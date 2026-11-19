@@ -2,9 +2,11 @@ import { useEffect, useState } from 'react';
 import { onAuthStateChanged, signOut, User } from 'firebase/auth';
 import { AnimatePresence, motion } from 'motion/react';
 import {
+  ArrowLeft,
   BookOpen,
   ClipboardList,
   Crown,
+  ExternalLink,
   FlaskConical,
   LayoutDashboard,
   LogOut,
@@ -19,6 +21,7 @@ import {
   X,
 } from 'lucide-react';
 import { AdminPanelView } from './components/AdminPanelView';
+import { AdminPortalPage } from './components/AdminPortalPage';
 import { AiRecipeGeneratorModal } from './components/AiRecipeGeneratorModal';
 import { AuthGate } from './components/AuthGate';
 import {
@@ -56,6 +59,7 @@ import {
   subscribeToAdmins,
   subscribeToAllCompoundingAdmin,
   subscribeToAllMealPlansAdmin,
+  subscribeToAllPatientsAdmin,
   subscribeToAllSubscriptionsAdmin,
   subscribeToAllVideoSessionsAdmin,
   subscribeToCompoundingPrescriptions,
@@ -96,6 +100,9 @@ import {
 function WorkspaceApp() {
   const [user, setUser] = useState<User | null>(null);
   const [authReady, setAuthReady] = useState(false);
+  const [routePath, setRoutePath] = useState<string>(() =>
+    typeof window !== 'undefined' ? window.location.pathname : '/'
+  );
 
   const [section, setSection] = useState<ActiveSection>('dashboard');
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
@@ -141,7 +148,9 @@ function WorkspaceApp() {
     Partial<Record<SiteMediaSlotKey, SiteMediaItem>>
   >({});
   const [isAdmin, setIsAdmin] = useState(false);
+  const [adminChecked, setAdminChecked] = useState(false);
   const [admins, setAdmins] = useState<AdminUser[]>([]);
+  const [adminAllPatients, setAdminAllPatients] = useState<Patient[]>([]);
   const [adminAllSubscriptions, setAdminAllSubscriptions] = useState<
     AnnualSubscription[]
   >([]);
@@ -154,6 +163,38 @@ function WorkspaceApp() {
   >([]);
 
   const [toast, setToast] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const params = new URLSearchParams(window.location.search);
+      const salaId = params.get('sala');
+      if (salaId) {
+        setPendingVideoSessionId(salaId);
+        setSection('video');
+        window.history.replaceState({}, '', window.location.pathname);
+      }
+    }
+    const handlePopState = () => {
+      setRoutePath(window.location.pathname);
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  function navigateRoute(path: string) {
+    if (typeof window !== 'undefined' && window.location.pathname !== path) {
+      window.history.pushState({}, '', path);
+      window.scrollTo({ top: 0 });
+    }
+    setRoutePath(path);
+  }
+
+  const isAdminRoute =
+    routePath === '/admin' ||
+    routePath.startsWith('/admin/') ||
+    routePath === '/administracao' ||
+    routePath.startsWith('/administracao/');
+  const isPublicPreviewRoute = routePath === '/site';
 
   function showToast(message: string) {
     setToast(message);
@@ -185,15 +226,19 @@ function WorkspaceApp() {
         setVideoSessions([]);
         setCompoundingPrescriptions([]);
         setIsAdmin(false);
+        setAdminChecked(true);
         setAdmins([]);
+        setAdminAllPatients([]);
         setAdminAllSubscriptions([]);
         setAdminAllMealPlans([]);
         setAdminAllVideoSessions([]);
         setAdminAllCompounding([]);
         setDataLoading(false);
       } else {
+        setAdminChecked(false);
         if (isDraDimitraEmail(firebaseUser.email)) {
           setIsAdmin(true);
+          setAdminChecked(true);
           showToast(
             `Bem-vinda, ${SPECIALIST_PROFILE.title} (${SPECIALIST_PROFILE.email}) — perfil titular reconhecido automaticamente.`
           );
@@ -202,12 +247,16 @@ function WorkspaceApp() {
           firebaseUser.uid,
           firebaseUser.email,
           firebaseUser.emailVerified
-        ).then((allowed) => {
-          setIsAdmin(allowed);
-          if (!allowed) {
-            setSection((curr) => (curr === 'admin' ? 'dashboard' : curr));
-          }
-        });
+        )
+          .then((allowed) => {
+            setIsAdmin(allowed);
+            if (!allowed) {
+              setSection((curr) => (curr === 'admin' ? 'dashboard' : curr));
+            }
+          })
+          .finally(() => {
+            setAdminChecked(true);
+          });
       }
     });
     return () => unsub();
@@ -217,6 +266,7 @@ function WorkspaceApp() {
   useEffect(() => {
     if (!authReady || !user || !isAdmin) return;
     const unsubAdmins = subscribeToAdmins(setAdmins);
+    const unsubAllPatients = subscribeToAllPatientsAdmin(setAdminAllPatients);
     const unsubAllSubs = subscribeToAllSubscriptionsAdmin(
       setAdminAllSubscriptions
     );
@@ -229,6 +279,7 @@ function WorkspaceApp() {
     );
     return () => {
       unsubAdmins();
+      unsubAllPatients();
       unsubAllSubs();
       unsubAllPlans();
       unsubAllVideos();
@@ -316,6 +367,156 @@ function WorkspaceApp() {
     }
   }, [recipes, inspectedRecipe?.id]);
 
+  async function handleSavePatient(
+    data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
+    existingId?: string
+  ) {
+    if (existingId) {
+      await updatePatient(existingId, data);
+      showToast('Prontuário do paciente atualizado.');
+    } else {
+      const newId = await createPatient(data);
+      setSelectedPatientId(newId);
+      showToast('Paciente cadastrado com sucesso.');
+    }
+  }
+
+  async function handleDeletePatient(patientId: string) {
+    const planIdsToDelete = new Set<string>();
+    for (const pl of [...mealPlans, ...adminAllMealPlans]) {
+      if (pl.patientId === patientId) {
+        planIdsToDelete.add(pl.id);
+      }
+    }
+    for (const planId of planIdsToDelete) {
+      await deleteMealPlan(planId);
+    }
+    await deletePatient(patientId);
+    if (selectedPatientId === patientId) {
+      setSelectedPatientId(null);
+    }
+    showToast('Paciente removido do consultório.');
+  }
+
+  // Dedicated standalone Administration Portal (/admin or /administracao)
+  if (isAdminRoute) {
+    return (
+      <>
+        <AdminPortalPage
+          user={user}
+          authReady={authReady}
+          isAdmin={isAdmin}
+          adminChecked={adminChecked}
+          siteSettings={siteSettings}
+          siteMedia={siteMedia}
+          admins={admins}
+          allPatients={adminAllPatients}
+          allSubscriptions={adminAllSubscriptions}
+          allMealPlans={adminAllMealPlans}
+          allVideoSessions={adminAllVideoSessions}
+          allCompounding={adminAllCompounding}
+          onOpenPublicSite={() => navigateRoute(user ? '/site' : '/')}
+          onOpenClinicalWorkspace={(patientId, targetSec) => {
+            if (patientId) setSelectedPatientId(patientId);
+            if (targetSec) setSection(targetSec);
+            navigateRoute('/');
+          }}
+          onAddPatient={() => {
+            setEditingPatient(null);
+            setPatientModalOpen(true);
+          }}
+          onEditPatient={(pat) => {
+            setEditingPatient(pat);
+            setPatientModalOpen(true);
+          }}
+          onDeletePatient={handleDeletePatient}
+          onCreateCompoundingFromCall={(prefillData) => {
+            setCompoundingPrefill(prefillData);
+            setSection('compounding');
+            navigateRoute('/');
+          }}
+          onNotify={showToast}
+        />
+
+        {user && isAdmin && (
+          <PatientFormModal
+            open={patientModalOpen}
+            nutritionistId={editingPatient?.nutritionistId || user.uid}
+            initialPatient={editingPatient}
+            onClose={() => {
+              setPatientModalOpen(false);
+              setEditingPatient(null);
+            }}
+            onSubmit={handleSavePatient}
+          />
+        )}
+
+        <AnimatePresence>
+          {toast && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 8 }}
+              transition={{ duration: 0.2, ease: MOTION_EASE }}
+              role="status"
+              className="no-print fixed bottom-6 right-6 z-50 glass-botanical text-white text-xs font-medium px-4 py-3 rounded-xl border border-[#B7DB74]/45 shadow-[0_14px_40px_-10px_rgba(0,0,0,0.85)]"
+            >
+              {toast}
+            </motion.div>
+          )}
+        </AnimatePresence>
+      </>
+    );
+  }
+
+  // Live Public Site Preview (/site) so logged-in Dra. Dimitra can review public changes without signing out
+  if (isPublicPreviewRoute) {
+    return (
+      <div className="relative">
+        <AuthGate
+          siteSettings={siteSettings}
+          siteMedia={siteMedia}
+          onSelectSubscriptionIntent={(spec) => {
+            setPendingSpecialty(spec);
+            setSection('subscription');
+            navigateRoute('/');
+          }}
+          onSelectVideoIntent={(intent) => {
+            setPendingVideoPrefill({
+              specialty: intent.specialty,
+              chiefComplaint: intent.chiefComplaint,
+            });
+            setSection('video');
+            navigateRoute('/');
+          }}
+          onOpenAdminPortal={() => navigateRoute('/admin')}
+        />
+        {user && (
+          <div className="no-print fixed bottom-5 right-5 z-50 flex flex-wrap items-center gap-2 glass-botanical px-3 py-2 rounded-full border border-[#B7DB74]/50 shadow-[0_16px_42px_-10px_rgba(0,0,0,0.88)]">
+            {isAdmin && (
+              <button
+                type="button"
+                onClick={() => navigateRoute('/admin')}
+                className="btn-botanical inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-full text-xs font-semibold cursor-pointer"
+              >
+                <ShieldCheck className="w-3.5 h-3.5" />
+                Voltar ao Portal Admin
+              </button>
+            )}
+            <button
+              type="button"
+              onClick={() => navigateRoute('/')}
+              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium text-[#E4F3EC] hover:bg-white/10 transition-colors cursor-pointer"
+            >
+              <ArrowLeft className="w-3.5 h-3.5 text-[#B7DB74]" />
+              Consultório
+            </button>
+          </div>
+        )}
+      </div>
+    );
+  }
+
   if (!authReady) {
     return (
       <div className="min-h-screen bg-[#041210] flex flex-col items-center justify-center gap-4">
@@ -343,6 +544,7 @@ function WorkspaceApp() {
           });
           setSection('video');
         }}
+        onOpenAdminPortal={() => navigateRoute('/admin')}
       />
     );
   }
@@ -358,32 +560,6 @@ function WorkspaceApp() {
     undefined,
     activeWhatsappDisplay
   );
-
-  async function handleSavePatient(
-    data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
-    existingId?: string
-  ) {
-    if (existingId) {
-      await updatePatient(existingId, data);
-      showToast('Prontuário do paciente atualizado.');
-    } else {
-      const newId = await createPatient(data);
-      setSelectedPatientId(newId);
-      showToast('Paciente cadastrado com sucesso.');
-    }
-  }
-
-  async function handleDeletePatient(patientId: string) {
-    const relatedPlans = mealPlans.filter((p) => p.patientId === patientId);
-    for (const pl of relatedPlans) {
-      await deleteMealPlan(pl.id);
-    }
-    await deletePatient(patientId);
-    if (selectedPatientId === patientId) {
-      setSelectedPatientId(null);
-    }
-    showToast('Paciente removido do consultório.');
-  }
 
   async function handleSaveRecipe(
     data: Omit<Recipe, 'id' | 'createdAt' | 'updatedAt'>,
@@ -596,7 +772,13 @@ function WorkspaceApp() {
               <button
                 key={item.id}
                 type="button"
-                onClick={() => setSection(item.id)}
+                onClick={() => {
+                  if (item.id === 'admin') {
+                    navigateRoute('/admin');
+                  } else {
+                    setSection(item.id);
+                  }
+                }}
                 className={`relative w-full flex items-center justify-between px-3.5 py-2.5 text-sm rounded-xl transition-colors cursor-pointer whitespace-nowrap ${
                   active
                     ? 'text-white font-semibold'
@@ -679,6 +861,16 @@ function WorkspaceApp() {
               <span>{activeWhatsappDisplay}</span>
             </a>
           </div>
+          {isAdmin && (
+            <button
+              type="button"
+              onClick={() => navigateRoute('/site')}
+              className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#DDF3B2] hover:text-white hover:bg-[#14453E]/45 rounded-xl transition-colors cursor-pointer whitespace-nowrap"
+            >
+              <ExternalLink className="w-3.5 h-3.5 text-[#B7DB74]" />
+              Ver página pública
+            </button>
+          )}
           <button
             type="button"
             onClick={() => signOut(auth)}
@@ -733,7 +925,11 @@ function WorkspaceApp() {
                       key={item.id}
                       type="button"
                       onClick={() => {
-                        setSection(item.id);
+                        if (item.id === 'admin') {
+                          navigateRoute('/admin');
+                        } else {
+                          setSection(item.id);
+                        }
                         setMobileMenuOpen(false);
                       }}
                       className={`w-full flex items-center justify-between px-3.5 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${
@@ -755,7 +951,20 @@ function WorkspaceApp() {
                   );
                 })}
               </nav>
-              <div className="p-4 border-t border-[#D4F0E0]/16">
+              <div className="p-4 border-t border-[#D4F0E0]/16 space-y-1.5">
+                {isAdmin && (
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      navigateRoute('/site');
+                    }}
+                    className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#DDF3B2] hover:bg-[#14453E]/45 rounded-xl"
+                  >
+                    <ExternalLink className="w-3.5 h-3.5 text-[#B7DB74]" />
+                    Ver página pública
+                  </button>
+                )}
                 <button
                   type="button"
                   onClick={() => signOut(auth)}

@@ -304,3 +304,81 @@ export function generateCompoundingFormula(params: {
     }
   );
 }
+
+export type InteractionSeverity = 'critico' | 'moderado' | 'informativo';
+
+export type InteractionCategory =
+  | 'interacao_ativos'
+  | 'contraindicacao_historico'
+  | 'duplicidade_ul'
+  | 'alergia_excipiente'
+  | 'horario_absorcao';
+
+export type OverallInteractionRisk = 'seguro' | 'atencao' | 'alto_risco';
+
+export interface InteractionAlert {
+  severity: InteractionSeverity;
+  category: InteractionCategory;
+  title: string;
+  involvedItems: string[];
+  mechanism: string;
+  recommendation: string;
+}
+
+export interface InteractionSynergy {
+  pair: string;
+  benefit: string;
+}
+
+export interface InteractionAnalysisResponse {
+  analysis: {
+    overallRisk: OverallInteractionRisk;
+    summary: string;
+    alerts: InteractionAlert[];
+    synergies: InteractionSynergy[];
+    timingGuidance: string;
+    suggestedPrecautionsText: string;
+  };
+  sources: GroundingSource[];
+  searchQueries: string[];
+  generatedAt: string;
+}
+
+export function analyzeCompoundingInteractions(params: {
+  actives: Array<{
+    name: string;
+    dosage: string;
+    unit: string;
+    purpose: string;
+  }>;
+  posology: string;
+  pharmaceuticalForm: string;
+  specialtyLabel: string;
+  patientName: string;
+  patient?: Patient | null;
+  clinicalCaseNotes: string;
+  allergies: string;
+  previousPrescriptions?: Array<{
+    formulaTitle: string;
+    status: string;
+    actives: Array<{ name: string; dosage: string; unit: string }>;
+  }>;
+}): Promise<InteractionAnalysisResponse> {
+  return postJson<InteractionAnalysisResponse>(
+    '/api/nutrition-ai/analyze-interactions',
+    {
+      actives: params.actives,
+      posology: params.posology,
+      pharmaceuticalForm: params.pharmaceuticalForm,
+      specialtyLabel: params.specialtyLabel,
+      patientName: params.patientName,
+      patientContext: params.patient
+        ? buildPatientContextPayload(params.patient)
+        : undefined,
+      clinicalCaseNotes: params.clinicalCaseNotes,
+      allergies: params.allergies,
+      previousPrescriptions: (params.previousPrescriptions || []).slice(0, 6),
+    }
+  );
+}
+

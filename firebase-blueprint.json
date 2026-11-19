@@ -606,6 +606,24 @@
         "durationMinutes": {
           "type": "integer"
         },
+        "hostInRoom": {
+          "type": "boolean",
+          "description": "Indica em tempo real se a Dra. Dimitra Bratu iniciou a sala e está aguardando ou atendendo o paciente."
+        },
+        "patientInRoom": {
+          "type": "boolean",
+          "description": "Indica em tempo real se o paciente agendado entrou na sala de videochamada."
+        },
+        "hostJoinedAtIso": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Horário ISO em que a Dra. Dimitra Bratu abriu a sala de espera."
+        },
+        "patientJoinedAtIso": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Horário ISO em que o paciente entrou na sala."
+        },
         "createdAt": {
           "type": "string",
           "format": "date-time"

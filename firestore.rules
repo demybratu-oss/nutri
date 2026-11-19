@@ -291,7 +291,8 @@ service cloud.firestore {
         && data.keys().hasOnly([
           'userId', 'patientId', 'patientName', 'specialty', 'scheduledDate',
           'scheduledTime', 'status', 'chiefComplaint', 'callNotes',
-          'durationMinutes', 'createdAt', 'updatedAt'
+          'durationMinutes', 'hostInRoom', 'patientInRoom', 'hostJoinedAtIso',
+          'patientJoinedAtIso', 'createdAt', 'updatedAt'
         ])
         && isValidId(data.userId)
         && (data.patientId == '' || isValidId(data.patientId))
@@ -303,6 +304,10 @@ service cloud.firestore {
         && isValidString(data.chiefComplaint, 0, 600)
         && isValidString(data.callNotes, 0, 3000)
         && data.durationMinutes is int && data.durationMinutes >= 0 && data.durationMinutes <= 240
+        && (!('hostInRoom' in data) || data.hostInRoom is bool)
+        && (!('patientInRoom' in data) || data.patientInRoom is bool)
+        && (!('hostJoinedAtIso' in data) || isValidString(data.hostJoinedAtIso, 0, 40))
+        && (!('patientJoinedAtIso' in data) || isValidString(data.patientJoinedAtIso, 0, 40))
         && data.createdAt is timestamp
         && data.updatedAt is timestamp;
     }
@@ -787,12 +792,14 @@ service cloud.firestore {
       allow create: if isVerifiedUser()
         && isValidId(sessionId)
         && isValidVideoSession(incoming())
-        && incoming().userId == request.auth.uid
+        && (incoming().userId == request.auth.uid || isAdmin())
         && incoming().status in ['agendada', 'em_andamento']
+        && (!('hostInRoom' in incoming()) || incoming().hostInRoom == false || isAdmin())
         && incoming().createdAt == request.time
         && incoming().updatedAt == request.time
         && (
           incoming().patientId == ''
+          || isAdmin()
           || (
             exists(/databases/$(database)/documents/patients/$(incoming().patientId))
             && get(/databases/$(database)/documents/patients/$(incoming().patientId)).data.nutritionistId == request.auth.uid
@@ -812,7 +819,8 @@ service cloud.firestore {
           isAdmin()
           || incoming().diff(existing()).affectedKeys().hasOnly([
             'specialty', 'scheduledDate', 'scheduledTime', 'chiefComplaint',
-            'callNotes', 'durationMinutes', 'status', 'updatedAt'
+            'callNotes', 'durationMinutes', 'status', 'patientInRoom',
+            'patientJoinedAtIso', 'updatedAt'
           ])
           ||
           (incoming().status == 'cancelada' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))

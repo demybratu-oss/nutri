@@ -404,9 +404,13 @@ export function sanitizeVideoSessionPayload(input: {
   chiefComplaint: string;
   callNotes: string;
   durationMinutes: number;
+  hostInRoom?: boolean;
+  patientInRoom?: boolean;
+  hostJoinedAtIso?: string;
+  patientJoinedAtIso?: string;
 }) {
   const safeName = trimStr(input.patientName, 120);
-  return {
+  const base: Record<string, unknown> = {
     userId: input.userId,
     patientId: trimStr(input.patientId, 128),
     patientName: safeName.length >= 2 ? safeName : 'Paciente Assinante',
@@ -418,6 +422,19 @@ export function sanitizeVideoSessionPayload(input: {
     callNotes: trimStr(input.callNotes, 3000),
     durationMinutes: Math.round(clamp(Number(input.durationMinutes), 0, 240)),
   };
+  if (typeof input.hostInRoom === 'boolean') {
+    base.hostInRoom = input.hostInRoom;
+  }
+  if (typeof input.patientInRoom === 'boolean') {
+    base.patientInRoom = input.patientInRoom;
+  }
+  if (typeof input.hostJoinedAtIso === 'string') {
+    base.hostJoinedAtIso = trimStr(input.hostJoinedAtIso, 40);
+  }
+  if (typeof input.patientJoinedAtIso === 'string') {
+    base.patientJoinedAtIso = trimStr(input.patientJoinedAtIso, 40);
+  }
+  return base;
 }
 
 export function sanitizeCompoundingPrescriptionPayload(input: {

@@ -199,6 +199,7 @@ interface AuthGateProps {
   siteMedia?: Partial<Record<SiteMediaSlotKey, SiteMediaItem>>;
   onSelectSubscriptionIntent?: (specialty: ClinicalSpecialty) => void;
   onSelectVideoIntent?: (intent: PublicVideoIntent) => void;
+  onOpenAdminPortal?: () => void;
 }
 
 export function AuthGate({
@@ -206,6 +207,7 @@ export function AuthGate({
   siteMedia = {},
   onSelectSubscriptionIntent,
   onSelectVideoIntent,
+  onOpenAdminPortal,
 }: AuthGateProps) {
   const [loading, setLoading] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
@@ -1607,6 +1609,19 @@ export function AuthGate({
           {siteSettings.instagramHandle && (
             <span>{siteSettings.instagramHandle}</span>
           )}
+          <a
+            href="/admin"
+            onClick={(e) => {
+              if (onOpenAdminPortal) {
+                e.preventDefault();
+                onOpenAdminPortal();
+              }
+            }}
+            className="inline-flex items-center gap-1.5 text-[#8DB5A2] hover:text-[#DDF3B2] transition-colors font-sans pl-2 border-l border-[#D4F0E0]/20"
+          >
+            <ShieldCheck className="w-3.5 h-3.5 text-[#B7DB74]" />
+            <span>Portal Administrativo</span>
+          </a>
         </div>
       </footer>
 

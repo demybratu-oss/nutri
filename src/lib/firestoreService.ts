@@ -682,6 +682,10 @@ export async function updateVideoSession(
     callNotes?: string;
     durationMinutes?: number;
     status?: VideoSessionStatus;
+    hostInRoom?: boolean;
+    patientInRoom?: boolean;
+    hostJoinedAtIso?: string;
+    patientJoinedAtIso?: string;
   }
 ): Promise<void> {
   const path = `videoSessions/${id}`;
@@ -698,6 +702,12 @@ export async function updateVideoSession(
   if (updates.durationMinutes !== undefined)
     clean.durationMinutes = Math.min(240, Math.max(0, Math.round(updates.durationMinutes)));
   if (updates.status !== undefined) clean.status = updates.status;
+  if (typeof updates.hostInRoom === 'boolean') clean.hostInRoom = updates.hostInRoom;
+  if (typeof updates.patientInRoom === 'boolean') clean.patientInRoom = updates.patientInRoom;
+  if (updates.hostJoinedAtIso !== undefined)
+    clean.hostJoinedAtIso = updates.hostJoinedAtIso.trim().slice(0, 40);
+  if (updates.patientJoinedAtIso !== undefined)
+    clean.patientJoinedAtIso = updates.patientJoinedAtIso.trim().slice(0, 40);
 
   try {
     await updateDoc(doc(db, 'videoSessions', id), clean);
@@ -1130,4 +1140,111 @@ export async function adminDeleteSubscription(id: string): Promise<void> {
     handleFirestoreError(error, OperationType.DELETE, path);
   }
 }
+
+export function subscribeToAllPatientsAdmin(
+  onData: (items: Patient[]) => void,
+  onError?: (err: Error) => void
+) {
+  const path = 'patients';
+  return onSnapshot(
+    collection(db, path),
+    (snapshot) => {
+      const items: Patient[] = snapshot.docs.map((d) => ({
+        id: d.id,
+        ...(d.data() as Omit<Patient, 'id'>),
+      }));
+      items.sort((a, b) => {
+        const ta = a.updatedAt?.toMillis?.() ?? 0;
+        const tb = b.updatedAt?.toMillis?.() ?? 0;
+        return tb - ta;
+      });
+      onData(items);
+    },
+    (error) => {
+      try {
+        handleFirestoreError(error, OperationType.LIST, path);
+      } catch (wrapped) {
+        if (onError && wrapped instanceof Error) onError(wrapped);
+      }
+    }
+  );
+}
+
+export async function adminUpdatePatientStatus(
+  id: string,
+  status: Patient['status']
+): Promise<void> {
+  const path = `patients/${id}`;
+  try {
+    await updateDoc(doc(db, 'patients', id), {
+      status,
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path);
+  }
+}
+
+export async function adminUpdateVideoSessionStatus(
+  id: string,
+  status: VideoSession['status']
+): Promise<void> {
+  const path = `videoSessions/${id}`;
+  try {
+    await updateDoc(doc(db, 'videoSessions', id), {
+      status,
+      ...(status === 'concluida' || status === 'cancelada'
+        ? { hostInRoom: false, patientInRoom: false }
+        : {}),
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path);
+  }
+}
+
+export async function adminOpenVideoWaitingRoom(id: string): Promise<void> {
+  const path = `videoSessions/${id}`;
+  try {
+    await updateDoc(doc(db, 'videoSessions', id), {
+      status: 'em_andamento',
+      hostInRoom: true,
+      hostJoinedAtIso: new Date().toISOString(),
+      updatedAt: serverTimestamp(),
+    });
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path);
+  }
+}
+
+export async function adminLeaveVideoRoom(
+  id: string,
+  options: {
+    markConcluded: boolean;
+    callNotes: string;
+    durationMinutes: number;
+    returnToScheduled?: boolean;
+  }
+): Promise<void> {
+  const path = `videoSessions/${id}`;
+  const payload: Record<string, unknown> = {
+    hostInRoom: false,
+    callNotes: options.callNotes.trim().slice(0, 3000),
+    durationMinutes: Math.min(240, Math.max(0, Math.round(options.durationMinutes))),
+    updatedAt: serverTimestamp(),
+  };
+  if (options.markConcluded) {
+    payload.status = 'concluida';
+    payload.patientInRoom = false;
+  } else if (options.returnToScheduled) {
+    payload.status = 'agendada';
+  }
+  try {
+    await updateDoc(doc(db, 'videoSessions', id), payload);
+  } catch (error) {
+    handleFirestoreError(error, OperationType.UPDATE, path);
+  }
+}
+
+
 

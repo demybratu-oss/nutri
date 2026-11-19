@@ -1,22 +1,33 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
+  AlertTriangle,
   ArrowLeft,
   BookOpen,
   CheckCircle2,
+  Clock,
   ExternalLink,
   FlaskConical,
   Globe,
+  Info,
   Loader2,
   Lock,
   Plus,
   Printer,
+  RefreshCw,
   Save,
+  ShieldAlert,
+  ShieldCheck,
   Sparkles,
   Trash2,
+  Zap,
 } from 'lucide-react';
 import {
+  analyzeCompoundingInteractions,
   generateCompoundingFormula,
   GroundingSource,
+  InteractionAnalysisResponse,
+  InteractionCategory,
+  InteractionSeverity,
 } from '../lib/aiService';
 import {
   createCompoundingPrescription,
@@ -61,6 +72,26 @@ const EMPTY_ACTIVE: CompoundingActive = {
   dosage: '',
   unit: 'mg',
   purpose: '',
+};
+
+const INTERACTION_CATEGORY_LABELS: Record<InteractionCategory, string> = {
+  interacao_ativos: 'Interação entre Ativos',
+  contraindicacao_historico: 'Contraindicação pelo Histórico',
+  duplicidade_ul: 'Duplicidade / Limite UL',
+  alergia_excipiente: 'Alergia / Excipiente',
+  horario_absorcao: 'Horário e Absorção',
+};
+
+const INTERACTION_SEVERITY_LABELS: Record<InteractionSeverity, string> = {
+  critico: 'Crítico',
+  moderado: 'Moderado',
+  informativo: 'Informativo',
+};
+
+const SEVERITY_SORT_ORDER: Record<InteractionSeverity, number> = {
+  critico: 0,
+  moderado: 1,
+  informativo: 2,
 };
 
 export function CompoundingPrescriptionsView({
@@ -130,9 +161,63 @@ export function CompoundingPrescriptionsView({
   const [saving, setSaving] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
 
+  // AI Interaction & Contraindication Analysis state
+  const [analyzingInteractions, setAnalyzingInteractions] = useState(false);
+  const [interactionResult, setInteractionResult] =
+    useState<InteractionAnalysisResponse | null>(null);
+  const [interactionError, setInteractionError] = useState<string | null>(null);
+  const [analyzedFingerprint, setAnalyzedFingerprint] = useState<string | null>(
+    null
+  );
+  const [confirmHighRiskIssue, setConfirmHighRiskIssue] = useState(false);
+
   const selectedPrescription =
     prescriptions.find((p) => p.id === selectedId) || null;
   const isIssued = selectedPrescription?.status === 'emitida';
+
+  const linkedPatient = useMemo(
+    () => patients.find((p) => p.id === patientId) || null,
+    [patients, patientId]
+  );
+
+  const previousPatientPrescriptions = useMemo(() => {
+    const normalizedName = patientName.trim().toLowerCase();
+    return prescriptions.filter((rx) => {
+      if (rx.id === selectedId) return false;
+      if (patientId && rx.patientId === patientId) return true;
+      if (
+        normalizedName &&
+        rx.patientName.trim().toLowerCase() === normalizedName
+      ) {
+        return true;
+      }
+      return false;
+    });
+  }, [prescriptions, selectedId, patientId, patientName]);
+
+  const currentFingerprint = useMemo(
+    () =>
+      JSON.stringify({
+        patientId,
+        allergies: allergies.trim(),
+        caseContext: caseContext.trim(),
+        posology: posology.trim(),
+        pharmaceuticalForm: pharmaceuticalForm.trim(),
+        actives: actives.map((a) => `${a.name.trim()}|${a.dosage.trim()}|${a.unit.trim()}`),
+      }),
+    [patientId, allergies, caseContext, posology, pharmaceuticalForm, actives]
+  );
+
+  const isAnalysisStale =
+    Boolean(interactionResult) &&
+    analyzedFingerprint !== null &&
+    analyzedFingerprint !== currentFingerprint;
+
+  const hasCriticalAlert = Boolean(
+    interactionResult &&
+      (interactionResult.analysis.overallRisk === 'alto_risco' ||
+        interactionResult.analysis.alerts.some((a) => a.severity === 'critico'))
+  );
 
   useEffect(() => {
     if (prefill) {
@@ -144,6 +229,10 @@ export function CompoundingPrescriptionsView({
       setCaseContext(prefill.clinicalCaseNotes);
       setFormulaTitle('');
       setAiSources([]);
+      setInteractionResult(null);
+      setAnalyzedFingerprint(null);
+      setInteractionError(null);
+      setConfirmHighRiskIssue(false);
       onConsumePrefill?.();
     }
   }, [prefill]);
@@ -165,6 +254,10 @@ export function CompoundingPrescriptionsView({
     setActives(rx.actives.length > 0 ? rx.actives : [{ ...EMPTY_ACTIVE }]);
     setRecommendedRecipes(rx.recommendedRecipes || []);
     setAiSources([]);
+    setInteractionResult(null);
+    setAnalyzedFingerprint(null);
+    setInteractionError(null);
+    setConfirmHighRiskIssue(false);
     setErrorMsg(null);
   }
 
@@ -184,7 +277,99 @@ export function CompoundingPrescriptionsView({
     setActives([{ ...EMPTY_ACTIVE }]);
     setRecommendedRecipes([]);
     setAiSources([]);
+    setInteractionResult(null);
+    setAnalyzedFingerprint(null);
+    setInteractionError(null);
+    setConfirmHighRiskIssue(false);
     setErrorMsg(null);
+  }
+
+  async function handleAnalyzeInteractions() {
+    const cleanActives = actives.filter((a) => a.name.trim().length > 0);
+    if (cleanActives.length === 0) {
+      setInteractionError(
+        'Adicione ao menos 1 vitamina ou suplemento na composição antes de analisar interações.'
+      );
+      return;
+    }
+
+    setAnalyzingInteractions(true);
+    setInteractionError(null);
+    setConfirmHighRiskIssue(false);
+    const snapshotFingerprint = currentFingerprint;
+
+    try {
+      const res = await analyzeCompoundingInteractions({
+        actives: cleanActives,
+        posology: posology.trim(),
+        pharmaceuticalForm: pharmaceuticalForm.trim(),
+        specialtyLabel: SPECIALTY_LABELS[specialty],
+        patientName:
+          patientName.trim() ||
+          linkedPatient?.fullName ||
+          activeSubscription?.subscriberName ||
+          'Paciente Assinante',
+        patient: linkedPatient,
+        clinicalCaseNotes: caseContext.trim(),
+        allergies:
+          allergies.trim() || linkedPatient?.restrictions.join(', ') || '',
+        previousPrescriptions: previousPatientPrescriptions.map((rx) => ({
+          formulaTitle: rx.formulaTitle,
+          status: rx.status,
+          actives: rx.actives.map((x) => ({
+            name: x.name,
+            dosage: x.dosage,
+            unit: x.unit,
+          })),
+        })),
+      });
+
+      setInteractionResult(res);
+      setAnalyzedFingerprint(snapshotFingerprint);
+
+      const risk = res.analysis.overallRisk;
+      if (risk === 'alto_risco') {
+        onNotify(
+          'Atenção: a IA detectou contraindicação ou interação crítica nesta fórmula. Revise os alertas abaixo.'
+        );
+      } else if (risk === 'atencao') {
+        onNotify(
+          'Análise concluída com pontos de atenção clínica (absorção, horário ou dose).'
+        );
+      } else {
+        onNotify(
+          'Análise concluída: fórmula compatível e segura para o histórico informado.'
+        );
+      }
+    } catch (err) {
+      setInteractionError(
+        err instanceof Error
+          ? err.message
+          : 'Não foi possível concluir a análise de interações agora.'
+      );
+    } finally {
+      setAnalyzingInteractions(false);
+    }
+  }
+
+  function handleApplySuggestedPrecautions() {
+    const suggested =
+      interactionResult?.analysis.suggestedPrecautionsText?.trim();
+    if (!suggested) return;
+    setPrecautions((prev) => {
+      const base = prev.trim();
+      if (!base) return suggested.slice(0, 800);
+      if (base.includes(suggested)) return base;
+      return `${base}\n${suggested}`.slice(0, 800);
+    });
+    onNotify('Alertas de segurança incorporados às Precauções do receituário.');
+  }
+
+  function handleApplySuggestedTiming() {
+    const timing = interactionResult?.analysis.timingGuidance?.trim();
+    if (!timing) return;
+    setPosology(timing.slice(0, 500));
+    onNotify('Orientação de horário aplicada na Posologia.');
   }
 
   async function handleGenerateWithAi() {
@@ -247,6 +432,7 @@ export function CompoundingPrescriptionsView({
 
     setSaving(true);
     setErrorMsg(null);
+    setConfirmHighRiskIssue(false);
     try {
       const resolvedName =
         patientName.trim() ||
@@ -880,6 +1066,307 @@ export function CompoundingPrescriptionsView({
               </div>
             ))}
           </div>
+
+          {/* =============================================================== */}
+          {/* AI INTERACTION & PATIENT CONTRAINDICATION ANALYZER              */}
+          {/* =============================================================== */}
+          <div className="pt-2 space-y-4">
+            <div className="p-4 rounded-2xl bg-[#08221E] border border-[#B7DB74]/28 flex flex-col md:flex-row md:items-center justify-between gap-3.5">
+              <div className="space-y-1 min-w-0">
+                <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#DDF3B2]">
+                  <ShieldCheck className="w-4 h-4 text-[#C7E88B] shrink-0" />
+                  <span>
+                    Auditoria Clínica de Interações e Contraindicações (IA)
+                  </span>
+                </div>
+                <p className="text-[11px] text-[#9CC2AF] leading-relaxed">
+                  Cruza os ativos prescritos entre si e com{' '}
+                  {linkedPatient ? (
+                    <strong className="text-white">
+                      o prontuário de {linkedPatient.fullName}
+                    </strong>
+                  ) : (
+                    'os dados clínicos informados'
+                  )}
+                  {previousPatientPrescriptions.length > 0
+                    ? ` + ${previousPatientPrescriptions.length} fórmula(s) anterior(es)`
+                    : ''}{' '}
+                  para detectar contraindicações, competição de absorção e
+                  excessos (UL / ANVISA IN 28).
+                </p>
+              </div>
+
+              <button
+                type="button"
+                disabled={analyzingInteractions}
+                onClick={handleAnalyzeInteractions}
+                className="btn-botanical inline-flex items-center justify-center gap-2 px-5 py-2.5 text-xs font-semibold rounded-full cursor-pointer disabled:opacity-60 whitespace-nowrap shrink-0"
+              >
+                {analyzingInteractions ? (
+                  <Loader2 className="w-3.5 h-3.5 animate-spin" />
+                ) : interactionResult ? (
+                  <RefreshCw className="w-3.5 h-3.5" />
+                ) : (
+                  <ShieldAlert className="w-3.5 h-3.5" />
+                )}
+                <span>
+                  {analyzingInteractions
+                    ? 'Analisando interações e histórico...'
+                    : interactionResult
+                    ? 'Reanalisar Segurança'
+                    : 'Analisar Interações com IA'}
+                </span>
+              </button>
+            </div>
+
+            {interactionError && (
+              <div
+                role="alert"
+                className="px-4 py-3 text-xs text-red-200 bg-red-950/60 border border-red-400/35 rounded-xl"
+              >
+                {interactionError}
+              </div>
+            )}
+
+            {interactionResult && (
+              <div
+                className={`rounded-2xl border p-5 space-y-4 ${
+                  interactionResult.analysis.overallRisk === 'alto_risco'
+                    ? 'bg-red-950/35 border-red-400/50'
+                    : interactionResult.analysis.overallRisk === 'atencao'
+                    ? 'bg-amber-950/30 border-amber-400/45'
+                    : 'bg-emerald-950/30 border-emerald-400/45'
+                }`}
+              >
+                {/* Stale warning if formula changed since last check */}
+                {isAnalysisStale && (
+                  <div className="px-3.5 py-2 rounded-xl bg-amber-950/65 border border-amber-400/40 text-[11px] text-amber-200 flex flex-wrap items-center justify-between gap-2">
+                    <span>
+                      A composição ou os dados do paciente foram alterados após
+                      esta análise.
+                    </span>
+                    <button
+                      type="button"
+                      disabled={analyzingInteractions}
+                      onClick={handleAnalyzeInteractions}
+                      className="font-semibold text-amber-100 underline cursor-pointer"
+                    >
+                      Reanalisar agora
+                    </button>
+                  </div>
+                )}
+
+                {/* Overall Risk Header */}
+                <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-3">
+                  <div className="flex items-start gap-3">
+                    {interactionResult.analysis.overallRisk === 'alto_risco' ? (
+                      <div className="w-10 h-10 rounded-full bg-red-900/60 border border-red-400/50 flex items-center justify-center shrink-0">
+                        <ShieldAlert className="w-5 h-5 text-red-200" />
+                      </div>
+                    ) : interactionResult.analysis.overallRisk === 'atencao' ? (
+                      <div className="w-10 h-10 rounded-full bg-amber-900/60 border border-amber-400/50 flex items-center justify-center shrink-0">
+                        <AlertTriangle className="w-5 h-5 text-amber-200" />
+                      </div>
+                    ) : (
+                      <div className="w-10 h-10 rounded-full bg-emerald-900/60 border border-emerald-400/50 flex items-center justify-center shrink-0">
+                        <ShieldCheck className="w-5 h-5 text-emerald-200" />
+                      </div>
+                    )}
+
+                    <div className="space-y-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h4 className="font-display text-2xl font-semibold text-white leading-none">
+                          {interactionResult.analysis.overallRisk ===
+                          'alto_risco'
+                            ? 'Alerta Clínico Crítico · Revisar Antes de Emitir'
+                            : interactionResult.analysis.overallRisk ===
+                              'atencao'
+                            ? 'Atenção Clínica · Ajustes Recomendados'
+                            : 'Fórmula Segura · Compatível com o Histórico'}
+                        </h4>
+                      </div>
+                      <p className="text-xs text-[#E4F3EC] leading-relaxed">
+                        {interactionResult.analysis.summary}
+                      </p>
+                    </div>
+                  </div>
+
+                  {!isIssued &&
+                    interactionResult.analysis.suggestedPrecautionsText && (
+                      <button
+                        type="button"
+                        onClick={handleApplySuggestedPrecautions}
+                        className="inline-flex items-center gap-1.5 px-3.5 py-2 rounded-full text-[11px] font-semibold bg-[#051815] text-[#DDF3B2] border border-[#B7DB74]/40 hover:border-[#DDF3B2] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                      >
+                        <CheckCircle2 className="w-3.5 h-3.5 text-[#C7E88B]" />
+                        <span>Adicionar às Precauções</span>
+                      </button>
+                    )}
+                </div>
+
+                {/* Detailed Alerts List */}
+                {interactionResult.analysis.alerts.length > 0 && (
+                  <div className="space-y-2.5">
+                    {[...interactionResult.analysis.alerts]
+                      .sort(
+                        (a, b) =>
+                          SEVERITY_SORT_ORDER[a.severity] -
+                          SEVERITY_SORT_ORDER[b.severity]
+                      )
+                      .map((alert, idx) => {
+                        const isCrit = alert.severity === 'critico';
+                        const isMod = alert.severity === 'moderado';
+                        return (
+                          <div
+                            key={`${alert.title}-${idx}`}
+                            className={`p-4 rounded-xl border space-y-2 ${
+                              isCrit
+                                ? 'bg-red-950/60 border-red-400/45'
+                                : isMod
+                                ? 'bg-amber-950/45 border-amber-400/38'
+                                : 'bg-[#061A17]/90 border-[#B7DB74]/24'
+                            }`}
+                          >
+                            <div className="flex flex-wrap items-center justify-between gap-2">
+                              <div className="flex items-center gap-2 flex-wrap">
+                                <span
+                                  className={`inline-flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider px-2.5 py-0.5 rounded-full ${
+                                    isCrit
+                                      ? 'bg-red-500/25 text-red-200 border border-red-400/50'
+                                      : isMod
+                                      ? 'bg-amber-500/20 text-amber-200 border border-amber-400/45'
+                                      : 'bg-[#103831] text-[#DDF3B2] border border-[#B7DB74]/35'
+                                  }`}
+                                >
+                                  {isCrit ? (
+                                    <ShieldAlert className="w-3 h-3" />
+                                  ) : isMod ? (
+                                    <AlertTriangle className="w-3 h-3" />
+                                  ) : (
+                                    <Info className="w-3 h-3" />
+                                  )}
+                                  {INTERACTION_SEVERITY_LABELS[alert.severity]}
+                                </span>
+                                <span className="text-[11px] font-medium text-[#A8CCB9]">
+                                  {INTERACTION_CATEGORY_LABELS[alert.category]}
+                                </span>
+                              </div>
+                            </div>
+
+                            <div className="text-sm font-semibold text-white">
+                              {alert.title}
+                            </div>
+
+                            {alert.involvedItems.length > 0 && (
+                              <div className="flex flex-wrap gap-1.5">
+                                {alert.involvedItems.map((item, i) => (
+                                  <span
+                                    key={`${item}-${i}`}
+                                    className="text-[11px] font-mono px-2 py-0.5 rounded-md bg-black/30 border border-white/12 text-[#E4F3EC]"
+                                  >
+                                    {item}
+                                  </span>
+                                ))}
+                              </div>
+                            )}
+
+                            <p className="text-xs text-[#D5E9DF] leading-relaxed">
+                              <strong className="text-white">Mecanismo:</strong>{' '}
+                              {alert.mechanism}
+                            </p>
+                            <p className="text-xs text-[#DDF3B2] leading-relaxed">
+                              <strong className="text-[#C7E88B]">
+                                Conduta recomendada:
+                              </strong>{' '}
+                              {alert.recommendation}
+                            </p>
+                          </div>
+                        );
+                      })}
+                  </div>
+                )}
+
+                {/* Synergies & Timing Optimization */}
+                {(interactionResult.analysis.synergies.length > 0 ||
+                  interactionResult.analysis.timingGuidance) && (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
+                    {interactionResult.analysis.synergies.length > 0 && (
+                      <div className="p-3.5 rounded-xl bg-[#051815]/90 border border-[#B7DB74]/22 space-y-2">
+                        <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#C7E88B]">
+                          <Zap className="w-3.5 h-3.5" />
+                          <span>Sinergias Positivas Identificadas</span>
+                        </div>
+                        <ul className="space-y-1.5 text-xs text-[#CBE3D6]">
+                          {interactionResult.analysis.synergies.map(
+                            (syn, idx) => (
+                              <li key={idx} className="leading-relaxed">
+                                <strong className="text-white">
+                                  {syn.pair}:
+                                </strong>{' '}
+                                {syn.benefit}
+                              </li>
+                            )
+                          )}
+                        </ul>
+                      </div>
+                    )}
+
+                    {interactionResult.analysis.timingGuidance && (
+                      <div className="p-3.5 rounded-xl bg-[#051815]/90 border border-[#B7DB74]/22 space-y-2 flex flex-col justify-between">
+                        <div className="space-y-1.5">
+                          <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#DDF3B2]">
+                            <Clock className="w-3.5 h-3.5 text-[#C7E88B]" />
+                            <span>Otimização de Horário e Absorção</span>
+                          </div>
+                          <p className="text-xs text-[#CBE3D6] leading-relaxed">
+                            {interactionResult.analysis.timingGuidance}
+                          </p>
+                        </div>
+                        {!isIssued && (
+                          <button
+                            type="button"
+                            onClick={handleApplySuggestedTiming}
+                            className="self-start text-[11px] font-semibold text-[#C7E88B] hover:text-white underline cursor-pointer pt-1"
+                          >
+                            Aplicar sugestão na Posologia →
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </div>
+                )}
+
+                {/* Grounded References for Interaction Audit */}
+                {interactionResult.sources.length > 0 && (
+                  <div className="pt-2 border-t border-white/10 space-y-1.5">
+                    <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#C7E88B]">
+                      <Globe className="w-3.5 h-3.5" />
+                      <span>
+                        Bases consultadas na auditoria de segurança (
+                        {interactionResult.sources.length})
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {interactionResult.sources.slice(0, 4).map((src, i) => (
+                        <a
+                          key={`${src.uri}-${i}`}
+                          href={src.uri}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg bg-[#051815] border border-[#D4F0E0]/18 hover:border-[#B7DB74] text-[11px] text-[#CBE3D6] hover:text-white transition-colors"
+                        >
+                          <span className="truncate max-w-[180px]">
+                            {src.title}
+                          </span>
+                          <ExternalLink className="w-3 h-3 shrink-0 text-[#85AF9B]" />
+                        </a>
+                      ))}
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
 
         {/* Posology & Pharmacy Instructions */}
@@ -910,30 +1397,35 @@ export function CompoundingPrescriptionsView({
           </div>
         </div>
 
-        {(clinicalRationale || precautions) && (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {clinicalRationale && (
-              <div className="p-4 rounded-xl bg-[#07201C] border border-[#B7DB74]/18 space-y-1">
-                <div className="text-xs font-semibold text-[#DDF3B2]">
-                  Fundamentação Científica
-                </div>
-                <p className="text-xs text-[#CBE3D6] leading-relaxed">
-                  {clinicalRationale}
-                </p>
-              </div>
-            )}
-            {precautions && (
-              <div className="p-4 rounded-xl bg-[#07201C] border border-[#B7DB74]/18 space-y-1">
-                <div className="text-xs font-semibold text-amber-300">
-                  Precauções e Segurança
-                </div>
-                <p className="text-xs text-[#CBE3D6] leading-relaxed">
-                  {precautions}
-                </p>
-              </div>
-            )}
+        {/* Rationale & Editable Precautions */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className="block text-xs font-medium text-[#DDF3B2] mb-1.5">
+              Fundamentação Científica (uso clínico)
+            </label>
+            <textarea
+              rows={3}
+              disabled={isIssued}
+              value={clinicalRationale}
+              onChange={(e) => setClinicalRationale(e.target.value)}
+              placeholder="Justificativa clínica dos ativos escolhidos para o tratamento..."
+              className="w-full px-3.5 py-2.5 text-xs bg-[#07201C] text-[#CBE3D6] placeholder-[#719C88] border border-[#B7DB74]/20 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none disabled:opacity-60"
+            />
           </div>
-        )}
+          <div>
+            <label className="block text-xs font-medium text-amber-300 mb-1.5">
+              Precauções, Interações e Segurança (impresso na receita)
+            </label>
+            <textarea
+              rows={3}
+              disabled={isIssued}
+              value={precautions}
+              onChange={(e) => setPrecautions(e.target.value)}
+              placeholder="Ex.: Separar do consumo de café/laticínios por 2h; monitorar ferritina e vitamina D após 60 dias..."
+              className="w-full px-3.5 py-2.5 text-xs bg-[#07201C] text-[#CBE3D6] placeholder-[#719C88] border border-amber-400/25 rounded-xl focus:outline-none focus:border-amber-300 resize-none disabled:opacity-60"
+            />
+          </div>
+        </div>
 
         {/* Recommended Therapeutic Recipes */}
         {recommendedRecipes.length > 0 && (
@@ -999,6 +1491,44 @@ export function CompoundingPrescriptionsView({
           </div>
         )}
 
+        {/* Inline High-Risk Emission Guard (never uses window.confirm) */}
+        {confirmHighRiskIssue && !isIssued && (
+          <div
+            role="alert"
+            className="p-4 rounded-2xl bg-red-950/65 border border-red-400/55 flex flex-col sm:flex-row sm:items-center justify-between gap-3"
+          >
+            <div className="flex items-start gap-2.5 text-xs text-red-100">
+              <ShieldAlert className="w-5 h-5 text-red-300 shrink-0 mt-0.5" />
+              <div>
+                <strong className="block text-white">
+                  A análise da IA detectou alerta(s) crítico(s) nesta fórmula.
+                </strong>
+                <span>
+                  Recomenda-se revisar os ativos ou incorporar as precauções
+                  antes de emitir o receituário oficial para a farmácia.
+                </span>
+              </div>
+            </div>
+            <div className="flex items-center gap-2 shrink-0">
+              <button
+                type="button"
+                onClick={() => setConfirmHighRiskIssue(false)}
+                className="px-3.5 py-2 rounded-full text-xs font-semibold bg-[#061A17] text-white border border-white/25 hover:border-[#B7DB74] cursor-pointer whitespace-nowrap"
+              >
+                Revisar fórmula
+              </button>
+              <button
+                type="button"
+                disabled={saving}
+                onClick={() => handleSave(true)}
+                className="px-4 py-2 rounded-full text-xs font-semibold bg-red-600 hover:bg-red-500 text-white cursor-pointer whitespace-nowrap disabled:opacity-50"
+              >
+                Emitir mesmo assim
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* Action Footer */}
         <div className="pt-4 border-t border-[#B7DB74]/16 flex flex-wrap items-center justify-between gap-3">
           {isIssued ? (
@@ -1022,7 +1552,13 @@ export function CompoundingPrescriptionsView({
               <button
                 type="button"
                 disabled={saving}
-                onClick={() => handleSave(true)}
+                onClick={() => {
+                  if (hasCriticalAlert && !confirmHighRiskIssue) {
+                    setConfirmHighRiskIssue(true);
+                    return;
+                  }
+                  void handleSave(true);
+                }}
                 className="btn-gold inline-flex items-center gap-2 px-5 py-2.5 text-xs font-semibold rounded-full cursor-pointer disabled:opacity-50"
               >
                 <CheckCircle2 className="w-3.5 h-3.5" />

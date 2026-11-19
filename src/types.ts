@@ -201,6 +201,10 @@ export interface VideoSession {
   chiefComplaint: string;
   callNotes: string;
   durationMinutes: number;
+  hostInRoom?: boolean;
+  patientInRoom?: boolean;
+  hostJoinedAtIso?: string;
+  patientJoinedAtIso?: string;
   createdAt?: Timestamp | null;
   updatedAt?: Timestamp | null;
 }

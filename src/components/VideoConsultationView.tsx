@@ -14,6 +14,7 @@ import {
   Phone,
   PhoneOff,
   Plus,
+  Radio,
   Save,
   Trash2,
   Video,
@@ -272,12 +273,21 @@ export function VideoConsultationView({
   async function handleJoinExisting(session: VideoSession) {
     setActiveSessionId(session.id);
     setCallNotesDraft(session.callNotes || '');
-    if (session.status === 'agendada') {
-      await updateVideoSession(session.id, { status: 'em_andamento' });
+    if (session.status !== 'concluida' && session.status !== 'cancelada') {
+      await updateVideoSession(session.id, {
+        status: 'em_andamento',
+        patientInRoom: true,
+        patientJoinedAtIso: new Date().toISOString(),
+      });
     }
     setCallSeconds(0);
     setInCall(true);
     await startLocalMedia();
+    if (session.hostInRoom) {
+      onNotify(
+        'Você entrou na sala! Dra. Dimitra Bratu já está conectada aguardando você.'
+      );
+    }
   }
 
   async function handleSaveCallNotes() {
@@ -305,6 +315,7 @@ export function VideoConsultationView({
       await updateVideoSession(activeSession.id, {
         callNotes: callNotesDraft,
         durationMinutes: Math.max(1, Math.round(callSeconds / 60)),
+        patientInRoom: false,
         ...(markConcluded ? { status: 'concluida' } : {}),
       });
       if (markConcluded) {
@@ -323,8 +334,57 @@ export function VideoConsultationView({
     return `${mins}:${secs}`;
   };
 
+  const hostWaitingSessions = videoSessions.filter(
+    (s) => s.hostInRoom && s.status === 'em_andamento'
+  );
+
   return (
     <div className="space-y-7">
+      {/* Real-Time Host Waiting Banner (when Dra. Dimitra opens the room from /admin) */}
+      {!inCall && hostWaitingSessions.length > 0 && (
+        <SpotlightCard
+          glowRim
+          className="rounded-3xl p-5 sm:p-6 border border-[#B7DB74]/60"
+        >
+          {hostWaitingSessions.map((waiting) => (
+            <div
+              key={waiting.id}
+              className="flex flex-col sm:flex-row sm:items-center justify-between gap-4"
+            >
+              <div className="flex items-center gap-4 min-w-0">
+                <img
+                  src={specialistAvatarUrl || SPECIALIST_PROFILE.photoUrl}
+                  alt="Dra. Dimitra Bratu"
+                  referrerPolicy="no-referrer"
+                  className="w-16 h-16 rounded-full object-cover object-top border-2 border-[#C7E88B] shrink-0 shadow-[0_0_28px_-4px_rgba(183,219,116,0.55)]"
+                />
+                <div className="min-w-0 space-y-1">
+                  <div className="inline-flex items-center gap-1.5 text-xs font-semibold text-[#C7E88B]">
+                    <Radio className="w-3.5 h-3.5 animate-pulse" />
+                    <span>DRA. DIMITRA BRATU JÁ ESTÁ NA SALA AGUARDANDO VOCÊ</span>
+                  </div>
+                  <div className="font-editorial text-2xl text-white leading-tight truncate">
+                    {waiting.patientName} · {SPECIALTY_LABELS[waiting.specialty]}
+                  </div>
+                  <div className="text-xs font-mono text-[#DDF3B2]">
+                    Consulta de {waiting.scheduledDate} às {waiting.scheduledTime}
+                  </div>
+                </div>
+              </div>
+
+              <button
+                type="button"
+                onClick={() => handleJoinExisting(waiting)}
+                className="btn-botanical inline-flex items-center justify-center gap-2 px-6 py-3 rounded-full text-xs font-semibold cursor-pointer whitespace-nowrap shrink-0"
+              >
+                <Video className="w-4 h-4" />
+                <span>Entrar agora na Videochamada</span>
+              </button>
+            </div>
+          ))}
+        </SpotlightCard>
+      )}
+
       {/* Live Video Call Stage */}
       {inCall && activeSession && (
         <SpotlightCard glowRim className="rounded-3xl overflow-hidden">
@@ -349,6 +409,20 @@ export function VideoConsultationView({
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Dra. Dimitra Bratu Clinical Presence */}
                 <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-[#144239] via-[#061A17] to-[#041210] border border-[#B7DB74]/30 flex flex-col items-center justify-center p-5 text-center">
+                  <div className="absolute top-2.5 left-2.5 inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#041210]/80 border border-[#B7DB74]/35 text-[10px] font-medium text-[#DDF3B2]">
+                    <Radio
+                      className={`w-3 h-3 ${
+                        activeSession.hostInRoom
+                          ? 'text-[#C7E88B] animate-pulse'
+                          : 'text-[#85AF9B]'
+                      }`}
+                    />
+                    <span>
+                      {activeSession.hostInRoom
+                        ? 'Dra. Dimitra conectada na sala'
+                        : 'Aguardando Dra. Dimitra entrar'}
+                    </span>
+                  </div>
                   <img
                     src={specialistAvatarUrl || SPECIALIST_PROFILE.photoUrl}
                     alt="Nutricionista Dra. Dimitra Bratu"
@@ -748,14 +822,18 @@ export function VideoConsultationView({
                         </span>
                         <span
                           className={`text-[11px] px-2.5 py-0.5 rounded-full border font-medium ${
-                            session.status === 'concluida'
+                            session.hostInRoom && session.status === 'em_andamento'
+                              ? 'border-[#C7E88B]/70 bg-[#B7DB74]/22 text-[#E5F7C4]'
+                              : session.status === 'concluida'
                               ? 'border-emerald-400/35 bg-emerald-950/50 text-emerald-300'
                               : session.status === 'em_andamento'
                               ? 'border-[#DDF3B2]/60 bg-[#B7DB74]/18 text-[#DDF3B2]'
                               : 'border-[#B7DB74]/28 bg-[#144239] text-[#C7E88B]'
                           }`}
                         >
-                          {STATUS_LABELS[session.status]}
+                          {session.hostInRoom && session.status === 'em_andamento'
+                            ? 'Dra. Dimitra aguardando na sala'
+                            : STATUS_LABELS[session.status]}
                         </span>
                       </div>
                       <div className="text-xs text-[#C7E88B] mt-1">
@@ -785,7 +863,11 @@ export function VideoConsultationView({
                             className="btn-gold inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold rounded-full cursor-pointer whitespace-nowrap"
                           >
                             <Video className="w-3.5 h-3.5" />
-                            <span>Entrar na sala</span>
+                            <span>
+                              {session.hostInRoom
+                                ? 'Entrar agora (Dra. na sala)'
+                                : 'Entrar na sala'}
+                            </span>
                           </button>
                         )}
 

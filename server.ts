@@ -856,6 +856,232 @@ REGRAS OBRIGATÓRIAS:
     }
   });
 
+  // 7. AI Supplement Interaction & Patient Contraindication Analyzer (Vitaminas Manipuladas)
+  app.post('/api/nutrition-ai/analyze-interactions', async (req, res) => {
+    try {
+      const {
+        actives = [],
+        posology = '',
+        pharmaceuticalForm = '',
+        specialtyLabel = '',
+        patientName = '',
+        patientContext,
+        clinicalCaseNotes = '',
+        allergies = '',
+        previousPrescriptions = [],
+      } = req.body || {};
+
+      const cleanActives = Array.isArray(actives)
+        ? actives
+            .filter(
+              (a: unknown): a is { name: string; dosage: string; unit: string; purpose?: string } =>
+                Boolean(
+                  a &&
+                    typeof a === 'object' &&
+                    typeof (a as { name?: unknown }).name === 'string' &&
+                    (a as { name: string }).name.trim().length > 0
+                )
+            )
+            .slice(0, 20)
+        : [];
+
+      if (cleanActives.length === 0) {
+        res.status(400).json({
+          error:
+            'Adicione ao menos um ativo ou vitamina na fórmula para realizar a análise de interações.',
+        });
+        return;
+      }
+
+      const ai = getAiClient();
+
+      const activesListText = cleanActives
+        .map(
+          (a, i) =>
+            `${i + 1}. ${a.name.trim()} — ${String(a.dosage || '').trim()} ${String(
+              a.unit || ''
+            ).trim()}${a.purpose ? ` (Finalidade: ${a.purpose.trim()})` : ''}`
+        )
+        .join('\n');
+
+      const patientHistoryBlock = patientContext
+        ? `PRONTUÁRIO E HISTÓRICO CLÍNICO DO PACIENTE:
+- Nome: ${patientContext.fullName || patientName || 'Paciente'}
+- Sexo / Idade: ${patientContext.sex}, ${patientContext.age} anos
+- Antropometria: ${patientContext.weightKg} kg, ${patientContext.heightCm} cm (IMC ${patientContext.bmi})
+- Nível de atividade física: ${patientContext.activityLabel}
+- Objetivo clínico: ${patientContext.goalLabel}
+- Restrições e alergias no prontuário: ${patientContext.restrictions?.join(', ') || 'Nenhuma registrada'}
+- Anamnese e observações clínicas: ${patientContext.clinicalNotes || 'Sem anamnese registrada'}`
+        : `DADOS DO PACIENTE:
+- Nome: ${patientName || 'Paciente Assinante'} (prontuário completo não vinculado)`;
+
+      const priorFormulasBlock =
+        Array.isArray(previousPrescriptions) && previousPrescriptions.length > 0
+          ? `\nOUTRAS FÓRMULAS MANIPULADAS JÁ PRESCRITAS PARA ESTE PACIENTE (verifique risco de duplicidade e soma acima do limite UL):\n${previousPrescriptions
+              .slice(0, 6)
+              .map(
+                (rx: {
+                  formulaTitle?: string;
+                  status?: string;
+                  actives?: Array<{ name: string; dosage: string; unit: string }>;
+                }) =>
+                  `- "${rx.formulaTitle || 'Fórmula anterior'}" (${rx.status || 'salva'}): ${
+                    Array.isArray(rx.actives)
+                      ? rx.actives
+                          .map((x) => `${x.name} ${x.dosage}${x.unit}`)
+                          .join(', ')
+                      : 'sem ativos'
+                  }`
+              )
+              .join('\n')}`
+          : '';
+
+      // Step 1: Live literature search on nutrient-nutrient interactions, ULs (ANVISA IN 28 / NIH ODS), and clinical contraindications
+      const evidenceRes = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: `Atuando como auditor científico de nutrição clínica e farmacologia magistral para a Nutricionista Dra. Dimitra Bratu no Brasil, pesquise em PubMed, NIH Office of Dietary Supplements (ODS), Cochrane, ANVISA IN 28 (limites máximos seguros / UL) e CFN Resolução 656/2020 todas as possíveis INTERAÇÕES, COMPETIÇÕES DE ABSORÇÃO, INCOMPATIBILIDADES FARMACOTÉCNICAS e CONTRAINDICAÇÕES CLÍNICAS para a fórmula abaixo.
+
+ATIVOS PRESCRITOS NA FÓRMULA ATUAL (${pharmaceuticalForm || 'uso oral'} | Especialidade: ${specialtyLabel || 'Nutrição Clínica'}):
+${activesListText}
+
+POSOLOGIA ATUAL: ${posology || 'Não informada'}
+
+${patientHistoryBlock}
+- Alergias e restrições informadas no receituário: ${allergies || 'Nenhuma informada'}
+- Notas do caso clínico / exames / medicamentos citados: ${clinicalCaseNotes || 'Nenhuma nota adicional'}${priorFormulasBlock}
+
+Investigue rigorosamente:
+1. Interações nutriente-nutriente entre os ativos da mesma cápsula/fórmula (ex.: Ferro x Cálcio/Zinco/Magnésio, Zinco alto >30-40mg x depleção de Cobre, competições de transportadores intestinais, estabilidade farmacotécnica).
+2. Contraindicações ou precauções específicas baseadas no HISTÓRICO do paciente (idade, sexo, gestação/lactação se mencionada, doença renal/hepática, hipertireoidismo, hemocromatose, cálculos renais, hipotensão, diabetes, alergias/intolerâncias ou medicamentos relatados nas notas clínicas como anticoagulantes, levotiroxina, metformina, omeprazol, antidepressivos).
+3. Risco de excesso / limite máximo tolerável (UL / ANVISA IN 28), incluindo duplicidade com fórmulas anteriores do paciente.
+4. Alergias ou incompatibilidades de excipiente / forma farmacêutica.
+5. Sinergias benéficas e ajuste ideal de horário de tomada (jejum, com refeição lipídica, manhã vs noite, separação entre tomadas).`,
+        config: {
+          tools: [{ googleSearch: {} }],
+        },
+      });
+
+      const evidenceSummary = evidenceRes.text || '';
+      const { sources, searchQueries } = extractGroundingMetadata(evidenceRes);
+
+      // Step 2: Structured Clinical Safety Analysis JSON
+      const analysisRes = await ai.models.generateContent({
+        model: MODEL_NAME,
+        contents: `Com base EXCLUSIVAMENTE nas evidências científicas obtidas abaixo e no caso real do paciente, gere um relatório estruturado de segurança clínica em Português do Brasil para a Nutricionista Dra. Dimitra Bratu.
+
+EVIDÊNCIAS CIENTÍFICAS RECUPERADAS:
+${evidenceSummary}
+
+FÓRMULA AVALIADA:
+${activesListText}
+Posologia: ${posology || 'Não informada'} | Forma farmacêutica: ${pharmaceuticalForm || 'Não informada'}
+
+${patientHistoryBlock}
+Alergias informadas: ${allergies || 'Nenhuma'}
+Notas clínicas / exames / medicações: ${clinicalCaseNotes || 'Nenhuma'}${priorFormulasBlock}
+
+REGRAS DE CLASSIFICAÇÃO OBRIGATÓRIAS:
+- "overallRisk":
+  • "alto_risco": se houver pelo menos 1 alerta "critico" (contraindicação direta pelo histórico/alergia/medicamento, dose acima do UL seguro ou interação severa que exige alteração imediata).
+  • "atencao": se não houver "critico", mas houver 1 ou mais alertas "moderado" (competição de absorção relevante, necessidade de separar horários, ajuste fino de dose ou monitoramento laboratorial).
+  • "seguro": se a combinação for segura e bem tolerada para o histórico informado (pode incluir alertas "informativo" de boa prática).
+- "alerts": liste apenas achados clinicamente relevantes e reais (sem inventar condições que o paciente não tem). Para cada alerta, escolha:
+  • "severity": "critico" | "moderado" | "informativo"
+  • "category": "interacao_ativos" | "contraindicacao_historico" | "duplicidade_ul" | "alergia_excipiente" | "horario_absorcao"
+  • "title": título curto e direto (máx. 90 caracteres)
+  • "involvedItems": array com os nomes exatos dos ativos e/ou condições/medicamentos envolvidos
+  • "mechanism": explicação clínica concisa do risco ou mecanismo fisiológico
+  • "recommendation": conduta prática clara para o nutricionista (ex.: separar em duas tomadas, ajustar dose para X mg, substituir forma quelada, solicitar exame Y).
+- "synergies": 1 a 4 sinergias positivas encontradas entre os ativos da fórmula.
+- "timingGuidance": sugestão prática de horário/posologia para maximizar absorção e evitar competições.
+- "suggestedPrecautionsText": texto curto, objetivo e profissional (máx. 650 caracteres) pronto para ser inserido no campo "Precauções e Segurança" do receituário da farmácia de manipulação.`,
+        config: {
+          responseMimeType: 'application/json',
+          responseSchema: {
+            type: Type.OBJECT,
+            properties: {
+              overallRisk: {
+                type: Type.STRING,
+                enum: ['seguro', 'atencao', 'alto_risco'],
+              },
+              summary: { type: Type.STRING },
+              alerts: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    severity: {
+                      type: Type.STRING,
+                      enum: ['critico', 'moderado', 'informativo'],
+                    },
+                    category: {
+                      type: Type.STRING,
+                      enum: [
+                        'interacao_ativos',
+                        'contraindicacao_historico',
+                        'duplicidade_ul',
+                        'alergia_excipiente',
+                        'horario_absorcao',
+                      ],
+                    },
+                    title: { type: Type.STRING },
+                    involvedItems: {
+                      type: Type.ARRAY,
+                      items: { type: Type.STRING },
+                    },
+                    mechanism: { type: Type.STRING },
+                    recommendation: { type: Type.STRING },
+                  },
+                  required: [
+                    'severity',
+                    'category',
+                    'title',
+                    'involvedItems',
+                    'mechanism',
+                    'recommendation',
+                  ],
+                },
+              },
+              synergies: {
+                type: Type.ARRAY,
+                items: {
+                  type: Type.OBJECT,
+                  properties: {
+                    pair: { type: Type.STRING },
+                    benefit: { type: Type.STRING },
+                  },
+                  required: ['pair', 'benefit'],
+                },
+              },
+              timingGuidance: { type: Type.STRING },
+              suggestedPrecautionsText: { type: Type.STRING },
+            },
+            required: [
+              'overallRisk',
+              'summary',
+              'alerts',
+              'synergies',
+              'timingGuidance',
+              'suggestedPrecautionsText',
+            ],
+          },
+        },
+      });
+
+      const parsed = JSON.parse((analysisRes.text || '{}').trim());
+      res.json({
+        analysis: parsed,
+        sources,
+        searchQueries,
+        generatedAt: new Date().toISOString(),
+      });
+    } catch (error) {
+      const formatted = formatApiError(error);
+      res.status(formatted.status).json({ error: formatted.message });
+    }
+  });
+
   // Mount Vite middleware in dev or serve built dist/ in production
   if (process.env.NODE_ENV !== 'production') {
     const { createServer: createViteServer } = await import('vite');
