@@ -11,6 +11,7 @@ import {
   Menu,
   MessageCircleHeart,
   Microscope,
+  Phone,
   Plus,
   ShieldCheck,
   Users,
@@ -36,7 +37,11 @@ import { RecipeModal } from './components/RecipeModal';
 import { RecipesView } from './components/RecipesView';
 import { ResearchView } from './components/ResearchView';
 import { SubscriptionView } from './components/SubscriptionView';
-import { VideoConsultationView } from './components/VideoConsultationView';
+import {
+  VideoCallPrefill,
+  VideoConsultationView,
+} from './components/VideoConsultationView';
+import { BOTANICAL_THEME_IMAGES } from './data/seedData';
 import { auth } from './lib/firebase';
 import {
   checkUserIsAdmin,
@@ -71,10 +76,12 @@ import {
   ActiveSection,
   AdminUser,
   AnnualSubscription,
+  buildSpecialistWhatsAppUrl,
   ClinicalSpecialty,
   CompoundingPrescription,
   Consultation,
   DEFAULT_SITE_SETTINGS,
+  isDraDimitraEmail,
   MealPlan,
   Patient,
   Recipe,
@@ -82,6 +89,7 @@ import {
   SiteMediaItem,
   SiteMediaSlotKey,
   SiteSettings,
+  SPECIALIST_PROFILE,
   VideoSession,
 } from './types';
 
@@ -122,6 +130,8 @@ function WorkspaceApp() {
   const [pendingVideoSessionId, setPendingVideoSessionId] = useState<
     string | null
   >(null);
+  const [pendingVideoPrefill, setPendingVideoPrefill] =
+    useState<VideoCallPrefill | null>(null);
 
   // Live Site CMS (public read) & Restricted Admin RBAC state
   const [siteSettings, setSiteSettings] = useState<SiteSettings>(
@@ -182,6 +192,12 @@ function WorkspaceApp() {
         setAdminAllCompounding([]);
         setDataLoading(false);
       } else {
+        if (isDraDimitraEmail(firebaseUser.email)) {
+          setIsAdmin(true);
+          showToast(
+            `Bem-vinda, ${SPECIALIST_PROFILE.title} (${SPECIALIST_PROFILE.email}) — perfil titular reconhecido automaticamente.`
+          );
+        }
         void checkUserIsAdmin(
           firebaseUser.uid,
           firebaseUser.email,
@@ -302,9 +318,9 @@ function WorkspaceApp() {
 
   if (!authReady) {
     return (
-      <div className="min-h-screen bg-[#0B0907] flex flex-col items-center justify-center gap-4">
+      <div className="min-h-screen bg-[#041210] flex flex-col items-center justify-center gap-4">
         <VerbenaEmblem className="w-10 h-10" />
-        <div className="text-xs tracking-[0.2em] text-[#D9AF72]">
+        <div className="text-xs tracking-[0.2em] text-[#B7DB74]">
           Carregando consultório...
         </div>
       </div>
@@ -320,6 +336,13 @@ function WorkspaceApp() {
           setPendingSpecialty(spec);
           setSection('subscription');
         }}
+        onSelectVideoIntent={(intent) => {
+          setPendingVideoPrefill({
+            specialty: intent.specialty,
+            chiefComplaint: intent.chiefComplaint,
+          });
+          setSection('video');
+        }}
       />
     );
   }
@@ -327,7 +350,14 @@ function WorkspaceApp() {
   const activeSubscription =
     subscriptions.find((s) => s.status === 'ativa') || null;
 
-  const nutritionistName = 'Nutricionista Dimitra Bratu';
+  const isDraDimitraAccount = isDraDimitraEmail(user.email);
+  const nutritionistName = SPECIALIST_PROFILE.title;
+  const activeWhatsappDisplay =
+    siteSettings.whatsappContact || SPECIALIST_PROFILE.phoneDisplay;
+  const specialistWhatsappHref = buildSpecialistWhatsAppUrl(
+    undefined,
+    activeWhatsappDisplay
+  );
 
   async function handleSavePatient(
     data: Omit<Patient, 'id' | 'createdAt' | 'updatedAt'>,
@@ -529,25 +559,30 @@ function WorkspaceApp() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0B0907] text-[#F5EFE6] flex relative">
-      {/* Ambient gold stage light */}
+    <div className="min-h-screen bg-[#041210] text-[#F3FAF6] flex relative">
+      {/* Subtle Botanical Emerald Spring Water Ambient Layer */}
       <div
         aria-hidden="true"
         className="no-print pointer-events-none fixed inset-0 overflow-hidden z-0"
       >
-        <div className="absolute -top-40 right-10 w-[560px] h-[560px] rounded-full bg-[#D9AF72]/7 blur-[140px]" />
-        <div className="absolute bottom-[-120px] left-60 w-[440px] h-[440px] rounded-full bg-[#B5833E]/6 blur-[140px]" />
+        <img
+          src={BOTANICAL_THEME_IMAGES.springWaterBackdrop}
+          alt=""
+          referrerPolicy="no-referrer"
+          className="w-full h-full object-cover opacity-20"
+        />
+        <div className="absolute inset-0 bg-gradient-to-br from-[#041210]/92 via-[#061D1A]/85 to-[#041210]/95" />
       </div>
 
-      {/* Desktop Smoked Obsidian Sidebar */}
-      <aside className="no-print hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 z-20 bg-[#100D0A]/92 backdrop-blur-xl border-r border-[#D9AF72]/16">
-        <div className="h-18 px-6 flex items-center gap-3 border-b border-[#D9AF72]/14">
+      {/* Desktop Frosted Emerald Botanical Sidebar */}
+      <aside className="no-print hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 z-20 bg-[#061C19]/88 backdrop-blur-xl border-r border-[#D4F0E0]/18">
+        <div className="h-18 px-6 flex items-center gap-3 border-b border-[#D4F0E0]/16">
           <VerbenaEmblem className="w-7 h-7 shrink-0" />
           <div className="min-w-0">
-            <div className="font-editorial text-lg tracking-[0.12em] font-semibold text-[#FAF5EC] leading-none whitespace-nowrap truncate">
+            <div className="font-editorial text-xl tracking-[0.08em] font-semibold text-white leading-none whitespace-nowrap truncate">
               {siteSettings.brandName}
             </div>
-            <div className="text-[10px] tracking-[0.16em] text-[#DFBA7C] mt-1 whitespace-nowrap truncate">
+            <div className="text-[10px] tracking-[0.14em] text-[#B7DB74] mt-1 whitespace-nowrap truncate">
               {siteSettings.brandSubtitle}
             </div>
           </div>
@@ -564,15 +599,15 @@ function WorkspaceApp() {
                 onClick={() => setSection(item.id)}
                 className={`relative w-full flex items-center justify-between px-3.5 py-2.5 text-sm rounded-xl transition-colors cursor-pointer whitespace-nowrap ${
                   active
-                    ? 'text-[#120D08] font-semibold'
-                    : 'text-[#BDB2A4] hover:text-[#FAF5EC] hover:bg-[#D9AF72]/8 font-medium'
+                    ? 'text-white font-semibold'
+                    : 'text-[#B5D6C5] hover:text-white hover:bg-[#14453E]/45 font-medium'
                 }`}
               >
                 {active && (
                   <motion.span
                     layoutId="activeSidebarIndicator"
                     transition={{ type: 'spring', stiffness: 380, damping: 32 }}
-                    className="absolute inset-0 rounded-xl btn-gold"
+                    className="absolute inset-0 rounded-xl btn-botanical"
                     aria-hidden="true"
                   />
                 )}
@@ -584,8 +619,8 @@ function WorkspaceApp() {
                   <span
                     className={`relative z-10 text-[10px] font-semibold px-2 py-0.5 rounded-full ${
                       active
-                        ? 'bg-[#2C1E0B]/20 text-[#120D08]'
-                        : 'bg-[#D9AF72]/18 text-[#F0D29C]'
+                        ? 'bg-[#041210]/30 text-[#E8F8DC]'
+                        : 'bg-[#749543]/25 text-[#DDF3B2]'
                     }`}
                   >
                     {item.tag}
@@ -594,7 +629,7 @@ function WorkspaceApp() {
                   typeof item.count === 'number' && (
                     <span
                       className={`relative z-10 text-xs font-mono tabular-nums ${
-                        active ? 'text-[#2C1E0B]/80' : 'text-[#84796B]'
+                        active ? 'text-[#E8F8DC]' : 'text-[#7AA38F]'
                       }`}
                     >
                       {item.count}
@@ -606,19 +641,50 @@ function WorkspaceApp() {
           })}
         </nav>
 
-        <div className="p-4 border-t border-[#D9AF72]/14 space-y-3">
-          <div className="px-2">
-            <div className="text-sm font-medium text-[#FAF5EC] truncate">
-              {nutritionistName}
+        <div className="p-4 border-t border-[#D4F0E0]/16 space-y-3">
+          <div className="px-2 space-y-1.5">
+            <div className="flex items-center gap-2.5">
+              {isDraDimitraAccount && (
+                <img
+                  src={
+                    siteMedia.specialist_avatar?.imageUrl ||
+                    SPECIALIST_PROFILE.photoUrl
+                  }
+                  alt={SPECIALIST_PROFILE.title}
+                  referrerPolicy="no-referrer"
+                  className="w-9 h-9 rounded-full object-cover object-top border border-[#B7DB74]/70 shrink-0"
+                />
+              )}
+              <div className="min-w-0">
+                <div className="text-sm font-semibold text-white truncate">
+                  {isDraDimitraAccount
+                    ? SPECIALIST_PROFILE.title
+                    : user.displayName || 'Paciente Assinante'}
+                </div>
+                <div className="text-[11px] font-medium text-[#B7DB74] truncate">
+                  {isDraDimitraAccount
+                    ? 'Nutricionista Titular · Admin'
+                    : 'Conta conectada'}
+                </div>
+              </div>
             </div>
-            <div className="text-xs text-[#8D8274] truncate">{user.email}</div>
+            <div className="text-xs text-[#9CC2AF] truncate">{user.email}</div>
+            <a
+              href={specialistWhatsappHref}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-1.5 text-[11px] font-mono text-[#DDF3B2] hover:text-white transition-colors pt-0.5"
+            >
+              <Phone className="w-3 h-3 text-[#B7DB74] shrink-0" />
+              <span>{activeWhatsappDisplay}</span>
+            </a>
           </div>
           <button
             type="button"
             onClick={() => signOut(auth)}
-            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#BDB2A4] hover:text-[#FAF5EC] hover:bg-[#D9AF72]/10 rounded-xl transition-colors cursor-pointer whitespace-nowrap"
+            className="w-full flex items-center gap-2.5 px-3 py-2 text-xs font-medium text-[#B5D6C5] hover:text-white hover:bg-[#14453E]/45 rounded-xl transition-colors cursor-pointer whitespace-nowrap"
           >
-            <LogOut className="w-3.5 h-3.5 text-[#D9AF72]" />
+            <LogOut className="w-3.5 h-3.5 text-[#B7DB74]" />
             Sair da conta
           </button>
         </div>
@@ -640,20 +706,20 @@ function WorkspaceApp() {
               animate={{ x: 0 }}
               exit={{ x: '-100%' }}
               transition={{ duration: 0.25, ease: MOTION_EASE }}
-              className="relative w-64 max-w-[82vw] bg-[#110D0A] h-full border-r border-[#D9AF72]/20 flex flex-col"
+              className="relative w-64 max-w-[82vw] bg-[#061C19] h-full border-r border-[#D4F0E0]/20 flex flex-col"
             >
-              <div className="h-16 px-5 flex items-center justify-between border-b border-[#D9AF72]/14">
+              <div className="h-16 px-5 flex items-center justify-between border-b border-[#D4F0E0]/16">
                 <div className="flex items-center gap-2.5">
                   <VerbenaEmblem className="w-6 h-6" />
-                  <span className="font-editorial text-base tracking-[0.12em] font-semibold text-[#FAF5EC] whitespace-nowrap">
-                    DIMITRA BRATU
+                  <span className="font-editorial text-lg tracking-[0.08em] font-semibold text-white whitespace-nowrap truncate">
+                    {siteSettings.brandName}
                   </span>
                 </div>
                 <button
                   type="button"
                   onClick={() => setMobileMenuOpen(false)}
                   aria-label="Fechar menu"
-                  className="p-2 text-[#A89E90] hover:text-[#FAF5EC] rounded-lg"
+                  className="p-2 text-[#9CC2AF] hover:text-white rounded-lg"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -672,8 +738,8 @@ function WorkspaceApp() {
                       }}
                       className={`w-full flex items-center justify-between px-3.5 py-2.5 text-sm rounded-xl transition-colors cursor-pointer ${
                         active
-                          ? 'btn-gold font-semibold'
-                          : 'text-[#BDB2A4] hover:bg-[#D9AF72]/10 font-medium'
+                          ? 'btn-botanical font-semibold text-white'
+                          : 'text-[#B5D6C5] hover:bg-[#14453E]/45 font-medium'
                       }`}
                     >
                       <span className="flex items-center gap-3">
@@ -689,13 +755,13 @@ function WorkspaceApp() {
                   );
                 })}
               </nav>
-              <div className="p-4 border-t border-[#D9AF72]/14">
+              <div className="p-4 border-t border-[#D4F0E0]/16">
                 <button
                   type="button"
                   onClick={() => signOut(auth)}
-                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#BDB2A4] hover:bg-[#D9AF72]/10 rounded-xl"
+                  className="w-full flex items-center gap-2 px-3 py-2 text-xs font-medium text-[#B5D6C5] hover:bg-[#14453E]/45 rounded-xl"
                 >
-                  <LogOut className="w-3.5 h-3.5 text-[#D9AF72]" />
+                  <LogOut className="w-3.5 h-3.5 text-[#B7DB74]" />
                   Sair da conta
                 </button>
               </div>
@@ -706,33 +772,33 @@ function WorkspaceApp() {
 
       {/* Main Content Viewport */}
       <div className="relative z-10 flex-1 lg:pl-64 flex flex-col min-w-0">
-        {/* Top Bar Contract: Breadcrumb on left + 1 Primary Metallic Gold Action on right */}
-        <header className="no-print h-18 bg-[#0E0B08]/85 backdrop-blur-xl border-b border-[#D9AF72]/14 px-4 sm:px-8 flex items-center justify-between gap-6 sticky top-0 z-30">
+        {/* Top Bar Contract: Breadcrumb on left + 1 Primary Botanical Action on right */}
+        <header className="no-print h-18 bg-[#061A17]/82 backdrop-blur-xl border-b border-[#D4F0E0]/16 px-4 sm:px-8 flex items-center justify-between gap-6 sticky top-0 z-30">
           <div className="flex items-center gap-3 min-w-0">
             <button
               type="button"
               onClick={() => setMobileMenuOpen(true)}
               aria-label="Abrir menu"
-              className="lg:hidden p-2 -ml-2 text-[#CFC5B8] hover:text-[#FAF5EC] rounded-lg"
+              className="lg:hidden p-2 -ml-2 text-[#D1E8DC] hover:text-white rounded-lg"
             >
               <Menu className="w-5 h-5" />
             </button>
             <div className="flex items-center gap-2.5 text-sm min-w-0">
-              <span className="text-[#8F8476] hidden sm:inline whitespace-nowrap">
+              <span className="text-[#8DB5A2] hidden sm:inline whitespace-nowrap">
                 Consultório
               </span>
-              <span className="text-[#D9AF72]/40 hidden sm:inline" aria-hidden="true">
+              <span className="text-[#D4F0E0]/35 hidden sm:inline" aria-hidden="true">
                 /
               </span>
-              <h1 className="font-editorial text-2xl font-medium text-[#FAF5EC] truncate tracking-wide">
+              <h1 className="font-editorial text-2xl font-semibold text-white truncate tracking-wide">
                 {sectionTitleMap[section]}
               </h1>
               {selectedPatientName && (
                 <>
-                  <span className="text-[#D9AF72]/40 hidden md:inline" aria-hidden="true">
+                  <span className="text-[#D4F0E0]/35 hidden md:inline" aria-hidden="true">
                     /
                   </span>
-                  <span className="text-[#DFBA7C] hidden md:inline truncate text-sm">
+                  <span className="text-[#B7DB74] hidden md:inline truncate text-sm">
                     {selectedPatientName}
                   </span>
                 </>
@@ -743,7 +809,7 @@ function WorkspaceApp() {
           <button
             type="button"
             onClick={primaryAction.onClick}
-            className="btn-gold inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-full cursor-pointer whitespace-nowrap shrink-0"
+            className="btn-botanical inline-flex items-center gap-2 px-4 py-2 text-xs font-semibold rounded-full cursor-pointer whitespace-nowrap shrink-0"
           >
             <Plus className="w-3.5 h-3.5" />
             {primaryAction.label}
@@ -830,9 +896,14 @@ function WorkspaceApp() {
                   patients={patients}
                   videoSessions={videoSessions}
                   activeSubscription={activeSubscription}
-                  specialistAvatarUrl={siteMedia.specialist_avatar?.imageUrl}
+                  specialistAvatarUrl={
+                    siteMedia.specialist_avatar?.imageUrl ||
+                    SPECIALIST_PROFILE.photoUrl
+                  }
                   initialSessionId={pendingVideoSessionId}
                   onConsumeInitialSession={() => setPendingVideoSessionId(null)}
+                  prefill={pendingVideoPrefill}
+                  onConsumePrefill={() => setPendingVideoPrefill(null)}
                   onCreateCompoundingFromCall={(prefillData) => {
                     setCompoundingPrefill(prefillData);
                     setSection('compounding');
@@ -863,11 +934,22 @@ function WorkspaceApp() {
                   mealPlans={mealPlans}
                   recipes={recipes}
                   consultations={consultations}
+                  specialistAvatarUrl={
+                    siteMedia.specialist_avatar?.imageUrl ||
+                    SPECIALIST_PROFILE.photoUrl
+                  }
                   initialPatientId={selectedPatientId}
                   onSaveClinicalNote={handleSaveClinicalNoteFromChat}
                   onOpenPatientPlan={(patientId) => {
                     setSelectedPatientId(patientId);
                     setSection('plans');
+                  }}
+                  onEscalateToVideo={(videoData) => {
+                    setPendingVideoPrefill(videoData);
+                    setSection('video');
+                    showToast(
+                      'Encaminhado para agendamento de videochamada com a Dra. Dimitra Bratu.'
+                    );
                   }}
                   onNotify={showToast}
                 />
@@ -1015,7 +1097,7 @@ function WorkspaceApp() {
         onAssignToPlan={handleAssignRecipeToPlan}
       />
 
-      {/* Luminous Obsidian & Gold Toast */}
+      {/* Frosted Botanical Emerald Toast */}
       <AnimatePresence>
         {toast && (
           <motion.div
@@ -1024,7 +1106,7 @@ function WorkspaceApp() {
             exit={{ opacity: 0, y: 8 }}
             transition={{ duration: 0.2, ease: MOTION_EASE }}
             role="status"
-            className="no-print fixed bottom-6 right-6 z-50 glass-obsidian text-[#FAF5EC] text-xs font-medium px-4 py-3 rounded-xl border border-[#D9AF72]/40 shadow-[0_14px_40px_-10px_rgba(0,0,0,0.85)]"
+            className="no-print fixed bottom-6 right-6 z-50 glass-botanical text-white text-xs font-medium px-4 py-3 rounded-xl border border-[#B7DB74]/45 shadow-[0_14px_40px_-10px_rgba(0,0,0,0.85)]"
           >
             {toast}
           </motion.div>

@@ -372,12 +372,12 @@ export function ClinicalCalendarPanel({
       className="glass-obsidian rounded-2xl overflow-hidden"
     >
       {/* Top Section Header */}
-      <div className="px-6 py-5 border-b border-[#D9AF72]/14 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+      <div className="px-6 py-5 border-b border-[#B7DB74]/14 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
         <div>
-          <h2 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+          <h2 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
             Agenda Clínica e Videochamadas
           </h2>
-          <p className="text-xs text-[#A89E90] mt-0.5 tabular-nums">
+          <p className="text-xs text-[#A8CCB9] mt-0.5 tabular-nums">
             {upcomingCount} próximas consultas · {monthActiveCount} neste mês ·
             Sincronizado em tempo real com Videochamadas
           </p>
@@ -395,7 +395,7 @@ export function ClinicalCalendarPanel({
           <button
             type="button"
             onClick={onOpenVideoTab}
-            className="text-xs font-medium text-[#E5C38A] hover:text-[#F7DFB3] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
+            className="text-xs font-medium text-[#C7E88B] hover:text-[#DDF3B2] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
           >
             <span>Abrir Videochamadas</span>
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -404,14 +404,14 @@ export function ClinicalCalendarPanel({
       </div>
 
       {/* Main Split: Calendar + Time Grid on Left, Day Schedule & Booking on Right */}
-      <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-[#D9AF72]/14">
+      <div className="grid grid-cols-1 lg:grid-cols-12 divide-y lg:divide-y-0 lg:divide-x divide-[#B7DB74]/14">
         {/* Left: Monthly Calendar + Day Slots Overview */}
         <div className="lg:col-span-7 p-6 space-y-6">
           {/* Month Navigation */}
           <div className="flex items-center justify-between gap-3">
-            <h3 className="font-editorial text-xl font-medium text-[#FAF5EC] capitalize">
+            <h3 className="font-editorial text-xl font-medium text-[#F4FBF6] capitalize">
               {MONTH_NAMES[viewMonth.month]}{' '}
-              <span className="font-mono tabular-nums text-[#DFBA7C] text-base">
+              <span className="font-mono tabular-nums text-[#C7E88B] text-base">
                 {viewMonth.year}
               </span>
             </h3>
@@ -420,7 +420,7 @@ export function ClinicalCalendarPanel({
               <button
                 type="button"
                 onClick={handleGoToday}
-                className="px-3 py-1.5 text-xs font-medium text-[#DFBA7C] hover:text-[#FAF5EC] border border-[#D9AF72]/25 hover:border-[#E8C589]/50 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
+                className="px-3 py-1.5 text-xs font-medium text-[#C7E88B] hover:text-[#F4FBF6] border border-[#B7DB74]/25 hover:border-[#C7E88B]/50 rounded-lg transition-colors cursor-pointer whitespace-nowrap"
               >
                 Hoje
               </button>
@@ -428,7 +428,7 @@ export function ClinicalCalendarPanel({
                 type="button"
                 onClick={handlePrevMonth}
                 aria-label="Mês anterior"
-                className="p-2 text-[#BDB2A4] hover:text-[#FAF5EC] border border-[#D9AF72]/20 hover:border-[#E8C589]/45 rounded-lg transition-colors cursor-pointer"
+                className="p-2 text-[#A8CCB9] hover:text-[#F4FBF6] border border-[#B7DB74]/20 hover:border-[#C7E88B]/45 rounded-lg transition-colors cursor-pointer"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -436,7 +436,7 @@ export function ClinicalCalendarPanel({
                 type="button"
                 onClick={handleNextMonth}
                 aria-label="Próximo mês"
-                className="p-2 text-[#BDB2A4] hover:text-[#FAF5EC] border border-[#D9AF72]/20 hover:border-[#E8C589]/45 rounded-lg transition-colors cursor-pointer"
+                className="p-2 text-[#A8CCB9] hover:text-[#F4FBF6] border border-[#B7DB74]/20 hover:border-[#C7E88B]/45 rounded-lg transition-colors cursor-pointer"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>
@@ -448,7 +448,7 @@ export function ClinicalCalendarPanel({
             {WEEKDAY_LABELS.map((wd) => (
               <div
                 key={wd}
-                className="py-1.5 text-[11px] font-medium text-[#8D8274]"
+                className="py-1.5 text-[11px] font-medium text-[#85AF9B]"
               >
                 {wd}
               </div>
@@ -478,37 +478,37 @@ export function ClinicalCalendarPanel({
                         }`
                       : ', sem consultas'
                   }`}
-                  className={`min-h-[54px] p-2 rounded-xl border text-left flex flex-col justify-between transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C589] ${
+                  className={`min-h-[54px] p-2 rounded-xl border text-left flex flex-col justify-between transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C7E88B] ${
                     isSelected
-                      ? 'bg-[#D9AF72]/20 border-[#E8C589] text-[#FAF5EC]'
+                      ? 'bg-[#B7DB74]/20 border-[#C7E88B] text-[#F4FBF6]'
                       : isToday
-                      ? 'bg-[#17120D] border-[#D9AF72]/45 text-[#FAF5EC] hover:bg-[#D9AF72]/10'
+                      ? 'bg-[#07201C] border-[#B7DB74]/45 text-[#F4FBF6] hover:bg-[#B7DB74]/10'
                       : cell.inCurrentMonth
-                      ? 'bg-[#100D0A]/65 border-[#D9AF72]/12 text-[#CFC5B8] hover:border-[#D9AF72]/35 hover:bg-[#17120D]'
-                      : 'bg-transparent border-transparent text-[#6A6156] hover:bg-[#14100C]/60'
+                      ? 'bg-[#07201C]/65 border-[#B7DB74]/12 text-[#CBE3D6] hover:border-[#B7DB74]/35 hover:bg-[#07201C]'
+                      : 'bg-transparent border-transparent text-[#85AF9B] hover:bg-[#0E332D]/60'
                   }`}
                 >
                   <div className="flex items-center justify-between w-full">
                     <span
                       className={`text-xs font-mono tabular-nums ${
                         isSelected
-                          ? 'font-semibold text-[#F7DFB3]'
+                          ? 'font-semibold text-[#DDF3B2]'
                           : isToday
-                          ? 'font-semibold text-[#E8C589]'
+                          ? 'font-semibold text-[#C7E88B]'
                           : ''
                       }`}
                     >
                       {cell.day}
                     </span>
                     {isToday && (
-                      <span className="text-[9px] font-medium text-[#E8C589]">
+                      <span className="text-[9px] font-medium text-[#C7E88B]">
                         Hoje
                       </span>
                     )}
                   </div>
 
                   {activeSessionsCount > 0 ? (
-                    <div className="text-[10px] font-mono tabular-nums text-[#E8C589] truncate">
+                    <div className="text-[10px] font-mono tabular-nums text-[#C7E88B] truncate">
                       {activeSessionsCount}{' '}
                       {activeSessionsCount === 1 ? 'horário' : 'horários'}
                     </div>
@@ -521,15 +521,15 @@ export function ClinicalCalendarPanel({
           </div>
 
           {/* Daily Time Slot Availability Matrix */}
-          <div className="pt-5 border-t border-[#D9AF72]/14 space-y-3">
+          <div className="pt-5 border-t border-[#B7DB74]/14 space-y-3">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <div className="text-xs font-medium text-[#FAF5EC]">
+              <div className="text-xs font-medium text-[#F4FBF6]">
                 Grade de horários ·{' '}
-                <span className="text-[#DFBA7C] capitalize">
+                <span className="text-[#C7E88B] capitalize">
                   {formatLongDatePt(selectedDate)}
                 </span>
               </div>
-              <div className="text-xs text-[#8D8274] tabular-nums">
+              <div className="text-xs text-[#85AF9B] tabular-nums">
                 {occupiedCountForDay} ocupados · {freeCountForDay} livres
               </div>
             </div>
@@ -544,12 +544,12 @@ export function ClinicalCalendarPanel({
                     key={slot}
                     type="button"
                     onClick={() => handleSlotClick(slot)}
-                    className={`px-3 py-2.5 rounded-xl border text-left transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#E8C589] ${
+                    className={`px-3 py-2.5 rounded-xl border text-left transition-colors cursor-pointer focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#C7E88B] ${
                       booked
-                        ? 'bg-[#D9AF72]/14 border-[#D9AF72]/45 text-[#FAF5EC] hover:bg-[#D9AF72]/22'
+                        ? 'bg-[#B7DB74]/14 border-[#B7DB74]/45 text-[#F4FBF6] hover:bg-[#B7DB74]/22'
                         : isSelectedSlot
-                        ? 'bg-[#E8C589]/20 border-[#F0D29C] text-[#FAF5EC]'
-                        : 'bg-[#0E0B08]/80 border-[#D9AF72]/15 text-[#BDB2A4] hover:border-[#D9AF72]/40 hover:text-[#FAF5EC]'
+                        ? 'bg-[#C7E88B]/20 border-[#DDF3B2] text-[#F4FBF6]'
+                        : 'bg-[#061A17]/80 border-[#B7DB74]/15 text-[#A8CCB9] hover:border-[#B7DB74]/40 hover:text-[#F4FBF6]'
                     }`}
                   >
                     <div className="flex items-center justify-between gap-1">
@@ -558,13 +558,13 @@ export function ClinicalCalendarPanel({
                       </span>
                       <span
                         className={`text-[10px] font-medium ${
-                          booked ? 'text-[#F0D29C]' : 'text-[#8D8274]'
+                          booked ? 'text-[#DDF3B2]' : 'text-[#85AF9B]'
                         }`}
                       >
                         {booked ? 'Ocupado' : 'Livre'}
                       </span>
                     </div>
-                    <div className="text-[11px] truncate mt-1 text-[#A89E90]">
+                    <div className="text-[11px] truncate mt-1 text-[#A8CCB9]">
                       {booked
                         ? booked.patientName.split(' ')[0]
                         : 'Agendar vídeo'}
@@ -577,14 +577,14 @@ export function ClinicalCalendarPanel({
         </div>
 
         {/* Right: Selected Day Appointments & Quick Booking Form */}
-        <div className="lg:col-span-5 p-6 bg-[#100D0A]/45 flex flex-col justify-between gap-6">
+        <div className="lg:col-span-5 p-6 bg-[#07201C]/45 flex flex-col justify-between gap-6">
           <div className="space-y-5">
             <div className="flex items-start justify-between gap-3">
               <div>
-                <div className="text-xs text-[#DFBA7C] font-medium capitalize">
+                <div className="text-xs text-[#C7E88B] font-medium capitalize">
                   {formatLongDatePt(selectedDate)}
                 </div>
-                <h3 className="font-editorial text-xl font-medium text-[#FAF5EC] mt-0.5">
+                <h3 className="font-editorial text-xl font-medium text-[#F4FBF6] mt-0.5">
                   {showForm ? 'Agendar nova consulta' : 'Consultas do dia'}
                 </h3>
               </div>
@@ -597,7 +597,7 @@ export function ClinicalCalendarPanel({
                     setFormError(null);
                   }}
                   aria-label="Fechar formulário de agendamento"
-                  className="p-1.5 text-[#A89E90] hover:text-[#FAF5EC] rounded-lg transition-colors cursor-pointer"
+                  className="p-1.5 text-[#A8CCB9] hover:text-[#F4FBF6] rounded-lg transition-colors cursor-pointer"
                 >
                   <X className="w-4 h-4" />
                 </button>
@@ -605,7 +605,7 @@ export function ClinicalCalendarPanel({
                 <button
                   type="button"
                   onClick={handleOpenNewBooking}
-                  className="text-xs font-medium text-[#E5C38A] hover:text-[#F7DFB3] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
+                  className="text-xs font-medium text-[#C7E88B] hover:text-[#DDF3B2] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   <span>Novo horário</span>
@@ -616,11 +616,11 @@ export function ClinicalCalendarPanel({
             {showForm && (
               <form
                 onSubmit={handleCreateAppointment}
-                className="space-y-3.5 pb-5 border-b border-[#D9AF72]/14"
+                className="space-y-3.5 pb-5 border-b border-[#B7DB74]/14"
               >
                 {patients.length > 0 && (
                   <div>
-                    <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                    <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                       Paciente cadastrado
                     </label>
                     <select
@@ -632,7 +632,7 @@ export function ClinicalCalendarPanel({
                         );
                         if (found) setCustomPatientName(found.fullName);
                       }}
-                      className="w-full px-3 py-2 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                      className="w-full px-3 py-2 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                     >
                       <option value="">Selecionar ou digitar nome abaixo</option>
                       {patients.map((p) => (
@@ -645,7 +645,7 @@ export function ClinicalCalendarPanel({
                 )}
 
                 <div>
-                  <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                  <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                     Nome do paciente
                   </label>
                   <input
@@ -654,13 +654,13 @@ export function ClinicalCalendarPanel({
                     value={customPatientName}
                     onChange={(e) => setCustomPatientName(e.target.value)}
                     placeholder="Nome completo do paciente"
-                    className="w-full px-3 py-2 text-xs bg-[#0B0907] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                    className="w-full px-3 py-2 text-xs bg-[#041210] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                   />
                 </div>
 
                 <div className="grid grid-cols-2 gap-2.5">
                   <div>
-                    <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                    <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                       Data
                     </label>
                     <input
@@ -672,11 +672,11 @@ export function ClinicalCalendarPanel({
                           handleSelectDay(e.target.value, false);
                         }
                       }}
-                      className="w-full px-3 py-2 text-xs font-mono tabular-nums bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                      className="w-full px-3 py-2 text-xs font-mono tabular-nums bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                    <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                       Horário
                     </label>
                     <input
@@ -687,7 +687,7 @@ export function ClinicalCalendarPanel({
                         setScheduledTime(e.target.value);
                         setFormError(null);
                       }}
-                      className="w-full px-3 py-2 text-xs font-mono tabular-nums bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                      className="w-full px-3 py-2 text-xs font-mono tabular-nums bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                     />
                   </div>
                 </div>
@@ -703,7 +703,7 @@ export function ClinicalCalendarPanel({
                 )}
 
                 <div>
-                  <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                  <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                     Especialidade clínica
                   </label>
                   <select
@@ -711,7 +711,7 @@ export function ClinicalCalendarPanel({
                     onChange={(e) =>
                       setSpecialty(e.target.value as ClinicalSpecialty)
                     }
-                    className="w-full px-3 py-2 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                    className="w-full px-3 py-2 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                   >
                     {CLINICAL_SPECIALTIES.map((spec) => (
                       <option key={spec.id} value={spec.id}>
@@ -722,7 +722,7 @@ export function ClinicalCalendarPanel({
                 </div>
 
                 <div>
-                  <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                  <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                     Objetivo / pauta da consulta (opcional)
                   </label>
                   <textarea
@@ -730,7 +730,7 @@ export function ClinicalCalendarPanel({
                     value={chiefComplaint}
                     onChange={(e) => setChiefComplaint(e.target.value)}
                     placeholder="Ex.: Retorno de 30 dias, revisão de exames e ajuste de manipulados..."
-                    className="w-full px-3 py-2 text-xs bg-[#0B0907] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none"
+                    className="w-full px-3 py-2 text-xs bg-[#041210] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none"
                   />
                 </div>
 
@@ -754,7 +754,7 @@ export function ClinicalCalendarPanel({
                       setShowForm(false);
                       setFormError(null);
                     }}
-                    className="px-4 py-2.5 text-xs font-medium text-[#BDB2A4] hover:text-[#FAF5EC] border border-[#D9AF72]/25 rounded-full transition-colors cursor-pointer whitespace-nowrap"
+                    className="px-4 py-2.5 text-xs font-medium text-[#A8CCB9] hover:text-[#F4FBF6] border border-[#B7DB74]/25 rounded-full transition-colors cursor-pointer whitespace-nowrap"
                   >
                     Cancelar
                   </button>
@@ -765,17 +765,17 @@ export function ClinicalCalendarPanel({
             {/* Selected Day Sessions List */}
             {selectedDaySessions.length === 0 ? (
               <div className="py-8 text-center space-y-2.5">
-                <CalendarIcon className="w-7 h-7 text-[#D9AF72]/50 mx-auto" />
-                <div className="text-sm font-medium text-[#FAF5EC]">
+                <CalendarIcon className="w-7 h-7 text-[#B7DB74]/50 mx-auto" />
+                <div className="text-sm font-medium text-[#F4FBF6]">
                   Agenda livre nesta data
                 </div>
-                <p className="text-xs text-[#8D8274] max-w-xs mx-auto leading-relaxed">
+                <p className="text-xs text-[#85AF9B] max-w-xs mx-auto leading-relaxed">
                   Clique em qualquer horário livre na grade ao lado para agendar
                   uma consulta de videochamada com o paciente.
                 </p>
               </div>
             ) : (
-              <div className="divide-y divide-[#D9AF72]/12">
+              <div className="divide-y divide-[#B7DB74]/12">
                 {selectedDaySessions.map((session) => {
                   const isCancelled = session.status === 'cancelada';
                   const isConcluded = session.status === 'concluida';
@@ -788,10 +788,10 @@ export function ClinicalCalendarPanel({
                     >
                       <div className="flex items-start justify-between gap-3">
                         <div className="min-w-0">
-                          <div className="flex items-center gap-2 text-xs text-[#DFBA7C] font-mono tabular-nums">
+                          <div className="flex items-center gap-2 text-xs text-[#C7E88B] font-mono tabular-nums">
                             <Clock className="w-3.5 h-3.5 shrink-0" />
                             <span>{session.scheduledTime}</span>
-                            <span aria-hidden="true" className="text-[#8D8274]">
+                            <span aria-hidden="true" className="text-[#85AF9B]">
                               ·
                             </span>
                             <span
@@ -800,16 +800,16 @@ export function ClinicalCalendarPanel({
                                   ? 'text-emerald-300'
                                   : isCancelled
                                   ? 'text-red-300'
-                                  : 'text-[#F0D29C]'
+                                  : 'text-[#DDF3B2]'
                               }`}
                             >
                               {STATUS_LABELS[session.status]}
                             </span>
                           </div>
-                          <div className="text-sm font-medium text-[#FAF5EC] truncate mt-1">
+                          <div className="text-sm font-medium text-[#F4FBF6] truncate mt-1">
                             {session.patientName}
                           </div>
-                          <div className="text-xs text-[#A89E90] truncate">
+                          <div className="text-xs text-[#A8CCB9] truncate">
                             {SPECIALTY_LABELS[session.specialty]}
                           </div>
                         </div>
@@ -831,7 +831,7 @@ export function ClinicalCalendarPanel({
                                 type="button"
                                 disabled={cancellingId === session.id}
                                 onClick={() => handleCancelSession(session)}
-                                className="px-2.5 py-1.5 text-xs font-medium text-[#A89E90] hover:text-red-300 transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
+                                className="px-2.5 py-1.5 text-xs font-medium text-[#A8CCB9] hover:text-red-300 transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
                               >
                                 Liberar
                               </button>
@@ -841,7 +841,7 @@ export function ClinicalCalendarPanel({
                       </div>
 
                       {session.chiefComplaint && (
-                        <p className="text-xs text-[#8D8274] line-clamp-2 leading-relaxed">
+                        <p className="text-xs text-[#85AF9B] line-clamp-2 leading-relaxed">
                           {session.chiefComplaint}
                         </p>
                       )}
@@ -853,7 +853,7 @@ export function ClinicalCalendarPanel({
           </div>
 
           {/* Upcoming Summary Footer */}
-          <div className="pt-4 border-t border-[#D9AF72]/14 flex items-center justify-between gap-3 text-xs text-[#8D8274]">
+          <div className="pt-4 border-t border-[#B7DB74]/14 flex items-center justify-between gap-3 text-xs text-[#85AF9B]">
             <span>
               Horários agendados aparecem automaticamente na sala de
               Videochamada.

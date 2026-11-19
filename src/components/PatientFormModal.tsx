@@ -48,7 +48,7 @@ const DEFAULT_FORM = {
 };
 
 const INPUT_CLASS =
-  'w-full px-3.5 py-2 text-sm bg-[#120E0B] text-[#FAF5EC] placeholder-[#6F6559] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]';
+  'w-full px-3.5 py-2 text-sm bg-[#0A2622] text-[#F4FBF6] placeholder-[#85AF9B] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]';
 
 export function PatientFormModal({
   open,
@@ -184,11 +184,11 @@ export function PatientFormModal({
       aria-modal="true"
       aria-labelledby="patient-modal-title"
     >
-      <div className="glass-obsidian border-[#D9AF72]/30 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#D9AF72]/15">
+      <div className="glass-obsidian border-[#B7DB74]/30 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#B7DB74]/15">
           <h2
             id="patient-modal-title"
-            className="font-editorial text-2xl font-medium text-[#FAF5EC]"
+            className="font-editorial text-2xl font-medium text-[#F4FBF6]"
           >
             {initialPatient ? 'Editar Prontuário do Paciente' : 'Cadastrar Novo Paciente'}
           </h2>
@@ -196,7 +196,7 @@ export function PatientFormModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar janela"
-            className="p-2 text-[#A89E90] hover:text-[#FAF5EC] rounded-lg hover:bg-[#D9AF72]/10 transition-colors cursor-pointer"
+            className="p-2 text-[#A8CCB9] hover:text-[#F4FBF6] rounded-lg hover:bg-[#B7DB74]/10 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -210,12 +210,12 @@ export function PatientFormModal({
           )}
 
           <div className="space-y-4">
-            <h3 className="text-xs font-semibold tracking-wider text-[#E8C589]">
+            <h3 className="text-xs font-semibold tracking-wider text-[#C7E88B]">
               Identificação e contato
             </h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
               <div className="sm:col-span-2">
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Nome completo
                 </label>
                 <input
@@ -230,7 +230,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   E-mail
                 </label>
                 <input
@@ -243,7 +243,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Telefone / WhatsApp
                 </label>
                 <input
@@ -258,19 +258,19 @@ export function PatientFormModal({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#D9AF72]/14 space-y-4">
+          <div className="pt-4 border-t border-[#B7DB74]/14 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-2">
-              <h3 className="text-xs font-semibold tracking-wider text-[#E8C589]">
+              <h3 className="text-xs font-semibold tracking-wider text-[#C7E88B]">
                 Antropometria e perfil clínico
               </h3>
-              <span className="text-xs font-mono tabular-nums text-[#F0D29C]">
+              <span className="text-xs font-mono tabular-nums text-[#DDF3B2]">
                 IMC {bmi.toFixed(1)} ({classifyBMI(bmi)}) · TMB {calc.bmr} kcal · GET {calc.tdee} kcal
               </span>
             </div>
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Sexo
                 </label>
                 <select
@@ -285,7 +285,7 @@ export function PatientFormModal({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Ano de nascimento
                 </label>
                 <input
@@ -300,7 +300,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Peso (kg)
                 </label>
                 <input
@@ -316,7 +316,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Altura (cm)
                 </label>
                 <input
@@ -334,7 +334,7 @@ export function PatientFormModal({
 
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Nível de atividade
                 </label>
                 <select
@@ -355,7 +355,7 @@ export function PatientFormModal({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Objetivo clínico
                 </label>
                 <select
@@ -373,7 +373,7 @@ export function PatientFormModal({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Status
                 </label>
                 <select
@@ -395,20 +395,20 @@ export function PatientFormModal({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#D9AF72]/14 space-y-4">
+          <div className="pt-4 border-t border-[#B7DB74]/14 space-y-4">
             <div className="flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="text-xs font-semibold tracking-wider text-[#E8C589]">
+                <h3 className="text-xs font-semibold tracking-wider text-[#C7E88B]">
                   Metas nutricionais diárias
                 </h3>
-                <p className="text-xs text-[#9D9284]">
+                <p className="text-xs text-[#85AF9B]">
                   Sugestão Mifflin-St Jeor ajustada ao objetivo ou personalize manualmente.
                 </p>
               </div>
               <button
                 type="button"
                 onClick={applySuggestedTargets}
-                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#F0D29C] bg-[#D9AF72]/12 border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/20 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+                className="inline-flex items-center gap-2 px-3.5 py-2 text-xs font-semibold text-[#DDF3B2] bg-[#B7DB74]/12 border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/20 transition-colors cursor-pointer whitespace-nowrap shrink-0"
               >
                 <Calculator className="w-3.5 h-3.5" />
                 Aplicar cálculo sugerido
@@ -417,7 +417,7 @@ export function PatientFormModal({
 
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Energia (kcal)
                 </label>
                 <input
@@ -432,7 +432,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Proteína (g)
                 </label>
                 <input
@@ -447,7 +447,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Carboidrato (g)
                 </label>
                 <input
@@ -462,7 +462,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Gordura (g)
                 </label>
                 <input
@@ -477,7 +477,7 @@ export function PatientFormModal({
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Água (L/dia)
                 </label>
                 <input
@@ -498,9 +498,9 @@ export function PatientFormModal({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#D9AF72]/14 space-y-4">
+          <div className="pt-4 border-t border-[#B7DB74]/14 space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Restrições e alergias (separadas por vírgula)
               </label>
               <input
@@ -514,7 +514,7 @@ export function PatientFormModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Observações clínicas e anamnese
               </label>
               <textarea
@@ -530,11 +530,11 @@ export function PatientFormModal({
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#D9AF72]/14">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#B7DB74]/14">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-xs font-medium text-[#FAF5EC] bg-[#15110E] border border-[#D9AF72]/25 rounded-full hover:border-[#E8C589] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="px-5 py-2.5 text-xs font-medium text-[#F4FBF6] bg-[#0E332D] border border-[#B7DB74]/25 rounded-full hover:border-[#C7E88B] transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               Cancelar
             </button>

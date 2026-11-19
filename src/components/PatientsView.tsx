@@ -56,7 +56,7 @@ export function PatientsView({
         {[1, 2, 3, 4].map((i) => (
           <div
             key={i}
-            className="h-12 bg-[#1D1712] rounded-xl animate-pulse"
+            className="h-12 bg-[#0A2622] rounded-xl animate-pulse"
           />
         ))}
       </div>
@@ -68,24 +68,24 @@ export function PatientsView({
       {/* Filter Toolbar */}
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="relative flex-1 max-w-md">
-          <Search className="w-4 h-4 text-[#8D8274] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+          <Search className="w-4 h-4 text-[#85AF9B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
           <input
             type="search"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
             placeholder="Buscar paciente por nome, e-mail ou restrição..."
-            className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#15110E] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/22 rounded-full focus:outline-none focus:border-[#E8C589]"
+            className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#0E332D] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/22 rounded-full focus:outline-none focus:border-[#C7E88B]"
           />
         </div>
 
-        <div className="flex items-center gap-1 p-1 bg-[#15110E] border border-[#D9AF72]/18 rounded-full overflow-x-auto">
+        <div className="flex items-center gap-1 p-1 bg-[#0E332D] border border-[#B7DB74]/18 rounded-full overflow-x-auto">
           <button
             type="button"
             onClick={() => setGoalFilter('all')}
             className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               goalFilter === 'all'
                 ? 'btn-gold font-semibold'
-                : 'text-[#BDB2A4] hover:text-[#FAF5EC]'
+                : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
             }`}
           >
             Todos ({patients.length})
@@ -98,7 +98,7 @@ export function PatientsView({
               className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                 goalFilter === goal
                   ? 'btn-gold font-semibold'
-                  : 'text-[#BDB2A4] hover:text-[#FAF5EC]'
+                  : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
               }`}
             >
               {GOAL_LABELS[goal]}
@@ -109,12 +109,12 @@ export function PatientsView({
 
       {filtered.length === 0 ? (
         <div className="glass-obsidian rounded-2xl p-10 text-center">
-          <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC] mb-2">
+          <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6] mb-2">
             {patients.length === 0
               ? 'Nenhum paciente cadastrado ainda'
               : 'Nenhum paciente encontrado para este filtro'}
           </h3>
-          <p className="text-sm text-[#A89E90] mb-6">
+          <p className="text-sm text-[#A8CCB9] mb-6">
             {patients.length === 0
               ? 'Cadastre o primeiro paciente para calcular metas nutricionais e montar seu plano alimentar.'
               : 'Tente limpar a busca ou selecionar outro objetivo clínico.'}
@@ -135,7 +135,7 @@ export function PatientsView({
           <div className="overflow-x-auto">
             <table className="w-full text-left border-collapse">
               <thead>
-                <tr className="border-b border-[#D9AF72]/15 text-xs font-medium text-[#9D9284] bg-[#100D0A]/65">
+                <tr className="border-b border-[#B7DB74]/15 text-xs font-medium text-[#85AF9B] bg-[#07201C]/65">
                   <th className="py-3.5 px-6">Paciente</th>
                   <th className="py-3.5 px-4">Objetivo & Status</th>
                   <th className="py-3.5 px-4 text-right">Peso / IMC</th>
@@ -144,7 +144,7 @@ export function PatientsView({
                   <th className="py-3.5 px-6 text-right">Ações</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#D9AF72]/10 text-sm">
+              <tbody className="divide-y divide-[#B7DB74]/10 text-sm">
                 {filtered.map((patient) => {
                   const age = calculateAge(patient.birthYear);
                   const bmi = calculateBMI(patient.weightKg, patient.heightCm);
@@ -161,13 +161,13 @@ export function PatientsView({
                   return (
                     <tr
                       key={patient.id}
-                      className="hover:bg-[#D9AF72]/6 transition-colors"
+                      className="hover:bg-[#B7DB74]/6 transition-colors"
                     >
                       <td className="py-4 px-6">
-                        <div className="font-semibold text-[#FAF5EC]">
+                        <div className="font-semibold text-[#F4FBF6]">
                           {patient.fullName}
                         </div>
-                        <div className="text-xs text-[#9D9284] mt-0.5">
+                        <div className="text-xs text-[#85AF9B] mt-0.5">
                           {age} anos · {patient.sex === 'F' ? 'Feminino' : 'Masculino'}
                           {patient.phone ? ` · ${patient.phone}` : ''}
                         </div>
@@ -179,28 +179,28 @@ export function PatientsView({
                       </td>
 
                       <td className="py-4 px-4">
-                        <div className="text-[#FAF5EC] font-medium">
+                        <div className="text-[#F4FBF6] font-medium">
                           {GOAL_LABELS[patient.goal]}
                         </div>
-                        <div className="text-xs text-[#9D9284] mt-0.5">
+                        <div className="text-xs text-[#85AF9B] mt-0.5">
                           {PATIENT_STATUS_LABELS[patient.status]}
                         </div>
                       </td>
 
                       <td className="py-4 px-4 text-right">
-                        <div className="font-mono tabular-nums text-[#FAF5EC]">
+                        <div className="font-mono tabular-nums text-[#F4FBF6]">
                           {patient.weightKg.toFixed(1)} kg
                         </div>
-                        <div className="text-xs font-mono tabular-nums text-[#9D9284] mt-0.5">
+                        <div className="text-xs font-mono tabular-nums text-[#85AF9B] mt-0.5">
                           IMC {bmi.toFixed(1)} · {classifyBMI(bmi)}
                         </div>
                       </td>
 
                       <td className="py-4 px-4 text-right">
-                        <div className="font-mono tabular-nums font-semibold text-[#F0D29C]">
+                        <div className="font-mono tabular-nums font-semibold text-[#DDF3B2]">
                           {patient.targetCalories} kcal
                         </div>
-                        <div className="text-xs font-mono tabular-nums text-[#9D9284] mt-0.5">
+                        <div className="text-xs font-mono tabular-nums text-[#85AF9B] mt-0.5">
                           {patient.targetProteinG}P · {patient.targetCarbsG}C ·{' '}
                           {patient.targetFatG}G
                         </div>
@@ -209,10 +209,10 @@ export function PatientsView({
                       <td className="py-4 px-4">
                         {activePlan ? (
                           <div>
-                            <div className="text-[#FAF5EC] font-medium truncate max-w-[210px]">
+                            <div className="text-[#F4FBF6] font-medium truncate max-w-[210px]">
                               {activePlan.title}
                             </div>
-                            <div className="text-xs font-mono tabular-nums text-[#DFBA7C] mt-0.5">
+                            <div className="text-xs font-mono tabular-nums text-[#C7E88B] mt-0.5">
                               {plannedCalories} kcal · {plansForPatient.length}{' '}
                               {plansForPatient.length === 1 ? 'versão' : 'versões'}
                             </div>
@@ -230,7 +230,7 @@ export function PatientsView({
                             <button
                               type="button"
                               onClick={() => setDeletingId(null)}
-                              className="px-2.5 py-1.5 text-xs text-[#CFC5B8] bg-[#1B1510] border border-[#D9AF72]/20 rounded-lg cursor-pointer"
+                              className="px-2.5 py-1.5 text-xs text-[#CBE3D6] bg-[#0A2622] border border-[#B7DB74]/20 rounded-lg cursor-pointer"
                             >
                               Cancelar
                             </button>
@@ -250,7 +250,7 @@ export function PatientsView({
                             <button
                               type="button"
                               onClick={() => onOpenPatientPlan(patient.id)}
-                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#F0D29C] bg-[#D9AF72]/10 border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/20 hover:border-[#F0D29C] transition-colors cursor-pointer whitespace-nowrap"
+                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#DDF3B2] bg-[#B7DB74]/10 border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/20 hover:border-[#DDF3B2] transition-colors cursor-pointer whitespace-nowrap"
                             >
                               <ClipboardList className="w-3.5 h-3.5" />
                               Plano
@@ -259,7 +259,7 @@ export function PatientsView({
                               type="button"
                               onClick={() => onEditPatient(patient)}
                               aria-label={`Editar ${patient.fullName}`}
-                              className="p-2 text-[#A89E90] hover:text-[#FAF5EC] hover:bg-[#D9AF72]/10 rounded-lg transition-colors cursor-pointer"
+                              className="p-2 text-[#A8CCB9] hover:text-[#F4FBF6] hover:bg-[#B7DB74]/10 rounded-lg transition-colors cursor-pointer"
                             >
                               <Edit3 className="w-4 h-4" />
                             </button>
@@ -267,7 +267,7 @@ export function PatientsView({
                               type="button"
                               onClick={() => setDeletingId(patient.id)}
                               aria-label={`Excluir ${patient.fullName}`}
-                              className="p-2 text-[#8D8274] hover:text-red-400 hover:bg-red-950/50 rounded-lg transition-colors cursor-pointer"
+                              className="p-2 text-[#85AF9B] hover:text-red-400 hover:bg-red-950/50 rounded-lg transition-colors cursor-pointer"
                             >
                               <Trash2 className="w-4 h-4" />
                             </button>

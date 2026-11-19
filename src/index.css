@@ -1,7 +1,8 @@
 @import "tailwindcss";
 
 @theme {
-  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-display: "Barlow Condensed", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Barlow Condensed", "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
 }
@@ -11,16 +12,17 @@
     font-family: var(--font-sans);
     color-scheme: dark;
     scroll-behavior: smooth;
-    background-color: #0b0907;
-    color: #f5efe6;
+    background-color: #041210;
+    color: #f3faf6;
   }
 
   body {
     letter-spacing: 0.008em;
-    background-color: #0b0907;
+    background-color: #041210;
     background-image:
-      radial-gradient(ellipse 75% 45% at 50% -10%, rgba(217, 175, 114, 0.13), transparent 70%),
-      radial-gradient(ellipse 55% 35% at 85% 25%, rgba(186, 134, 66, 0.07), transparent 65%);
+      radial-gradient(ellipse 75% 48% at 50% -10%, rgba(34, 118, 102, 0.28), transparent 68%),
+      radial-gradient(ellipse 52% 42% at 88% 30%, rgba(114, 150, 62, 0.14), transparent 65%),
+      radial-gradient(ellipse 48% 38% at 10% 76%, rgba(20, 96, 86, 0.2), transparent 68%);
     background-attachment: fixed;
   }
 
@@ -29,41 +31,49 @@
   }
 
   select option {
-    background-color: #16120e;
-    color: #f5efe6;
+    background-color: #071d1a;
+    color: #f3faf6;
   }
 }
 
-.font-editorial {
-  font-family: var(--font-serif);
+/* Tall Botanical Display Heading inspired by organic nature-glass reference */
+.font-editorial,
+.font-display {
+  font-family: var(--font-display);
+  letter-spacing: 0.012em;
 }
 
 .tabular-nums {
   font-variant-numeric: tabular-nums;
 }
 
-/* Signature brushed champagne-gold button inspired by reference */
-.btn-gold {
+/* Primary Botanical Olive-Moss CTA Button (preserves .btn-gold & .btn-azure aliases across all views) */
+.btn-gold,
+.btn-azure,
+.btn-botanical {
   position: relative;
   overflow: hidden;
-  background: linear-gradient(135deg, #f3d7a3 0%, #d4a661 52%, #b5833e 100%);
-  color: #120d08;
+  background: linear-gradient(135deg, #749543 0%, #58762f 52%, #435c22 100%);
+  color: #f8fff4;
+  border: 1px solid rgba(214, 240, 170, 0.45);
   box-shadow:
-    0 1px 0 rgba(255, 245, 224, 0.45) inset,
-    0 10px 28px -10px rgba(212, 166, 97, 0.48);
+    0 1px 0 rgba(255, 255, 255, 0.28) inset,
+    0 10px 26px -10px rgba(74, 110, 34, 0.65);
   transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
     filter 180ms cubic-bezier(0.16, 1, 0.3, 1),
     box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.btn-gold::after {
+.btn-gold::after,
+.btn-azure::after,
+.btn-botanical::after {
   content: "";
   position: absolute;
   inset: 0;
   background: linear-gradient(
     115deg,
     transparent 20%,
-    rgba(255, 250, 238, 0.42) 50%,
+    rgba(255, 255, 255, 0.28) 50%,
     transparent 80%
   );
   transform: translateX(-120%);
@@ -71,71 +81,99 @@
   pointer-events: none;
 }
 
-.btn-gold:hover::after {
+.btn-gold:hover::after,
+.btn-azure:hover::after,
+.btn-botanical:hover::after {
   transform: translateX(120%);
 }
 
-.btn-gold:hover {
-  filter: brightness(1.06);
+.btn-gold:hover,
+.btn-azure:hover,
+.btn-botanical:hover {
+  filter: brightness(1.09);
   box-shadow:
-    0 1px 0 rgba(255, 245, 224, 0.55) inset,
-    0 14px 32px -10px rgba(217, 175, 114, 0.62);
+    0 1px 0 rgba(255, 255, 255, 0.38) inset,
+    0 14px 34px -10px rgba(132, 174, 68, 0.68);
 }
 
-.btn-gold:active {
+.btn-gold:active,
+.btn-azure:active,
+.btn-botanical:active {
   transform: scale(0.985);
 }
 
-/* Smoked obsidian glass surface */
-.glass-obsidian {
+/* Frosted Botanical Sea-Glass Surfaces inspired by the attached reference */
+.glass-obsidian,
+.glass-holo,
+.glass-botanical {
   background: linear-gradient(
     165deg,
-    rgba(28, 22, 18, 0.86) 0%,
-    rgba(17, 13, 10, 0.9) 100%
+    rgba(20, 62, 56, 0.56) 0%,
+    rgba(8, 30, 27, 0.78) 100%
   );
-  backdrop-filter: blur(18px);
-  -webkit-backdrop-filter: blur(18px);
-  border: 1px solid rgba(217, 175, 114, 0.17);
+  backdrop-filter: blur(22px);
+  -webkit-backdrop-filter: blur(22px);
+  border: 1px solid rgba(212, 240, 224, 0.24);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.22) inset,
+    0 22px 48px -24px rgba(2, 12, 10, 0.85);
 }
 
-.glass-obsidian-subtle {
-  background: rgba(20, 16, 13, 0.72);
-  backdrop-filter: blur(14px);
-  -webkit-backdrop-filter: blur(14px);
-  border: 1px solid rgba(217, 175, 114, 0.14);
+.glass-obsidian-subtle,
+.glass-holo-subtle,
+.glass-botanical-subtle {
+  background: rgba(11, 38, 34, 0.62);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(212, 240, 224, 0.2);
+  box-shadow: 0 1px 0 rgba(255, 255, 255, 0.14) inset;
 }
 
-/* Luminous golden horizon filament */
-.gold-horizon {
+/* Delicate Botanical Frost Divider */
+.gold-horizon,
+.azure-horizon,
+.botanical-horizon {
   height: 1px;
   background: linear-gradient(
     90deg,
     transparent 0%,
-    rgba(217, 175, 114, 0.15) 18%,
-    rgba(243, 215, 163, 0.65) 50%,
-    rgba(217, 175, 114, 0.15) 82%,
+    rgba(196, 232, 208, 0.16) 18%,
+    rgba(183, 219, 116, 0.65) 50%,
+    rgba(196, 232, 208, 0.16) 82%,
     transparent 100%
   );
-  box-shadow: 0 0 18px rgba(217, 175, 114, 0.35);
 }
 
-/* Dark bespoke scrollbar */
+/* Circular Vitamin Emblem Ring from reference */
+.vitamin-ring {
+  background: radial-gradient(
+    circle at 30% 25%,
+    rgba(46, 112, 96, 0.55) 0%,
+    rgba(12, 42, 37, 0.82) 100%
+  );
+  border: 1.5px solid rgba(212, 240, 220, 0.36);
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.24) inset,
+    0 12px 26px -12px rgba(2, 14, 12, 0.8);
+}
+
+/* Deep Botanical Emerald Scrollbar */
 ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #0e0b08;
+  background: #041210;
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(217, 175, 114, 0.22);
+  background: rgba(154, 198, 120, 0.32);
   border-radius: 9999px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(217, 175, 114, 0.38);
+  background: rgba(183, 219, 116, 0.52);
 }
 
 @media (prefers-reduced-motion: reduce) {

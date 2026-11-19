@@ -362,26 +362,57 @@ export interface SiteSettings {
   updatedAt?: Timestamp | null;
 }
 
+export const SPECIALIST_ACADEMIC_FORMATION =
+  'Formação: Universidade Gama Filho · Rio de Janeiro - RJ';
+
+export const SPECIALIST_PROFILE = {
+  fullName: 'Dra. Dimitra Bratu',
+  title: 'Nutricionista Dra. Dimitra Bratu',
+  email: PRIMARY_ADMIN_EMAIL,
+  phoneE164: '+5521980984243',
+  phoneDisplay: '+55 (21) 98098-4243',
+  whatsappDigits: '5521980984243',
+  formation: 'Universidade Gama Filho · Rio de Janeiro - RJ',
+  photoUrl:
+    '/assets/aistudio/Nutritionist_standing_in_clinic___758238ed_2K_8a98a1e5.jpg',
+} as const;
+
+export function isDraDimitraEmail(email: string | null | undefined): boolean {
+  return Boolean(email && email.trim().toLowerCase() === SPECIALIST_PROFILE.email);
+}
+
+export function buildSpecialistWhatsAppUrl(
+  message?: string,
+  customPhone?: string
+): string {
+  const digits = (customPhone || SPECIALIST_PROFILE.whatsappDigits).replace(/\D/g, '');
+  const resolved = digits.length >= 10 ? digits : SPECIALIST_PROFILE.whatsappDigits;
+  const text =
+    message ||
+    'Olá Dra. Dimitra Bratu! Gostaria de agendar meu atendimento nutricional especializado.';
+  return `https://wa.me/${resolved}?text=${encodeURIComponent(text)}`;
+}
+
 export const DEFAULT_SITE_SETTINGS: SiteSettings = {
-  brandName: 'DIMITRA BRATU',
-  brandSubtitle: 'NUTRICIONISTA CLÍNICA',
-  heroEyebrow: 'Nutricionista Dimitra Bratu · Consultório Digital',
-  heroTitle: 'Nutrição Clínica com Atendimento Inteligente 24h',
+  brandName: 'DRA. DIMITRA BRATU',
+  brandSubtitle: 'NUTRIÇÃO CLÍNICA · GAMA FILHO (RJ)',
+  heroEyebrow: 'Universidade Gama Filho · Rio de Janeiro - RJ · Atendimento IA & Videochamada',
+  heroTitle: 'Nutrição Inteligente com IA e Atendimento Especializado.',
   heroDescription:
-    'Tire suas dúvidas nutricionais e realize um atendimento acolhedor com a inteligência artificial da Nutricionista Dimitra Bratu, fundamentada em tempo real nas bibliotecas científicas mais atuais.',
-  methodTitle: 'Rigor Científico Além do Comum',
+    'Tire dúvidas imediatas no site com nossa IA baseada em ciência nutricional e avance para consulta especializada por videochamada com a Nutricionista Dra. Dimitra Bratu — formada pela Universidade Gama Filho (RJ) — com prescrição de vitaminas manipuladas e plano sob medida.',
+  methodTitle: 'Atendimento em Dois Níveis: IA 24h e Especialista por Vídeo',
   methodDescription:
-    'O consultório reúne prontuário antropométrico, auditoria automática de planos frente às diretrizes mais atuais, videochamadas exclusivas e fórmulas de vitaminas manipuladas sob medida.',
-  bannerTitle: 'Atendimento Dra. Dimitra Bratu',
+    'Inicie seu atendimento agora mesmo pela inteligência artificial conectada às maiores bibliotecas científicas. Quando seu caso exige avaliação clínica aprofundada, exames ou vitaminas manipuladas, a Dra. Dimitra Bratu (Universidade Gama Filho · RJ) assume pessoalmente por videochamada.',
+  bannerTitle: 'Consulta Especializada por Videochamada',
   bannerDescription:
-    'Inicie agora uma pré-consulta guiada ou esclareça suas dúvidas sobre emagrecimento, hipertrofia, substituições e suplementação com referências científicas clicáveis em tempo real.',
-  annualPlanHeadline: 'Plano Anual Completo (12 Meses)',
+    'Casos clínicos complexos, leitura de exames, protocolos de vitaminas manipuladas para farmácia de manipulação e acompanhamento de 12 meses diretamente com a Nutricionista Dra. Dimitra Bratu.',
+  annualPlanHeadline: 'Plano Anual Exclusivo (12 Meses)',
   annualCardInstallmentBrl: 297,
   annualCardTotalBrl: 3564,
   annualPixTotalBrl: 3240,
   annualPixDiscountLabel: '10% OFF',
   annualBoletoTotalBrl: 3564,
-  whatsappContact: '',
+  whatsappContact: SPECIALIST_PROFILE.phoneDisplay,
   instagramHandle: '@dimitrabratu',
   updatedByEmail: PRIMARY_ADMIN_EMAIL,
 };

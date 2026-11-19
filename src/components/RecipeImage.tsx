@@ -20,14 +20,14 @@ export function RecipeImage({
   if (!src || failed) {
     return (
       <div
-        className={`${className} bg-gradient-to-br from-[#1C1611] via-[#14100C] to-[#0D0A08] flex flex-col items-center justify-center p-4 text-center select-none`}
+        className={`${className} bg-gradient-to-br from-[#0A2622] via-[#0E332D] to-[#041210] flex flex-col items-center justify-center p-4 text-center select-none`}
         role="img"
         aria-label={alt}
       >
-        <div className="w-11 h-11 rounded-full bg-[#D9AF72]/12 border border-[#D9AF72]/35 flex items-center justify-center mb-2.5 text-[#E8C589]">
+        <div className="w-11 h-11 rounded-full bg-[#B7DB74]/12 border border-[#B7DB74]/35 flex items-center justify-center mb-2.5 text-[#C7E88B]">
           <Utensils className="w-4 h-4" />
         </div>
-        <span className="text-xs font-medium text-[#B8AEA0] tracking-wide">
+        <span className="text-xs font-medium text-[#CBE3D6] tracking-wide">
           {RECIPE_CATEGORY_LABELS[category]}
         </span>
       </div>
@@ -40,7 +40,7 @@ export function RecipeImage({
       alt={alt}
       referrerPolicy="no-referrer"
       onError={() => setFailed(true)}
-      className={`${className} object-cover bg-[#14100C]`}
+      className={`${className} object-cover bg-[#0E332D]`}
     />
   );
 }

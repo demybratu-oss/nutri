@@ -216,10 +216,10 @@ export function MealPlanBuilder({
   if (!activePatient) {
     return (
       <div className="glass-obsidian rounded-2xl p-10 text-center max-w-xl">
-        <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC] mb-2">
+        <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6] mb-2">
           Cadastre um paciente para criar planos alimentares
         </h3>
-        <p className="text-sm text-[#A89E90] mb-6">
+        <p className="text-sm text-[#A8CCB9] mb-6">
           Cada plano alimentar é vinculado a um paciente com suas metas de calorias, macronutrientes e restrições clínicas.
         </p>
         <button
@@ -525,15 +525,15 @@ export function MealPlanBuilder({
     return (
       <div className="space-y-6">
         <div className="no-print flex flex-wrap items-center justify-between gap-3 glass-obsidian rounded-2xl px-5 py-3.5">
-          <div className="text-sm text-[#CFC5B8]">
+          <div className="text-sm text-[#CBE3D6]">
             Visualização da prescrição alimentar de{' '}
-            <strong className="text-[#FAF5EC]">{activePatient.fullName}</strong>
+            <strong className="text-[#F4FBF6]">{activePatient.fullName}</strong>
           </div>
           <div className="flex items-center gap-2.5">
             <button
               type="button"
               onClick={() => setPrintMode(false)}
-              className="px-4 py-2 text-xs font-medium text-[#FAF5EC] bg-[#17120E] border border-[#D9AF72]/30 rounded-full hover:border-[#F0D29C] cursor-pointer whitespace-nowrap"
+              className="px-4 py-2 text-xs font-medium text-[#F4FBF6] bg-[#0E332D] border border-[#B7DB74]/30 rounded-full hover:border-[#DDF3B2] cursor-pointer whitespace-nowrap"
             >
               Voltar ao editor
             </button>
@@ -548,7 +548,7 @@ export function MealPlanBuilder({
           </div>
         </div>
 
-        <article className="bg-white text-slate-900 border border-[#D9AF72]/30 rounded-2xl p-8 sm:p-10 max-w-4xl mx-auto space-y-8 print:border-0 print:p-0">
+        <article className="bg-white text-slate-900 border border-[#B7DB74]/30 rounded-2xl p-8 sm:p-10 max-w-4xl mx-auto space-y-8 print:border-0 print:p-0">
           <header className="flex flex-wrap items-start justify-between gap-6 pb-6 border-b border-slate-200">
             <div>
               <p className="text-xs font-semibold tracking-wider text-amber-800 mb-1">
@@ -755,7 +755,7 @@ export function MealPlanBuilder({
             <div className="min-w-[240px]">
               <label
                 htmlFor="patient-plan-selector"
-                className="block text-[11px] font-medium text-[#9D9284] mb-1"
+                className="block text-[11px] font-medium text-[#85AF9B] mb-1"
               >
                 Paciente selecionado
               </label>
@@ -763,7 +763,7 @@ export function MealPlanBuilder({
                 id="patient-plan-selector"
                 value={activePatient.id}
                 onChange={(e) => onSelectPatient(e.target.value)}
-                className="w-full px-3.5 py-2 text-sm font-semibold text-[#FAF5EC] bg-[#120E0B] border border-[#D9AF72]/28 rounded-full focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2 text-sm font-semibold text-[#F4FBF6] bg-[#0A2622] border border-[#B7DB74]/28 rounded-full focus:outline-none focus:border-[#C7E88B]"
               >
                 {patients.map((p) => (
                   <option key={p.id} value={p.id}>
@@ -773,8 +773,8 @@ export function MealPlanBuilder({
               </select>
             </div>
 
-            <div className="text-xs text-[#A89E90] space-y-1 border-t sm:border-t-0 sm:border-l border-[#D9AF72]/16 pt-3 sm:pt-0 sm:pl-4">
-              <div className="font-mono tabular-nums text-[#FAF5EC]">
+            <div className="text-xs text-[#A8CCB9] space-y-1 border-t sm:border-t-0 sm:border-l border-[#B7DB74]/16 pt-3 sm:pt-0 sm:pl-4">
+              <div className="font-mono tabular-nums text-[#F4FBF6]">
                 {age} anos · {activePatient.weightKg.toFixed(1)} kg ·{' '}
                 {activePatient.heightCm} cm · IMC {bmi.toFixed(1)} · Água{' '}
                 {activePatient.waterTargetLiters} L/dia
@@ -805,7 +805,7 @@ export function MealPlanBuilder({
                 type="button"
                 onClick={handleAuditWithScience}
                 disabled={auditing}
-                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#F0D29C] bg-[#D9AF72]/12 border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/20 hover:border-[#F0D29C] transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-semibold text-[#DDF3B2] bg-[#B7DB74]/12 border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/20 hover:border-[#DDF3B2] transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap"
               >
                 {auditing ? (
                   <>
@@ -823,18 +823,18 @@ export function MealPlanBuilder({
             <button
               type="button"
               onClick={handleCreateNewPlanForPatient}
-              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#FAF5EC] bg-[#14100C] border border-[#D9AF72]/24 rounded-full hover:border-[#E8C589] transition-colors cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#F4FBF6] bg-[#0E332D] border border-[#B7DB74]/24 rounded-full hover:border-[#C7E88B] transition-colors cursor-pointer whitespace-nowrap"
             >
-              <Plus className="w-3.5 h-3.5 text-[#E8C589]" />
+              <Plus className="w-3.5 h-3.5 text-[#C7E88B]" />
               Em branco
             </button>
             {draft && (
               <button
                 type="button"
                 onClick={() => setPrintMode(true)}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#FAF5EC] bg-[#14100C] border border-[#D9AF72]/24 rounded-full hover:border-[#E8C589] transition-colors cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#F4FBF6] bg-[#0E332D] border border-[#B7DB74]/24 rounded-full hover:border-[#C7E88B] transition-colors cursor-pointer whitespace-nowrap"
               >
-                <FileText className="w-3.5 h-3.5 text-[#E8C589]" />
+                <FileText className="w-3.5 h-3.5 text-[#C7E88B]" />
                 Prescrição / PDF
               </button>
             )}
@@ -844,22 +844,22 @@ export function MealPlanBuilder({
 
       {/* Evidence-Based Plan Generator Drawer */}
       {showGeneratePanel && (
-        <SpotlightCard glowRim className="p-5 sm:p-6 space-y-3 border-[#E8C589]/40">
+        <SpotlightCard glowRim className="p-5 sm:p-6 space-y-3 border-[#C7E88B]/40">
           <div className="flex items-start justify-between gap-4">
             <div>
-              <h3 className="font-editorial text-xl font-medium text-[#FAF5EC]">
+              <h3 className="font-editorial text-xl font-medium text-[#F4FBF6]">
                 Gerar plano alimentar personalizado baseado em evidências atuais
               </h3>
-              <p className="text-xs text-[#A89E90] mt-0.5">
+              <p className="text-xs text-[#A8CCB9] mt-0.5">
                 A IA pesquisa diretrizes atualizadas (PubMed, Cochrane, ESPEN, ISSN, SBD, ABESO) para o perfil de{' '}
-                <strong className="text-[#F0D29C]">{activePatient.fullName}</strong>, respeita as restrições e reaproveita receitas compatíveis da sua biblioteca.
+                <strong className="text-[#DDF3B2]">{activePatient.fullName}</strong>, respeita as restrições e reaproveita receitas compatíveis da sua biblioteca.
               </p>
             </div>
             <button
               type="button"
               onClick={() => setShowGeneratePanel(false)}
               aria-label="Fechar gerador"
-              className="p-1.5 text-[#8D8274] hover:text-[#FAF5EC] rounded-lg cursor-pointer"
+              className="p-1.5 text-[#85AF9B] hover:text-[#F4FBF6] rounded-lg cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -871,7 +871,7 @@ export function MealPlanBuilder({
               value={generateInstruction}
               onChange={(e) => setGenerateInstruction(e.target.value)}
               placeholder="Diretriz opcional da nutricionista (ex.: foco anti-inflamatório, jantares leves, lanches práticos de trabalho)..."
-              className="flex-1 px-4 py-2.5 text-xs bg-[#120E0B] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/25 rounded-full focus:outline-none focus:border-[#E8C589]"
+              className="flex-1 px-4 py-2.5 text-xs bg-[#0A2622] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/25 rounded-full focus:outline-none focus:border-[#C7E88B]"
             />
             <button
               type="button"
@@ -912,13 +912,13 @@ export function MealPlanBuilder({
       )}
 
       {generatedEvidence && (
-        <section className="glass-obsidian border-[#E8C589]/40 rounded-2xl p-6 space-y-4">
-          <div className="flex items-start justify-between gap-4 pb-3 border-b border-[#D9AF72]/15">
+        <section className="glass-obsidian border-[#C7E88B]/40 rounded-2xl p-6 space-y-4">
+          <div className="flex items-start justify-between gap-4 pb-3 border-b border-[#B7DB74]/15">
             <div>
-              <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+              <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                 Fundamentação Científica deste Plano
               </h3>
-              <p className="text-xs text-[#A89E90] mt-0.5">
+              <p className="text-xs text-[#A8CCB9] mt-0.5">
                 Evidências recuperadas em tempo real nas bibliotecas de ciência da nutrição
               </p>
             </div>
@@ -926,7 +926,7 @@ export function MealPlanBuilder({
               type="button"
               onClick={() => setGeneratedEvidence(null)}
               aria-label="Ocultar fundamentação"
-              className="p-1.5 text-[#8D8274] hover:text-[#FAF5EC] rounded-lg cursor-pointer"
+              className="p-1.5 text-[#85AF9B] hover:text-[#F4FBF6] rounded-lg cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -941,13 +941,13 @@ export function MealPlanBuilder({
       )}
 
       {auditResult && (
-        <section className="glass-obsidian border-[#E8C589]/40 rounded-2xl p-6 space-y-4">
-          <div className="flex flex-wrap items-start justify-between gap-4 pb-3 border-b border-[#D9AF72]/15">
+        <section className="glass-obsidian border-[#C7E88B]/40 rounded-2xl p-6 space-y-4">
+          <div className="flex flex-wrap items-start justify-between gap-4 pb-3 border-b border-[#B7DB74]/15">
             <div>
-              <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+              <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                 Parecer Científico — {activePatient.fullName}
               </h3>
-              <p className="text-xs text-[#A89E90] mt-0.5">
+              <p className="text-xs text-[#A8CCB9] mt-0.5">
                 Análise comparada às diretrizes mais recentes da literatura nutricional
               </p>
             </div>
@@ -955,7 +955,7 @@ export function MealPlanBuilder({
               type="button"
               onClick={() => setAuditResult(null)}
               aria-label="Fechar parecer científico"
-              className="p-1.5 text-[#8D8274] hover:text-[#FAF5EC] rounded-lg cursor-pointer"
+              className="p-1.5 text-[#85AF9B] hover:text-[#F4FBF6] rounded-lg cursor-pointer"
             >
               <X className="w-4 h-4" />
             </button>
@@ -972,7 +972,7 @@ export function MealPlanBuilder({
       {/* Plan Switcher Tabs */}
       {patientPlans.length > 0 && (
         <div className="flex items-center justify-between gap-4 flex-wrap">
-          <div className="flex items-center gap-1 p-1 bg-[#15110E] border border-[#D9AF72]/18 rounded-full overflow-x-auto">
+          <div className="flex items-center gap-1 p-1 bg-[#0E332D] border border-[#B7DB74]/18 rounded-full overflow-x-auto">
             {patientPlans.map((pl) => (
               <button
                 key={pl.id}
@@ -981,7 +981,7 @@ export function MealPlanBuilder({
                 className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer whitespace-nowrap shrink-0 flex items-center gap-1.5 ${
                   activePlan?.id === pl.id
                     ? 'btn-gold font-semibold'
-                    : 'text-[#BDB2A4] hover:text-[#FAF5EC]'
+                    : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
                 }`}
               >
                 {pl.status === 'concluido' && <Lock className="w-3 h-3" />}
@@ -1019,9 +1019,9 @@ export function MealPlanBuilder({
               <button
                 type="button"
                 onClick={handleDuplicatePlan}
-                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#FAF5EC] bg-[#15110E] border border-[#D9AF72]/24 rounded-full hover:border-[#E8C589] transition-colors cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center gap-1.5 px-3.5 py-2 text-xs font-medium text-[#F4FBF6] bg-[#0E332D] border border-[#B7DB74]/24 rounded-full hover:border-[#C7E88B] transition-colors cursor-pointer whitespace-nowrap"
               >
-                <Copy className="w-3.5 h-3.5 text-[#E8C589]" />
+                <Copy className="w-3.5 h-3.5 text-[#C7E88B]" />
                 Duplicar
               </button>
             </div>
@@ -1031,12 +1031,12 @@ export function MealPlanBuilder({
 
       {!draft || !activePlan ? (
         <div className="glass-obsidian rounded-2xl p-10 text-center">
-          <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC] mb-2">
+          <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6] mb-2">
             {activePatient.fullName} ainda não possui plano alimentar
           </h3>
-          <p className="text-sm text-[#A89E90] mb-6 max-w-md mx-auto">
+          <p className="text-sm text-[#A8CCB9] mb-6 max-w-md mx-auto">
             Crie o primeiro plano personalizado já pré-configurado com as metas de{' '}
-            <span className="font-mono tabular-nums text-[#F0D29C]">
+            <span className="font-mono tabular-nums text-[#DDF3B2]">
               {activePatient.targetCalories} kcal
             </span>{' '}
             deste paciente.
@@ -1053,9 +1053,9 @@ export function MealPlanBuilder({
             <button
               type="button"
               onClick={handleCreateNewPlanForPatient}
-              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium text-[#FAF5EC] border border-[#D9AF72]/35 rounded-full hover:border-[#F0D29C] cursor-pointer"
+              className="inline-flex items-center gap-2 px-5 py-2.5 text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/35 rounded-full hover:border-[#DDF3B2] cursor-pointer"
             >
-              <Plus className="w-4 h-4 text-[#E8C589]" />
+              <Plus className="w-4 h-4 text-[#C7E88B]" />
               Criar plano em branco
             </button>
           </div>
@@ -1063,17 +1063,17 @@ export function MealPlanBuilder({
       ) : (
         <>
           {isLocked && (
-            <div className="bg-[#18130E] border border-[#D9AF72]/28 rounded-2xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
-              <div className="flex items-center gap-2 text-xs text-[#CFC5B8]">
-                <Lock className="w-4 h-4 text-[#E8C589] shrink-0" />
+            <div className="bg-[#07201C] border border-[#B7DB74]/28 rounded-2xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
+              <div className="flex items-center gap-2 text-xs text-[#CBE3D6]">
+                <Lock className="w-4 h-4 text-[#C7E88B] shrink-0" />
                 <span>
-                  Este plano foi marcado como <strong className="text-[#FAF5EC]">Concluído (Histórico)</strong> e está bloqueado para edição. Use <strong className="text-[#FAF5EC]">Duplicar</strong> para iniciar uma nova fase.
+                  Este plano foi marcado como <strong className="text-[#F4FBF6]">Concluído (Histórico)</strong> e está bloqueado para edição. Use <strong className="text-[#F4FBF6]">Duplicar</strong> para iniciar uma nova fase.
                 </span>
               </div>
               <button
                 type="button"
                 onClick={handleDuplicatePlan}
-                className="px-3.5 py-1.5 text-xs font-semibold text-[#F0D29C] bg-[#D9AF72]/12 border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/20 cursor-pointer whitespace-nowrap"
+                className="px-3.5 py-1.5 text-xs font-semibold text-[#DDF3B2] bg-[#B7DB74]/12 border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/20 cursor-pointer whitespace-nowrap"
               >
                 Criar nova revisão
               </button>
@@ -1082,7 +1082,7 @@ export function MealPlanBuilder({
 
           {/* Live Macro Reconciliation Strip */}
           <SpotlightCard glowRim className="rounded-2xl">
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#D9AF72]/15">
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 divide-y sm:divide-y-0 sm:divide-x divide-[#B7DB74]/15">
               {macroCards.map((card) => {
                 const status = evaluateTargetAlignment(card.planned, card.target);
                 const barWidth = Math.min(100, Math.max(0, status.percent));
@@ -1094,7 +1094,7 @@ export function MealPlanBuilder({
                       : 'text-amber-300';
                 const barColor =
                   status.tone === 'good'
-                    ? 'bg-gradient-to-r from-[#D4A661] to-[#F5DCAC]'
+                    ? 'bg-gradient-to-r from-[#B7DB74] to-[#DDF3B2]'
                     : status.tone === 'high'
                       ? 'bg-red-500'
                       : 'bg-amber-400/80';
@@ -1102,23 +1102,23 @@ export function MealPlanBuilder({
                 return (
                   <div key={card.label} className="p-5 space-y-2.5">
                     <div className="flex items-center justify-between text-xs">
-                      <span className="font-medium text-[#A89E90]">{card.label}</span>
+                      <span className="font-medium text-[#A8CCB9]">{card.label}</span>
                       <span className={`font-medium ${toneClass}`}>
                         {status.label} ({status.percent}%)
                       </span>
                     </div>
                     <div className="flex items-baseline justify-between font-mono tabular-nums">
-                      <span className="text-xl font-semibold text-[#FAF5EC]">
+                      <span className="text-xl font-semibold text-[#F4FBF6]">
                         {card.planned}
-                        <span className="text-xs font-normal text-[#8D8274] ml-0.5">
+                        <span className="text-xs font-normal text-[#85AF9B] ml-0.5">
                           {card.unit}
                         </span>
                       </span>
-                      <span className="text-xs text-[#9D9284]">
+                      <span className="text-xs text-[#85AF9B]">
                         Meta {card.target} {card.unit}
                       </span>
                     </div>
-                    <div className="h-1.5 w-full bg-[#241C16] rounded-full overflow-hidden">
+                    <div className="h-1.5 w-full bg-[#0E332D] rounded-full overflow-hidden">
                       <div
                         className={`h-full rounded-full transition-all duration-300 ${barColor}`}
                         style={{ width: `${barWidth}%` }}
@@ -1134,7 +1134,7 @@ export function MealPlanBuilder({
           <section className="glass-obsidian rounded-2xl p-6 space-y-4">
             <div className="grid grid-cols-1 lg:grid-cols-4 gap-4">
               <div className="lg:col-span-2">
-                <label className="block text-xs font-medium text-[#9D9284] mb-1.5">
+                <label className="block text-xs font-medium text-[#85AF9B] mb-1.5">
                   Título do plano
                 </label>
                 <input
@@ -1145,11 +1145,11 @@ export function MealPlanBuilder({
                   onChange={(e) =>
                     patchDraft((prev) => ({ ...prev, title: e.target.value }))
                   }
-                  className="w-full px-3.5 py-2 text-sm font-medium bg-[#120E0B] text-[#FAF5EC] border border-[#D9AF72]/22 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                  className="w-full px-3.5 py-2 text-sm font-medium bg-[#0A2622] text-[#F4FBF6] border border-[#B7DB74]/22 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#9D9284] mb-1.5">
+                <label className="block text-xs font-medium text-[#85AF9B] mb-1.5">
                   Status do plano
                 </label>
                 <select
@@ -1161,7 +1161,7 @@ export function MealPlanBuilder({
                       status: e.target.value as MealPlanStatus,
                     }))
                   }
-                  className="w-full px-3 py-2 text-sm bg-[#120E0B] text-[#FAF5EC] border border-[#D9AF72]/22 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                  className="w-full px-3 py-2 text-sm bg-[#0A2622] text-[#F4FBF6] border border-[#B7DB74]/22 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                 >
                   <option value="rascunho">{PLAN_STATUS_LABELS.rascunho}</option>
                   <option value="ativo">{PLAN_STATUS_LABELS.ativo}</option>
@@ -1171,11 +1171,11 @@ export function MealPlanBuilder({
                 </select>
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#9D9284] mb-1.5">
+                <label className="block text-xs font-medium text-[#85AF9B] mb-1.5">
                   Fibras planejadas · Água
                 </label>
                 <div className="flex items-center gap-2">
-                  <div className="px-3 py-2 text-sm font-mono tabular-nums bg-[#120E0B] border border-[#D9AF72]/18 rounded-xl text-[#F0D29C] whitespace-nowrap">
+                  <div className="px-3 py-2 text-sm font-mono tabular-nums bg-[#0A2622] border border-[#B7DB74]/18 rounded-xl text-[#DDF3B2] whitespace-nowrap">
                     {totals.fiberG}g fibras
                   </div>
                   <input
@@ -1192,14 +1192,14 @@ export function MealPlanBuilder({
                       }))
                     }
                     aria-label="Meta de água em litros"
-                    className="w-20 px-2.5 py-2 text-sm font-mono tabular-nums bg-[#120E0B] text-[#FAF5EC] border border-[#D9AF72]/22 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                    className="w-20 px-2.5 py-2 text-sm font-mono tabular-nums bg-[#0A2622] text-[#F4FBF6] border border-[#B7DB74]/22 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                   />
-                  <span className="text-xs text-[#9D9284]">L</span>
+                  <span className="text-xs text-[#85AF9B]">L</span>
                 </div>
               </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#D9AF72]/12">
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-3 border-t border-[#B7DB74]/12">
               {[
                 { label: 'Meta Energia (kcal)', field: 'targetCalories', min: 800, max: 6000, val: draft.targetCalories },
                 { label: 'Meta Proteína (g)', field: 'targetProteinG', min: 20, max: 400, val: draft.targetProteinG },
@@ -1207,7 +1207,7 @@ export function MealPlanBuilder({
                 { label: 'Meta Gordura (g)', field: 'targetFatG', min: 10, max: 250, val: draft.targetFatG },
               ].map((m) => (
                 <div key={m.field}>
-                  <label className="block text-[11px] font-medium text-[#9D9284] mb-1">
+                  <label className="block text-[11px] font-medium text-[#85AF9B] mb-1">
                     {m.label}
                   </label>
                   <input
@@ -1222,7 +1222,7 @@ export function MealPlanBuilder({
                         [m.field]: Number(e.target.value),
                       }))
                     }
-                    className="w-full px-3 py-1.5 text-xs font-mono tabular-nums bg-[#120E0B] text-[#FAF5EC] border border-[#D9AF72]/20 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                    className="w-full px-3 py-1.5 text-xs font-mono tabular-nums bg-[#0A2622] text-[#F4FBF6] border border-[#B7DB74]/20 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                   />
                 </div>
               ))}
@@ -1233,10 +1233,10 @@ export function MealPlanBuilder({
           <section className="space-y-4">
             <div className="flex items-center justify-between gap-4">
               <div>
-                <h2 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+                <h2 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                   Refeições do Dia
                 </h2>
-                <p className="text-xs text-[#A89E90]">
+                <p className="text-xs text-[#A8CCB9]">
                   Adicione receitas da sua biblioteca ou alimentos avulsos com opções de substituição
                 </p>
               </div>
@@ -1244,7 +1244,7 @@ export function MealPlanBuilder({
                 <button
                   type="button"
                   onClick={addMealSlot}
-                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#F0D29C] bg-[#15110E] border border-[#D9AF72]/28 rounded-full hover:border-[#F0D29C] transition-colors cursor-pointer whitespace-nowrap"
+                  className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#DDF3B2] bg-[#0E332D] border border-[#B7DB74]/28 rounded-full hover:border-[#DDF3B2] transition-colors cursor-pointer whitespace-nowrap"
                 >
                   <Plus className="w-3.5 h-3.5" />
                   Adicionar refeição
@@ -1261,7 +1261,7 @@ export function MealPlanBuilder({
                   key={meal.id}
                   className="glass-obsidian rounded-2xl overflow-hidden"
                 >
-                  <div className="px-5 py-3.5 bg-[#110D0A]/80 border-b border-[#D9AF72]/15 flex flex-wrap items-center justify-between gap-3">
+                  <div className="px-5 py-3.5 bg-[#07201C]/80 border-b border-[#B7DB74]/15 flex flex-wrap items-center justify-between gap-3">
                     <div className="flex items-center gap-2.5 flex-1 min-w-[220px]">
                       <input
                         type="time"
@@ -1271,7 +1271,7 @@ export function MealPlanBuilder({
                           updateMealField(meal.id, 'time', e.target.value)
                         }
                         aria-label="Horário da refeição"
-                        className="px-2.5 py-1 text-xs font-mono tabular-nums font-semibold text-[#F0D29C] bg-[#1A1410] border border-[#D9AF72]/25 rounded-lg focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                        className="px-2.5 py-1 text-xs font-mono tabular-nums font-semibold text-[#DDF3B2] bg-[#0A2622] border border-[#B7DB74]/25 rounded-lg focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                       />
                       <input
                         type="text"
@@ -1282,13 +1282,13 @@ export function MealPlanBuilder({
                           updateMealField(meal.id, 'name', e.target.value)
                         }
                         aria-label="Nome da refeição"
-                        className="flex-1 max-w-xs px-2.5 py-1 font-editorial text-xl font-medium text-[#FAF5EC] bg-transparent border border-transparent hover:border-[#D9AF72]/20 focus:bg-[#16110D] focus:border-[#E8C589] rounded-lg focus:outline-none"
+                        className="flex-1 max-w-xs px-2.5 py-1 font-editorial text-xl font-medium text-[#F4FBF6] bg-transparent border border-transparent hover:border-[#B7DB74]/20 focus:bg-[#0E332D] focus:border-[#C7E88B] rounded-lg focus:outline-none"
                       />
                     </div>
 
                     <div className="flex items-center gap-4">
-                      <span className="text-xs font-mono tabular-nums text-[#A89E90]">
-                        <strong className="text-[#F0D29C]">
+                      <span className="text-xs font-mono tabular-nums text-[#A8CCB9]">
+                        <strong className="text-[#DDF3B2]">
                           {Math.round(mealTotals.calories)} kcal
                         </strong>{' '}
                         · P {mealTotals.proteinG.toFixed(0)}g · C{' '}
@@ -1304,7 +1304,7 @@ export function MealPlanBuilder({
                               setAddingToMealId(isAddingHere ? null : meal.id);
                               setAddMode('recipe');
                             }}
-                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-[#F0D29C] bg-[#D9AF72]/12 border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/22 transition-colors cursor-pointer whitespace-nowrap"
+                            className="inline-flex items-center gap-1 px-3 py-1.5 text-xs font-semibold text-[#DDF3B2] bg-[#B7DB74]/12 border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/22 transition-colors cursor-pointer whitespace-nowrap"
                           >
                             <Plus className="w-3.5 h-3.5" />
                             Item
@@ -1313,7 +1313,7 @@ export function MealPlanBuilder({
                             type="button"
                             onClick={() => removeMealSlot(meal.id)}
                             aria-label={`Remover ${meal.name}`}
-                            className="p-1.5 text-[#8D8274] hover:text-red-400 rounded-lg hover:bg-red-950/50 transition-colors cursor-pointer"
+                            className="p-1.5 text-[#85AF9B] hover:text-red-400 rounded-lg hover:bg-red-950/50 transition-colors cursor-pointer"
                           >
                             <Trash2 className="w-3.5 h-3.5" />
                           </button>
@@ -1322,9 +1322,9 @@ export function MealPlanBuilder({
                     </div>
                   </div>
 
-                  <div className="divide-y divide-[#D9AF72]/10">
+                  <div className="divide-y divide-[#B7DB74]/10">
                     {meal.items.length === 0 ? (
-                      <div className="px-5 py-5 text-xs text-[#8D8274]">
+                      <div className="px-5 py-5 text-xs text-[#85AF9B]">
                         Nenhum alimento ou receita incluído nesta refeição.
                       </div>
                     ) : (
@@ -1340,17 +1340,17 @@ export function MealPlanBuilder({
                           >
                             <div className="space-y-1 flex-1 min-w-0">
                               <div className="flex items-center gap-2 flex-wrap">
-                                <span className="text-sm font-medium text-[#FAF5EC]">
+                                <span className="text-sm font-medium text-[#F4FBF6]">
                                   {item.name}
                                 </span>
-                                <span className="text-xs text-[#9D9284]">
+                                <span className="text-xs text-[#85AF9B]">
                                   · {item.portion}
                                 </span>
                                 {linkedRecipe && (
                                   <button
                                     type="button"
                                     onClick={() => onInspectRecipe(linkedRecipe)}
-                                    className="inline-flex items-center gap-1 text-xs font-medium text-[#E8C589] hover:underline cursor-pointer whitespace-nowrap"
+                                    className="inline-flex items-center gap-1 text-xs font-medium text-[#C7E88B] hover:underline cursor-pointer whitespace-nowrap"
                                   >
                                     <BookOpen className="w-3 h-3" />
                                     Ver receita
@@ -1359,11 +1359,11 @@ export function MealPlanBuilder({
                               </div>
 
                               <div className="flex items-center gap-2">
-                                <span className="text-xs text-[#8D8274] shrink-0">
+                                <span className="text-xs text-[#85AF9B] shrink-0">
                                   Substituição:
                                 </span>
                                 {isLocked ? (
-                                  <span className="text-xs text-[#BDB2A4]">
+                                  <span className="text-xs text-[#A8CCB9]">
                                     {item.substitution || 'Não informada'}
                                   </span>
                                 ) : (
@@ -1379,15 +1379,15 @@ export function MealPlanBuilder({
                                       )
                                     }
                                     placeholder="Adicionar sugestão de substituição equivalente..."
-                                    className="flex-1 text-xs text-[#CFC5B8] placeholder-[#6F6559] bg-transparent border-b border-transparent hover:border-[#D9AF72]/25 focus:border-[#E8C589] focus:outline-none py-0.5"
+                                    className="flex-1 text-xs text-[#CBE3D6] placeholder-[#85AF9B] bg-transparent border-b border-transparent hover:border-[#B7DB74]/25 focus:border-[#C7E88B] focus:outline-none py-0.5"
                                   />
                                 )}
                               </div>
                             </div>
 
                             <div className="flex items-center gap-3 shrink-0">
-                              <span className="text-xs font-mono tabular-nums text-[#A89E90]">
-                                <strong className="text-[#F0D29C]">
+                              <span className="text-xs font-mono tabular-nums text-[#A8CCB9]">
+                                <strong className="text-[#DDF3B2]">
                                   {item.calories} kcal
                                 </strong>{' '}
                                 · {item.proteinG}P · {item.carbsG}C · {item.fatG}G
@@ -1399,7 +1399,7 @@ export function MealPlanBuilder({
                                     removeItemFromMeal(meal.id, item.id)
                                   }
                                   aria-label={`Remover ${item.name}`}
-                                  className="p-1 text-[#8D8274] hover:text-red-400 rounded cursor-pointer"
+                                  className="p-1 text-[#85AF9B] hover:text-red-400 rounded cursor-pointer"
                                 >
                                   <X className="w-3.5 h-3.5" />
                                 </button>
@@ -1413,16 +1413,16 @@ export function MealPlanBuilder({
 
                   {/* Inline Picker to Add Recipe or Custom Item */}
                   {isAddingHere && !isLocked && (
-                    <div className="p-5 bg-[#100C09] border-t border-[#D9AF72]/16 space-y-4">
+                    <div className="p-5 bg-[#061A17] border-t border-[#B7DB74]/16 space-y-4">
                       <div className="flex items-center justify-between gap-3 flex-wrap">
-                        <div className="flex items-center gap-1 p-1 bg-[#17120E] border border-[#D9AF72]/18 rounded-full">
+                        <div className="flex items-center gap-1 p-1 bg-[#0E332D] border border-[#B7DB74]/18 rounded-full">
                           <button
                             type="button"
                             onClick={() => setAddMode('recipe')}
                             className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
                               addMode === 'recipe'
                                 ? 'btn-gold font-semibold'
-                                : 'text-[#BDB2A4]'
+                                : 'text-[#A8CCB9]'
                             }`}
                           >
                             Da biblioteca de receitas
@@ -1433,7 +1433,7 @@ export function MealPlanBuilder({
                             className={`px-3 py-1 text-xs font-medium rounded-full cursor-pointer ${
                               addMode === 'custom'
                                 ? 'btn-gold font-semibold'
-                                : 'text-[#BDB2A4]'
+                                : 'text-[#A8CCB9]'
                             }`}
                           >
                             Alimento personalizado
@@ -1443,7 +1443,7 @@ export function MealPlanBuilder({
                         <button
                           type="button"
                           onClick={() => setAddingToMealId(null)}
-                          className="text-xs text-[#9D9284] hover:text-[#FAF5EC] cursor-pointer"
+                          className="text-xs text-[#85AF9B] hover:text-[#F4FBF6] cursor-pointer"
                         >
                           Fechar
                         </button>
@@ -1453,16 +1453,16 @@ export function MealPlanBuilder({
                         <div className="space-y-3">
                           <div className="flex flex-col sm:flex-row sm:items-center gap-3">
                             <div className="relative flex-1">
-                              <Search className="w-3.5 h-3.5 text-[#8D8274] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                              <Search className="w-3.5 h-3.5 text-[#85AF9B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                               <input
                                 type="search"
                                 value={recipeSearch}
                                 onChange={(e) => setRecipeSearch(e.target.value)}
                                 placeholder="Filtrar receitas por título, categoria ou restrição..."
-                                className="w-full pl-9 pr-3 py-2 text-xs bg-[#17120E] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/20 rounded-full focus:outline-none focus:border-[#E8C589]"
+                                className="w-full pl-9 pr-3 py-2 text-xs bg-[#0E332D] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/20 rounded-full focus:outline-none focus:border-[#C7E88B]"
                               />
                             </div>
-                            <div className="flex items-center gap-1.5 text-xs text-[#A89E90]">
+                            <div className="flex items-center gap-1.5 text-xs text-[#A8CCB9]">
                               <span>Porção:</span>
                               {[0.5, 1, 1.5, 2].map((mult) => (
                                 <button
@@ -1472,7 +1472,7 @@ export function MealPlanBuilder({
                                   className={`px-2.5 py-1 rounded-full font-mono tabular-nums cursor-pointer ${
                                     recipeMultiplier === mult
                                       ? 'btn-gold font-semibold'
-                                      : 'bg-[#17120E] border border-[#D9AF72]/20 text-[#CFC5B8]'
+                                      : 'bg-[#0E332D] border border-[#B7DB74]/20 text-[#CBE3D6]'
                                   }`}
                                 >
                                   {mult}x
@@ -1482,7 +1482,7 @@ export function MealPlanBuilder({
                           </div>
 
                           {filteredRecipes.length === 0 ? (
-                            <p className="text-xs text-[#8D8274] py-2">
+                            <p className="text-xs text-[#85AF9B] py-2">
                               Nenhuma receita encontrada.
                             </p>
                           ) : (
@@ -1498,13 +1498,13 @@ export function MealPlanBuilder({
                                       recipeMultiplier
                                     )
                                   }
-                                  className="text-left p-3 bg-[#17120E] border border-[#D9AF72]/18 rounded-xl hover:border-[#F0D29C]/60 transition-colors cursor-pointer"
+                                  className="text-left p-3 bg-[#0E332D] border border-[#B7DB74]/18 rounded-xl hover:border-[#DDF3B2]/60 transition-colors cursor-pointer"
                                 >
-                                  <div className="text-xs font-semibold text-[#FAF5EC] truncate">
+                                  <div className="text-xs font-semibold text-[#F4FBF6] truncate">
                                     {rec.title}
                                   </div>
-                                  <div className="text-[11px] font-mono tabular-nums text-[#A89E90] mt-0.5">
-                                    <span className="text-[#F0D29C]">
+                                  <div className="text-[11px] font-mono tabular-nums text-[#A8CCB9] mt-0.5">
+                                    <span className="text-[#DDF3B2]">
                                       {Math.round(rec.calories * recipeMultiplier)} kcal
                                     </span>{' '}
                                     · P {(rec.proteinG * recipeMultiplier).toFixed(0)}g · C{' '}
@@ -1520,7 +1520,7 @@ export function MealPlanBuilder({
                         <div className="space-y-3">
                           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
                             <div className="sm:col-span-2">
-                              <label className="block text-[11px] font-medium text-[#9D9284] mb-1">
+                              <label className="block text-[11px] font-medium text-[#85AF9B] mb-1">
                                 Alimento / preparação
                               </label>
                               <input
@@ -1533,11 +1533,11 @@ export function MealPlanBuilder({
                                   })
                                 }
                                 placeholder="Ex.: Pão integral com queijo cottage"
-                                className="w-full px-3 py-1.5 text-xs bg-[#17120E] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/20 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                                className="w-full px-3 py-1.5 text-xs bg-[#0E332D] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/20 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                               />
                             </div>
                             <div>
-                              <label className="block text-[11px] font-medium text-[#9D9284] mb-1">
+                              <label className="block text-[11px] font-medium text-[#85AF9B] mb-1">
                                 Quantidade / medida
                               </label>
                               <input
@@ -1550,7 +1550,7 @@ export function MealPlanBuilder({
                                   })
                                 }
                                 placeholder="2 fatias + 2 col. sopa"
-                                className="w-full px-3 py-1.5 text-xs bg-[#17120E] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/20 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                                className="w-full px-3 py-1.5 text-xs bg-[#0E332D] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/20 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                               />
                             </div>
                           </div>
@@ -1564,7 +1564,7 @@ export function MealPlanBuilder({
                               { label: 'Fibras (g)', key: 'fiberG', step: '0.5' },
                             ].map((f) => (
                               <div key={f.key}>
-                                <label className="block text-[11px] text-[#9D9284] mb-1">
+                                <label className="block text-[11px] text-[#85AF9B] mb-1">
                                   {f.label}
                                 </label>
                                 <input
@@ -1578,7 +1578,7 @@ export function MealPlanBuilder({
                                       [f.key]: Number(e.target.value),
                                     })
                                   }
-                                  className="w-full px-2.5 py-1.5 text-xs font-mono tabular-nums bg-[#17120E] text-[#FAF5EC] border border-[#D9AF72]/20 rounded-xl"
+                                  className="w-full px-2.5 py-1.5 text-xs font-mono tabular-nums bg-[#0E332D] text-[#F4FBF6] border border-[#B7DB74]/20 rounded-xl"
                                 />
                               </div>
                             ))}
@@ -1595,7 +1595,7 @@ export function MealPlanBuilder({
                                 })
                               }
                               placeholder="Substituição opcional (ex.: 1 tapioca média com frango)"
-                              className="flex-1 px-3 py-1.5 text-xs bg-[#17120E] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/20 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                              className="flex-1 px-3 py-1.5 text-xs bg-[#0E332D] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/20 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                             />
                             <button
                               type="button"
@@ -1611,7 +1611,7 @@ export function MealPlanBuilder({
                     </div>
                   )}
 
-                  <div className="px-5 py-2.5 bg-[#100D0A]/60 border-t border-[#D9AF72]/10">
+                  <div className="px-5 py-2.5 bg-[#07201C]/60 border-t border-[#B7DB74]/10">
                     <input
                       type="text"
                       disabled={isLocked}
@@ -1621,7 +1621,7 @@ export function MealPlanBuilder({
                         updateMealField(meal.id, 'notes', e.target.value)
                       }
                       placeholder="Observação específica desta refeição (ex.: horário pré-treino, modo de consumo)..."
-                      className="w-full text-xs text-[#BDB2A4] placeholder-[#6F6559] bg-transparent focus:outline-none"
+                      className="w-full text-xs text-[#A8CCB9] placeholder-[#85AF9B] bg-transparent focus:outline-none"
                     />
                   </div>
                 </div>
@@ -1632,7 +1632,7 @@ export function MealPlanBuilder({
           {/* General Clinical Guidance & Plan Lifecycle Actions */}
           <section className="glass-obsidian rounded-2xl p-6 space-y-5">
             <div>
-              <label className="block font-editorial text-xl font-medium text-[#FAF5EC] mb-2">
+              <label className="block font-editorial text-xl font-medium text-[#F4FBF6] mb-2">
                 Orientações Gerais, Hidratação e Suplementação
               </label>
               <textarea
@@ -1647,22 +1647,22 @@ export function MealPlanBuilder({
                   }))
                 }
                 placeholder="Recomendações de hidratação, temperos naturais, chás, suplementos prescritos ou orientações de retorno..."
-                className="w-full px-4 py-3 text-sm bg-[#120E0B] text-[#FAF5EC] placeholder-[#6F6559] border border-[#D9AF72]/20 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                className="w-full px-4 py-3 text-sm bg-[#0A2622] text-[#F4FBF6] placeholder-[#85AF9B] border border-[#B7DB74]/20 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
               />
             </div>
 
-            <div className="pt-4 border-t border-[#D9AF72]/14 flex flex-wrap items-center justify-between gap-4">
+            <div className="pt-4 border-t border-[#B7DB74]/14 flex flex-wrap items-center justify-between gap-4">
               <div className="flex items-center gap-4 flex-wrap">
                 {!isLocked &&
                   (confirmConclude ? (
                     <div className="flex items-center gap-2 text-xs">
-                      <span className="text-[#FAF5EC] font-medium">
+                      <span className="text-[#F4FBF6] font-medium">
                         Concluir e travar este plano como histórico?
                       </span>
                       <button
                         type="button"
                         onClick={() => setConfirmConclude(false)}
-                        className="px-2.5 py-1.5 text-[#CFC5B8] bg-[#18130E] border border-[#D9AF72]/20 rounded-lg cursor-pointer"
+                        className="px-2.5 py-1.5 text-[#CBE3D6] bg-[#07201C] border border-[#B7DB74]/20 rounded-lg cursor-pointer"
                       >
                         Cancelar
                       </button>
@@ -1682,9 +1682,9 @@ export function MealPlanBuilder({
                     <button
                       type="button"
                       onClick={() => setConfirmConclude(true)}
-                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[#BDB2A4] hover:text-[#FAF5EC] cursor-pointer"
+                      className="inline-flex items-center gap-1.5 text-xs font-medium text-[#A8CCB9] hover:text-[#F4FBF6] cursor-pointer"
                     >
-                      <Lock className="w-3.5 h-3.5 text-[#D9AF72]" />
+                      <Lock className="w-3.5 h-3.5 text-[#B7DB74]" />
                       Concluir plano (arquivar histórico)
                     </button>
                   ))}
@@ -1697,7 +1697,7 @@ export function MealPlanBuilder({
                     <button
                       type="button"
                       onClick={() => setConfirmDelete(false)}
-                      className="px-2.5 py-1.5 text-[#CFC5B8] bg-[#18130E] border border-[#D9AF72]/20 rounded-lg cursor-pointer"
+                      className="px-2.5 py-1.5 text-[#CBE3D6] bg-[#07201C] border border-[#B7DB74]/20 rounded-lg cursor-pointer"
                     >
                       Cancelar
                     </button>

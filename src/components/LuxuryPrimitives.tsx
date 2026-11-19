@@ -10,46 +10,61 @@ export function VerbenaEmblem({ className = 'w-7 h-7' }: { className?: string })
       className={className}
       aria-hidden="true"
     >
-      <path
-        d="M18 4C14.5 9.8 14.5 16.5 18 22.5C21.5 16.5 21.5 9.8 18 4Z"
-        stroke="url(#verbenaGold)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M18 22.5C12.2 19.6 8.6 15.2 7 9.5C12.4 10.6 16.1 14.8 18 22.5Z"
-        stroke="url(#verbenaGold)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M18 22.5C23.8 19.6 27.4 15.2 29 9.5C23.6 10.6 19.9 14.8 18 22.5Z"
-        stroke="url(#verbenaGold)"
-        strokeWidth="1.5"
-        strokeLinecap="round"
-        strokeLinejoin="round"
-      />
-      <path
-        d="M18 24.5C13 24.5 8.5 22.8 5.5 19.5C7.6 25.4 12.4 28.5 18 28.5C23.6 28.5 28.4 25.4 30.5 19.5C27.5 22.8 23 24.5 18 24.5Z"
-        stroke="url(#verbenaGold)"
+      <circle
+        cx="18"
+        cy="18"
+        r="15.5"
+        fill="url(#botanicalBg)"
+        stroke="url(#botanicalStroke)"
         strokeWidth="1.4"
+      />
+      <path
+        d="M11.5 24.5C11.5 16.5 16.5 11.2 24.8 10.8C24.4 19.2 19.5 24.5 11.5 24.5Z"
+        stroke="url(#leafStroke)"
+        strokeWidth="1.9"
         strokeLinecap="round"
         strokeLinejoin="round"
+      />
+      <path
+        d="M11.5 24.5L21 15"
+        stroke="#C9E991"
+        strokeWidth="1.6"
+        strokeLinecap="round"
       />
       <defs>
         <linearGradient
-          id="verbenaGold"
-          x1="5.5"
+          id="botanicalBg"
+          x1="4"
           y1="4"
-          x2="30.5"
-          y2="29"
+          x2="32"
+          y2="32"
           gradientUnits="userSpaceOnUse"
         >
-          <stop stopColor="#F5DCAC" />
-          <stop offset="0.55" stopColor="#D4A661" />
-          <stop offset="1" stopColor="#A97936" />
+          <stop stopColor="#174942" />
+          <stop offset="1" stopColor="#071E1B" />
+        </linearGradient>
+        <linearGradient
+          id="botanicalStroke"
+          x1="4"
+          y1="4"
+          x2="32"
+          y2="32"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#D7F2B4" />
+          <stop offset="0.55" stopColor="#8DB654" />
+          <stop offset="1" stopColor="#3B7A6D" />
+        </linearGradient>
+        <linearGradient
+          id="leafStroke"
+          x1="11"
+          y1="25"
+          x2="25"
+          y2="11"
+          gradientUnits="userSpaceOnUse"
+        >
+          <stop stopColor="#F4FBF6" />
+          <stop offset="1" stopColor="#B7DB74" />
         </linearGradient>
       </defs>
     </svg>
@@ -64,7 +79,7 @@ interface SpotlightCardProps {
 }
 
 /**
- * Smoked obsidian glass container with subtle GPU mouse-tracking golden ambient spotlight.
+ * Frosted botanical emerald glass container with subtle GPU mouse-tracking sunlit sage glow.
  */
 export function SpotlightCard({
   children,
@@ -92,20 +107,20 @@ export function SpotlightCard({
       onClick={onClick}
       onMouseMove={handleMouseMove}
       onMouseLeave={() => setSpot((s) => ({ ...s, visible: false }))}
-      className={`relative overflow-hidden glass-obsidian rounded-2xl transition-colors duration-200 hover:border-[#D9AF72]/35 ${className}`}
+      className={`relative overflow-hidden glass-botanical rounded-2xl transition-colors duration-200 hover:border-[#D4F0E0]/40 ${className}`}
     >
       <div
         aria-hidden="true"
         className="pointer-events-none absolute -inset-px transition-opacity duration-300"
         style={{
           opacity: spot.visible ? 1 : 0,
-          background: `radial-gradient(380px circle at ${spot.x}px ${spot.y}px, rgba(226, 184, 118, 0.12), transparent 60%)`,
+          background: `radial-gradient(380px circle at ${spot.x}px ${spot.y}px, rgba(183, 219, 116, 0.14), transparent 60%)`,
         }}
       />
       {glowRim && (
         <div
           aria-hidden="true"
-          className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#F0D29C]/65 to-transparent"
+          className="pointer-events-none absolute inset-x-10 top-0 h-px bg-gradient-to-r from-transparent via-[#D4F0E0]/65 to-transparent"
         />
       )}
       <div className="relative z-10">{children}</div>
@@ -114,7 +129,38 @@ export function SpotlightCard({
 }
 
 export function GoldHorizonDivider({ className = '' }: { className?: string }) {
-  return <div aria-hidden="true" className={`gold-horizon w-full ${className}`} />;
+  return <div aria-hidden="true" className={`botanical-horizon w-full ${className}`} />;
+}
+
+export function BotanicalLeafDivider({ className = '' }: { className?: string }) {
+  return (
+    <div
+      aria-hidden="true"
+      className={`flex items-center gap-3 ${className}`}
+    >
+      <span className="h-px flex-1 bg-gradient-to-r from-transparent via-[#D4F0E0]/45 to-[#D4F0E0]/35" />
+      <svg
+        viewBox="0 0 20 20"
+        fill="none"
+        className="w-4 h-4 text-[#B7DB74] shrink-0"
+      >
+        <path
+          d="M4.5 15.5C4.5 9.8 8.2 5.6 15.5 5C15 11.4 11 15.5 4.5 15.5Z"
+          stroke="currentColor"
+          strokeWidth="1.5"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M4.5 15.5L12.2 8.2"
+          stroke="currentColor"
+          strokeWidth="1.3"
+          strokeLinecap="round"
+        />
+      </svg>
+      <span className="h-px flex-1 bg-gradient-to-l from-transparent via-[#D4F0E0]/45 to-[#D4F0E0]/35" />
+    </div>
+  );
 }
 
 export const MOTION_EASE = [0.16, 1, 0.3, 1] as const;

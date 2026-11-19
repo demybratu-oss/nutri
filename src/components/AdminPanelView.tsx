@@ -13,7 +13,7 @@ import {
   UserPlus,
   Users,
 } from 'lucide-react';
-import { RECIPE_IMAGES } from '../data/seedData';
+import { BOTANICAL_THEME_IMAGES, RECIPE_IMAGES } from '../data/seedData';
 import {
   adminDeleteSubscription,
   adminUpdateSubscriptionStatus,
@@ -37,6 +37,7 @@ import {
   SiteMediaItem,
   SiteMediaSlotKey,
   SiteSettings,
+  SPECIALIST_PROFILE,
   SPECIALTY_LABELS,
   VideoSession,
 } from '../types';
@@ -58,10 +59,10 @@ interface AdminPanelViewProps {
 }
 
 const DEFAULT_SLOT_IMAGES: Record<SiteMediaSlotKey, string> = {
-  hero: RECIPE_IMAGES.salmao,
-  specialist_avatar: '',
-  method: RECIPE_IMAGES.frango,
-  banner: RECIPE_IMAGES.abobora,
+  hero: SPECIALIST_PROFILE.photoUrl,
+  specialist_avatar: SPECIALIST_PROFILE.photoUrl,
+  method: BOTANICAL_THEME_IMAGES.bioactivesEditorial,
+  banner: BOTANICAL_THEME_IMAGES.apothecaryVessel,
   recipe_1: RECIPE_IMAGES.salmao,
   recipe_2: RECIPE_IMAGES.overnight,
   recipe_3: RECIPE_IMAGES.omelete,
@@ -334,19 +335,19 @@ export function AdminPanelView({
       <SpotlightCard glowRim className="p-6 rounded-2xl space-y-5">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div>
-            <p className="text-xs tracking-[0.18em] text-[#DFBA7C] font-medium">
+            <p className="text-xs tracking-[0.18em] text-[#C7E88B] font-medium">
               Acesso Restrito · Administrador Autorizado
             </p>
-            <h2 className="font-editorial text-3xl font-medium text-[#FAF5EC] mt-1">
+            <h2 className="font-editorial text-3xl font-medium text-[#F4FBF6] mt-1">
               Central de Administração do Site
             </h2>
-            <p className="text-xs text-[#A89E90] mt-1">
+            <p className="text-xs text-[#A8CCB9] mt-1">
               Logado como {currentUserEmail} · Controle completo de fotos,
               textos, planos, pagamentos, assinantes e permissões
             </p>
           </div>
 
-          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#0E0B08] border border-[#D9AF72]/20 rounded-xl">
+          <div className="flex flex-wrap items-center gap-1.5 p-1 bg-[#061A17] border border-[#B7DB74]/20 rounded-xl">
             {tabs.map((tab) => {
               const Icon = tab.icon;
               const active = activeTab === tab.id;
@@ -358,7 +359,7 @@ export function AdminPanelView({
                   className={`inline-flex items-center gap-2 px-3.5 py-2 text-xs font-medium rounded-lg transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                     active
                       ? 'btn-gold font-semibold'
-                      : 'text-[#BDB2A4] hover:text-[#FAF5EC]'
+                      : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
                   }`}
                 >
                   <Icon className="w-3.5 h-3.5" />
@@ -377,54 +378,54 @@ export function AdminPanelView({
         <div className="space-y-6">
           {/* 4-Column Financial & Subscriber KPIs */}
           <div className="glass-obsidian rounded-2xl">
-            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#D9AF72]/14">
+            <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#B7DB74]/14">
               <div className="p-6">
-                <div className="text-xs text-[#A89E90] mb-1">
+                <div className="text-xs text-[#A8CCB9] mb-1">
                   Assinantes ativos (12 meses)
                 </div>
-                <div className="font-editorial text-3xl font-semibold tabular-nums text-[#E8C589]">
+                <div className="font-editorial text-3xl font-semibold tabular-nums text-[#C7E88B]">
                   {activeSubs.length}
                 </div>
-                <div className="text-xs text-[#8D8274] mt-1 tabular-nums">
+                <div className="text-xs text-[#85AF9B] mt-1 tabular-nums">
                   {allSubscriptions.length} registros no total
                 </div>
               </div>
 
               <div className="p-6">
-                <div className="text-xs text-[#A89E90] mb-1">
+                <div className="text-xs text-[#A8CCB9] mb-1">
                   Receita anual ativa
                 </div>
-                <div className="font-editorial text-3xl font-semibold tabular-nums text-[#FAF5EC]">
+                <div className="font-editorial text-3xl font-semibold tabular-nums text-[#F4FBF6]">
                   {formatBrl(totalActiveRevenue)}
                 </div>
-                <div className="text-xs text-[#8D8274] mt-1">
+                <div className="text-xs text-[#85AF9B] mt-1">
                   Soma dos planos ativos
                 </div>
               </div>
 
               <div className="p-6">
-                <div className="text-xs text-[#A89E90] mb-1">
+                <div className="text-xs text-[#A8CCB9] mb-1">
                   Ticket médio anual
                 </div>
-                <div className="font-editorial text-3xl font-semibold tabular-nums text-[#FAF5EC]">
+                <div className="font-editorial text-3xl font-semibold tabular-nums text-[#F4FBF6]">
                   {formatBrl(avgTicket)}
                 </div>
-                <div className="text-xs text-[#8D8274] mt-1">
+                <div className="text-xs text-[#85AF9B] mt-1">
                   Por assinatura de 12 meses
                 </div>
               </div>
 
               <div className="p-6">
-                <div className="text-xs text-[#A89E90] mb-1">
+                <div className="text-xs text-[#A8CCB9] mb-1">
                   Meios de pagamento ativos
                 </div>
-                <div className="font-mono text-sm font-medium tabular-nums text-[#FAF5EC] mt-2 space-y-0.5">
+                <div className="font-mono text-sm font-medium tabular-nums text-[#F4FBF6] mt-2 space-y-0.5">
                   <div>
-                    Cartão 12x: <span className="text-[#E8C589]">{paymentBreakdown.card}</span>
+                    Cartão 12x: <span className="text-[#C7E88B]">{paymentBreakdown.card}</span>
                   </div>
                   <div>
-                    PIX Anual: <span className="text-[#E8C589]">{paymentBreakdown.pix}</span> · Boleto:{' '}
-                    <span className="text-[#E8C589]">{paymentBreakdown.boleto}</span>
+                    PIX Anual: <span className="text-[#C7E88B]">{paymentBreakdown.pix}</span> · Boleto:{' '}
+                    <span className="text-[#C7E88B]">{paymentBreakdown.boleto}</span>
                   </div>
                 </div>
               </div>
@@ -433,20 +434,20 @@ export function AdminPanelView({
 
           {/* Filter Toolbar & Subscribers Table */}
           <section className="glass-obsidian rounded-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#D9AF72]/14 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+            <div className="px-6 py-4 border-b border-[#B7DB74]/14 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
               <div className="relative flex-1 max-w-md">
-                <Search className="w-4 h-4 text-[#8D8274] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+                <Search className="w-4 h-4 text-[#85AF9B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
                 <input
                   type="text"
                   value={subSearch}
                   onChange={(e) => setSubSearch(e.target.value)}
                   placeholder="Buscar por assinante, e-mail, especialidade ou comprovante..."
-                  className="w-full pl-10 pr-4 py-2 text-xs bg-[#0E0B08] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/22 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full pl-10 pr-4 py-2 text-xs bg-[#061A17] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/22 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div className="flex flex-wrap items-center gap-3">
-                <div className="flex items-center gap-1 p-1 bg-[#0E0B08] border border-[#D9AF72]/18 rounded-lg">
+                <div className="flex items-center gap-1 p-1 bg-[#061A17] border border-[#B7DB74]/18 rounded-lg">
                   {(['all', 'ativa', 'cancelada'] as const).map((st) => (
                     <button
                       key={st}
@@ -454,8 +455,8 @@ export function AdminPanelView({
                       onClick={() => setSubStatusFilter(st)}
                       className={`px-3 py-1 text-xs rounded-md transition-colors cursor-pointer whitespace-nowrap ${
                         subStatusFilter === st
-                          ? 'bg-[#D9AF72]/22 text-[#F7DFB3] font-medium'
-                          : 'text-[#A89E90] hover:text-[#FAF5EC]'
+                          ? 'bg-[#B7DB74]/22 text-[#DDF3B2] font-medium'
+                          : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
                       }`}
                     >
                       {st === 'all' ? 'Todas' : st === 'ativa' ? 'Ativas' : 'Canceladas'}
@@ -469,7 +470,7 @@ export function AdminPanelView({
                     setSubPaymentFilter(e.target.value as 'all' | PaymentMethod)
                   }
                   aria-label="Filtrar por forma de pagamento"
-                  className="px-3 py-2 text-xs bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/22 rounded-lg focus:outline-none focus:border-[#E8C589]"
+                  className="px-3 py-2 text-xs bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/22 rounded-lg focus:outline-none focus:border-[#C7E88B]"
                 >
                   <option value="all">Todos os pagamentos</option>
                   <option value="cartao_12x">Cartão 12x</option>
@@ -481,11 +482,11 @@ export function AdminPanelView({
 
             {filteredSubscriptions.length === 0 ? (
               <div className="p-10 text-center space-y-2">
-                <Users className="w-8 h-8 text-[#D9AF72]/50 mx-auto" />
-                <div className="text-sm font-medium text-[#FAF5EC]">
+                <Users className="w-8 h-8 text-[#B7DB74]/50 mx-auto" />
+                <div className="text-sm font-medium text-[#F4FBF6]">
                   Nenhuma assinatura encontrada
                 </div>
-                <p className="text-xs text-[#8D8274]">
+                <p className="text-xs text-[#85AF9B]">
                   Quando novos clientes concluírem o plano anual de 12 meses,
                   todos os dados de pagamento e especialidade aparecerão aqui.
                 </p>
@@ -494,7 +495,7 @@ export function AdminPanelView({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse">
                   <thead>
-                    <tr className="border-b border-[#D9AF72]/14 text-xs font-medium text-[#9D9284] bg-[#100D0A]/60">
+                    <tr className="border-b border-[#B7DB74]/14 text-xs font-medium text-[#85AF9B] bg-[#07201C]/60">
                       <th className="py-3.5 px-6">Assinante</th>
                       <th className="py-3.5 px-4">Especialidade</th>
                       <th className="py-3.5 px-4">Pagamento & Comprovante</th>
@@ -503,7 +504,7 @@ export function AdminPanelView({
                       <th className="py-3.5 px-6 text-right">Ações</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#D9AF72]/10 text-xs">
+                  <tbody className="divide-y divide-[#B7DB74]/10 text-xs">
                     {filteredSubscriptions.map((sub) => {
                       const validUntil = new Date(
                         sub.validUntilIso
@@ -512,32 +513,32 @@ export function AdminPanelView({
                       return (
                         <tr
                           key={sub.id}
-                          className="hover:bg-[#D9AF72]/5 transition-colors"
+                          className="hover:bg-[#B7DB74]/5 transition-colors"
                         >
                           <td className="py-4 px-6">
-                            <div className="text-sm font-medium text-[#FAF5EC]">
+                            <div className="text-sm font-medium text-[#F4FBF6]">
                               {sub.subscriberName}
                             </div>
-                            <div className="text-[#A89E90] mt-0.5">
+                            <div className="text-[#A8CCB9] mt-0.5">
                               {sub.subscriberEmail}
                               {sub.phone ? ` · ${sub.phone}` : ''}
                             </div>
                           </td>
-                          <td className="py-4 px-4 text-[#CFC5B8]">
+                          <td className="py-4 px-4 text-[#CBE3D6]">
                             <div>{SPECIALTY_LABELS[sub.specialty]}</div>
                             {sub.healthFocus && (
-                              <div className="text-[#8D8274] truncate max-w-[220px] mt-0.5">
+                              <div className="text-[#85AF9B] truncate max-w-[220px] mt-0.5">
                                 {sub.healthFocus}
                               </div>
                             )}
                           </td>
-                          <td className="py-4 px-4 text-[#CFC5B8]">
+                          <td className="py-4 px-4 text-[#CBE3D6]">
                             <div>{PAYMENT_METHOD_LABELS[sub.paymentMethod]}</div>
-                            <div className="font-mono tabular-nums text-[#DFBA7C] mt-0.5">
+                            <div className="font-mono tabular-nums text-[#C7E88B] mt-0.5">
                               Recibo {sub.receiptCode}
                             </div>
                           </td>
-                          <td className="py-4 px-4 text-right font-mono tabular-nums font-semibold text-[#FAF5EC]">
+                          <td className="py-4 px-4 text-right font-mono tabular-nums font-semibold text-[#F4FBF6]">
                             {formatBrl(sub.totalAmountBrl)}
                           </td>
                           <td className="py-4 px-4">
@@ -548,7 +549,7 @@ export function AdminPanelView({
                             >
                               {isActive ? 'Ativa' : 'Cancelada'}
                             </div>
-                            <div className="font-mono tabular-nums text-[#8D8274] mt-0.5">
+                            <div className="font-mono tabular-nums text-[#85AF9B] mt-0.5">
                               Até {validUntil}
                             </div>
                           </td>
@@ -558,7 +559,7 @@ export function AdminPanelView({
                                 type="button"
                                 disabled={busySubId === sub.id}
                                 onClick={() => handleToggleSubStatus(sub)}
-                                className="px-3 py-1.5 text-xs font-medium text-[#F0D29C] border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/14 transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
+                                className="px-3 py-1.5 text-xs font-medium text-[#DDF3B2] border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/14 transition-colors cursor-pointer whitespace-nowrap disabled:opacity-50"
                               >
                                 {isActive ? 'Cancelar' : 'Reativar'}
                               </button>
@@ -577,7 +578,7 @@ export function AdminPanelView({
                                   type="button"
                                   onClick={() => setConfirmDeleteSubId(sub.id)}
                                   aria-label="Remover assinatura"
-                                  className="p-1.5 text-[#8D8274] hover:text-red-300 transition-colors cursor-pointer"
+                                  className="p-1.5 text-[#85AF9B] hover:text-red-300 transition-colors cursor-pointer"
                                 >
                                   <Trash2 className="w-3.5 h-3.5" />
                                 </button>
@@ -607,10 +608,10 @@ export function AdminPanelView({
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+                <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                   Valores do Plano Anual (12 Meses)
                 </h3>
-                <p className="text-xs text-[#A89E90] mt-0.5">
+                <p className="text-xs text-[#A8CCB9] mt-0.5">
                   Os valores atualizados aqui passam a valer imediatamente na
                   página inicial e no checkout de assinatura.
                 </p>
@@ -627,7 +628,7 @@ export function AdminPanelView({
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Nome exibido do plano
                 </label>
                 <input
@@ -639,12 +640,12 @@ export function AdminPanelView({
                       annualPlanHeadline: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Parcela Cartão 12x (R$)
                 </label>
                 <input
@@ -659,12 +660,12 @@ export function AdminPanelView({
                       annualCardTotalBrl: Number((inst * 12).toFixed(2)),
                     });
                   }}
-                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Total Cartão 12 Meses (R$)
                 </label>
                 <input
@@ -677,12 +678,12 @@ export function AdminPanelView({
                       annualCardTotalBrl: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   PIX Anual à Vista (R$)
                 </label>
                 <input
@@ -695,12 +696,12 @@ export function AdminPanelView({
                       annualPixTotalBrl: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Selo de desconto PIX
                 </label>
                 <input
@@ -713,12 +714,12 @@ export function AdminPanelView({
                     })
                   }
                   placeholder="10% OFF"
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Boleto Anual 12 Meses (R$)
                 </label>
                 <input
@@ -731,7 +732,7 @@ export function AdminPanelView({
                       annualBoletoTotalBrl: Number(e.target.value),
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
             </div>
@@ -739,19 +740,19 @@ export function AdminPanelView({
 
           {/* Cross-Platform Clinical Records Overview */}
           <section className="glass-obsidian rounded-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#D9AF72]/14 flex flex-wrap items-center justify-between gap-3">
+            <div className="px-6 py-4 border-b border-[#B7DB74]/14 flex flex-wrap items-center justify-between gap-3">
               <div>
-                <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+                <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                   Visão Geral de Planos e Atendimentos
                 </h3>
-                <p className="text-xs text-[#A89E90] tabular-nums">
+                <p className="text-xs text-[#A8CCB9] tabular-nums">
                   {allMealPlans.length} planos alimentares ·{' '}
                   {allVideoSessions.length} videochamadas ·{' '}
                   {allCompounding.length} fórmulas manipuladas
                 </p>
               </div>
 
-              <div className="flex items-center gap-1 p-1 bg-[#0E0B08] border border-[#D9AF72]/18 rounded-lg">
+              <div className="flex items-center gap-1 p-1 bg-[#061A17] border border-[#B7DB74]/18 rounded-lg">
                 {(
                   [
                     ['mealPlans', 'Planos Alimentares'],
@@ -765,8 +766,8 @@ export function AdminPanelView({
                     onClick={() => setOversightTab(key)}
                     className={`px-3 py-1.5 text-xs rounded-md transition-colors cursor-pointer whitespace-nowrap ${
                       oversightTab === key
-                        ? 'bg-[#D9AF72]/22 text-[#F7DFB3] font-medium'
-                        : 'text-[#A89E90] hover:text-[#FAF5EC]'
+                        ? 'bg-[#B7DB74]/22 text-[#DDF3B2] font-medium'
+                        : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
                     }`}
                   >
                     {label}
@@ -779,38 +780,38 @@ export function AdminPanelView({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-[#D9AF72]/14 text-[#9D9284] bg-[#100D0A]/60">
+                    <tr className="border-b border-[#B7DB74]/14 text-[#85AF9B] bg-[#07201C]/60">
                       <th className="py-3 px-6">Plano Alimentar</th>
                       <th className="py-3 px-4 text-right">Meta Diária</th>
                       <th className="py-3 px-4 text-right">Refeições</th>
                       <th className="py-3 px-6 text-right">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#D9AF72]/10">
+                  <tbody className="divide-y divide-[#B7DB74]/10">
                     {allMealPlans.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-[#8D8274]">
+                        <td colSpan={4} className="py-8 text-center text-[#85AF9B]">
                           Nenhum plano alimentar cadastrado ainda.
                         </td>
                       </tr>
                     ) : (
                       allMealPlans.map((plan) => (
-                        <tr key={plan.id} className="hover:bg-[#D9AF72]/5">
+                        <tr key={plan.id} className="hover:bg-[#B7DB74]/5">
                           <td className="py-3.5 px-6">
-                            <div className="text-sm font-medium text-[#FAF5EC]">
+                            <div className="text-sm font-medium text-[#F4FBF6]">
                               {plan.title}
                             </div>
-                            <div className="text-[#8D8274] truncate max-w-md">
+                            <div className="text-[#85AF9B] truncate max-w-md">
                               {plan.objectiveSummary || 'Sem resumo cadastrado'}
                             </div>
                           </td>
-                          <td className="py-3.5 px-4 text-right font-mono tabular-nums text-[#FAF5EC]">
+                          <td className="py-3.5 px-4 text-right font-mono tabular-nums text-[#F4FBF6]">
                             {plan.targetCalories} kcal
                           </td>
-                          <td className="py-3.5 px-4 text-right font-mono tabular-nums text-[#CFC5B8]">
+                          <td className="py-3.5 px-4 text-right font-mono tabular-nums text-[#CBE3D6]">
                             {plan.meals.length}
                           </td>
-                          <td className="py-3.5 px-6 text-right text-[#DFBA7C] font-medium">
+                          <td className="py-3.5 px-6 text-right text-[#C7E88B] font-medium">
                             {PLAN_STATUS_LABELS[plan.status]}
                           </td>
                         </tr>
@@ -825,33 +826,33 @@ export function AdminPanelView({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-[#D9AF72]/14 text-[#9D9284] bg-[#100D0A]/60">
+                    <tr className="border-b border-[#B7DB74]/14 text-[#85AF9B] bg-[#07201C]/60">
                       <th className="py-3 px-6">Paciente</th>
                       <th className="py-3 px-4">Especialidade</th>
                       <th className="py-3 px-4">Data e Horário</th>
                       <th className="py-3 px-6 text-right">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#D9AF72]/10">
+                  <tbody className="divide-y divide-[#B7DB74]/10">
                     {allVideoSessions.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-[#8D8274]">
+                        <td colSpan={4} className="py-8 text-center text-[#85AF9B]">
                           Nenhuma videochamada agendada ainda.
                         </td>
                       </tr>
                     ) : (
                       allVideoSessions.map((vs) => (
-                        <tr key={vs.id} className="hover:bg-[#D9AF72]/5">
-                          <td className="py-3.5 px-6 text-sm font-medium text-[#FAF5EC]">
+                        <tr key={vs.id} className="hover:bg-[#B7DB74]/5">
+                          <td className="py-3.5 px-6 text-sm font-medium text-[#F4FBF6]">
                             {vs.patientName}
                           </td>
-                          <td className="py-3.5 px-4 text-[#CFC5B8]">
+                          <td className="py-3.5 px-4 text-[#CBE3D6]">
                             {SPECIALTY_LABELS[vs.specialty]}
                           </td>
-                          <td className="py-3.5 px-4 font-mono tabular-nums text-[#DFBA7C]">
+                          <td className="py-3.5 px-4 font-mono tabular-nums text-[#C7E88B]">
                             {vs.scheduledDate} · {vs.scheduledTime}
                           </td>
-                          <td className="py-3.5 px-6 text-right capitalize text-[#FAF5EC]">
+                          <td className="py-3.5 px-6 text-right capitalize text-[#F4FBF6]">
                             {vs.status.replace('_', ' ')}
                           </td>
                         </tr>
@@ -866,38 +867,38 @@ export function AdminPanelView({
               <div className="overflow-x-auto">
                 <table className="w-full text-left border-collapse text-xs">
                   <thead>
-                    <tr className="border-b border-[#D9AF72]/14 text-[#9D9284] bg-[#100D0A]/60">
+                    <tr className="border-b border-[#B7DB74]/14 text-[#85AF9B] bg-[#07201C]/60">
                       <th className="py-3 px-6">Fórmula Manipulada</th>
                       <th className="py-3 px-4">Paciente</th>
                       <th className="py-3 px-4 text-right">Ativos / Doses</th>
                       <th className="py-3 px-6 text-right">Status</th>
                     </tr>
                   </thead>
-                  <tbody className="divide-y divide-[#D9AF72]/10">
+                  <tbody className="divide-y divide-[#B7DB74]/10">
                     {allCompounding.length === 0 ? (
                       <tr>
-                        <td colSpan={4} className="py-8 text-center text-[#8D8274]">
+                        <td colSpan={4} className="py-8 text-center text-[#85AF9B]">
                           Nenhuma prescrição de vitaminas manipuladas criada ainda.
                         </td>
                       </tr>
                     ) : (
                       allCompounding.map((rx) => (
-                        <tr key={rx.id} className="hover:bg-[#D9AF72]/5">
+                        <tr key={rx.id} className="hover:bg-[#B7DB74]/5">
                           <td className="py-3.5 px-6">
-                            <div className="text-sm font-medium text-[#FAF5EC]">
+                            <div className="text-sm font-medium text-[#F4FBF6]">
                               {rx.formulaTitle}
                             </div>
-                            <div className="text-[#8D8274]">
+                            <div className="text-[#85AF9B]">
                               {SPECIALTY_LABELS[rx.specialty]}
                             </div>
                           </td>
-                          <td className="py-3.5 px-4 text-[#CFC5B8]">
+                          <td className="py-3.5 px-4 text-[#CBE3D6]">
                             {rx.patientName}
                           </td>
-                          <td className="py-3.5 px-4 text-right font-mono tabular-nums text-[#CFC5B8]">
+                          <td className="py-3.5 px-4 text-right font-mono tabular-nums text-[#CBE3D6]">
                             {rx.actives.length} ativos · {rx.totalDoses} doses
                           </td>
-                          <td className="py-3.5 px-6 text-right font-medium text-[#DFBA7C] capitalize">
+                          <td className="py-3.5 px-6 text-right font-medium text-[#C7E88B] capitalize">
                             {rx.status}
                           </td>
                         </tr>
@@ -919,10 +920,10 @@ export function AdminPanelView({
           {/* Photos Manager */}
           <section className="glass-obsidian rounded-2xl p-6 space-y-5">
             <div>
-              <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+              <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                 Fotos do Site
               </h3>
-              <p className="text-xs text-[#A89E90] mt-0.5">
+              <p className="text-xs text-[#A8CCB9] mt-0.5">
                 Envie fotos diretamente do seu computador ou celular (otimização
                 automática) ou cole um link de imagem. As alterações aparecem
                 imediatamente no site.
@@ -948,10 +949,10 @@ export function AdminPanelView({
                 return (
                   <div
                     key={slot.slotKey}
-                    className="p-4 rounded-xl bg-[#100D0A]/80 border border-[#D9AF72]/18 flex flex-col gap-3.5"
+                    className="p-4 rounded-xl bg-[#07201C]/80 border border-[#B7DB74]/18 flex flex-col gap-3.5"
                   >
                     <div className="flex items-start gap-3.5">
-                      <div className="w-24 h-20 rounded-lg overflow-hidden bg-[#18130F] border border-[#D9AF72]/20 shrink-0 flex items-center justify-center">
+                      <div className="w-24 h-20 rounded-lg overflow-hidden bg-[#144239] border border-[#B7DB74]/20 shrink-0 flex items-center justify-center">
                         {previewSrc ? (
                           <img
                             src={previewSrc}
@@ -960,17 +961,17 @@ export function AdminPanelView({
                             className="w-full h-full object-cover"
                           />
                         ) : (
-                          <ImageIcon className="w-6 h-6 text-[#8D8274]" />
+                          <ImageIcon className="w-6 h-6 text-[#85AF9B]" />
                         )}
                       </div>
                       <div className="min-w-0 flex-1">
-                        <div className="text-sm font-medium text-[#FAF5EC]">
+                        <div className="text-sm font-medium text-[#F4FBF6]">
                           {slot.label}
                         </div>
-                        <p className="text-xs text-[#8D8274] mt-0.5 leading-relaxed">
+                        <p className="text-xs text-[#85AF9B] mt-0.5 leading-relaxed">
                           {slot.description}
                         </p>
-                        <div className="text-[11px] text-[#DFBA7C] mt-1">
+                        <div className="text-[11px] text-[#C7E88B] mt-1">
                           {custom ? 'Foto personalizada ativa' : 'Usando imagem padrão'}
                         </div>
                       </div>
@@ -1003,7 +1004,7 @@ export function AdminPanelView({
                           type="button"
                           disabled={isBusy}
                           onClick={() => handleResetSlot(slot.slotKey, slot.label)}
-                          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#BDB2A4] hover:text-[#FAF5EC] border border-[#D9AF72]/25 rounded-full transition-colors cursor-pointer whitespace-nowrap"
+                          className="inline-flex items-center gap-1.5 px-3 py-2 text-xs font-medium text-[#A8CCB9] hover:text-[#F4FBF6] border border-[#B7DB74]/25 rounded-full transition-colors cursor-pointer whitespace-nowrap"
                         >
                           <RotateCcw className="w-3 h-3" />
                           <span>Restaurar padrão</span>
@@ -1022,7 +1023,7 @@ export function AdminPanelView({
                           }))
                         }
                         placeholder="Ou cole o link (https://...) de uma foto"
-                        className="flex-1 min-w-0 px-3 py-1.5 text-xs bg-[#0B0907] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/20 rounded-lg focus:outline-none focus:border-[#E8C589]"
+                        className="flex-1 min-w-0 px-3 py-1.5 text-xs bg-[#041210] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/20 rounded-lg focus:outline-none focus:border-[#C7E88B]"
                       />
                       <button
                         type="button"
@@ -1030,7 +1031,7 @@ export function AdminPanelView({
                         onClick={() =>
                           handleSaveUrlSlot(slot.slotKey, slot.label, slot.defaultAlt)
                         }
-                        className="px-3 py-1.5 text-xs font-medium text-[#F0D29C] border border-[#D9AF72]/35 rounded-lg hover:bg-[#D9AF72]/14 transition-colors cursor-pointer disabled:opacity-45 whitespace-nowrap"
+                        className="px-3 py-1.5 text-xs font-medium text-[#DDF3B2] border border-[#B7DB74]/35 rounded-lg hover:bg-[#B7DB74]/14 transition-colors cursor-pointer disabled:opacity-45 whitespace-nowrap"
                       >
                         Aplicar link
                       </button>
@@ -1048,10 +1049,10 @@ export function AdminPanelView({
           >
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
               <div>
-                <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+                <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                   Textos, Identidade e Contatos do Site
                 </h3>
-                <p className="text-xs text-[#A89E90] mt-0.5">
+                <p className="text-xs text-[#A8CCB9] mt-0.5">
                   Personalize o título principal, apresentação clínica e canais
                   de contato exibidos aos visitantes.
                 </p>
@@ -1068,7 +1069,7 @@ export function AdminPanelView({
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Nome da Marca / Profissional
                 </label>
                 <input
@@ -1078,12 +1079,12 @@ export function AdminPanelView({
                   onChange={(e) =>
                     setSettingsDraft({ ...settingsDraft, brandName: e.target.value })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Subtítulo da Marca
                 </label>
                 <input
@@ -1095,12 +1096,12 @@ export function AdminPanelView({
                       brandSubtitle: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Frase de abertura (acima do título)
                 </label>
                 <input
@@ -1112,12 +1113,12 @@ export function AdminPanelView({
                       heroEyebrow: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Título principal da capa
                 </label>
                 <input
@@ -1127,12 +1128,12 @@ export function AdminPanelView({
                   onChange={(e) =>
                     setSettingsDraft({ ...settingsDraft, heroTitle: e.target.value })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Descrição principal da capa
                 </label>
                 <textarea
@@ -1144,12 +1145,12 @@ export function AdminPanelView({
                       heroDescription: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Título da seção Nosso Método
                 </label>
                 <input
@@ -1161,12 +1162,12 @@ export function AdminPanelView({
                       methodTitle: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Título do banner inferior
                 </label>
                 <input
@@ -1178,12 +1179,12 @@ export function AdminPanelView({
                       bannerTitle: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Texto da seção Nosso Método
                 </label>
                 <textarea
@@ -1195,12 +1196,12 @@ export function AdminPanelView({
                       methodDescription: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none"
                 />
               </div>
 
               <div className="md:col-span-2">
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Texto do banner inferior
                 </label>
                 <textarea
@@ -1212,12 +1213,12 @@ export function AdminPanelView({
                       bannerDescription: e.target.value,
                     })
                   }
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   WhatsApp oficial do consultório
                 </label>
                 <input
@@ -1230,12 +1231,12 @@ export function AdminPanelView({
                     })
                   }
                   placeholder="(11) 99999-0000"
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
 
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                   Instagram
                 </label>
                 <input
@@ -1248,7 +1249,7 @@ export function AdminPanelView({
                     })
                   }
                   placeholder="@dimitrabratu"
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
             </div>
@@ -1267,10 +1268,10 @@ export function AdminPanelView({
             className="lg:col-span-5 glass-obsidian rounded-2xl p-6 space-y-4"
           >
             <div>
-              <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+              <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                 Liberar Novo Administrador
               </h3>
-              <p className="text-xs text-[#A89E90] mt-1 leading-relaxed">
+              <p className="text-xs text-[#A8CCB9] mt-1 leading-relaxed">
                 Somente os e-mails Google listados aqui (com conta verificada)
                 podem enxergar esta área, editar fotos/textos ou ver assinantes
                 e pagamentos.
@@ -1278,7 +1279,7 @@ export function AdminPanelView({
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                 E-mail Google do administrador
               </label>
               <input
@@ -1287,12 +1288,12 @@ export function AdminPanelView({
                 value={newAdminEmail}
                 onChange={(e) => setNewAdminEmail(e.target.value)}
                 placeholder="nome@gmail.com"
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                 Nome completo
               </label>
               <input
@@ -1301,12 +1302,12 @@ export function AdminPanelView({
                 value={newAdminName}
                 onChange={(e) => setNewAdminName(e.target.value)}
                 placeholder="Ex.: Equipe Clínica Dimitra"
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1">
                 Função / Cargo
               </label>
               <input
@@ -1314,7 +1315,7 @@ export function AdminPanelView({
                 value={newAdminRole}
                 onChange={(e) => setNewAdminRole(e.target.value)}
                 placeholder="Gestão Financeira / Equipe"
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
 
@@ -1338,25 +1339,28 @@ export function AdminPanelView({
 
           {/* Authorized Admins List */}
           <section className="lg:col-span-7 glass-obsidian rounded-2xl overflow-hidden">
-            <div className="px-6 py-4 border-b border-[#D9AF72]/14">
-              <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+            <div className="px-6 py-4 border-b border-[#B7DB74]/14">
+              <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                 Administradores Liberados
               </h3>
-              <p className="text-xs text-[#A89E90] mt-0.5 tabular-nums">
+              <p className="text-xs text-[#A8CCB9] mt-0.5 tabular-nums">
                 {admins.length + 1} conta{admins.length > 0 ? 's' : ''} com
                 permissão administrativa ativa
               </p>
             </div>
 
-            <div className="divide-y divide-[#D9AF72]/12">
+            <div className="divide-y divide-[#B7DB74]/12">
               {/* Permanent Primary Admin */}
               <div className="p-5 flex items-center justify-between gap-4">
                 <div>
-                  <div className="text-sm font-medium text-[#FAF5EC]">
-                    Nutricionista Dimitra Bratu · Proprietária
+                  <div className="text-sm font-medium text-[#F4FBF6]">
+                    {SPECIALIST_PROFILE.title} · Proprietária
                   </div>
-                  <div className="text-xs font-mono text-[#DFBA7C] mt-0.5">
-                    {PRIMARY_ADMIN_EMAIL}
+                  <div className="text-xs font-mono text-[#C7E88B] mt-0.5">
+                    {PRIMARY_ADMIN_EMAIL} · WhatsApp {SPECIALIST_PROFILE.phoneDisplay}
+                  </div>
+                  <div className="text-[11px] text-[#A8CCB9] mt-0.5">
+                    {SPECIALIST_PROFILE.formation} · Reconhecimento automático ativo
                   </div>
                 </div>
                 <div className="inline-flex items-center gap-1.5 text-xs font-medium text-emerald-300 shrink-0">
@@ -1369,14 +1373,14 @@ export function AdminPanelView({
               {admins.map((admin) => (
                 <div
                   key={admin.id}
-                  className="p-5 flex flex-wrap items-center justify-between gap-4 hover:bg-[#D9AF72]/5 transition-colors"
+                  className="p-5 flex flex-wrap items-center justify-between gap-4 hover:bg-[#B7DB74]/5 transition-colors"
                 >
                   <div>
-                    <div className="text-sm font-medium text-[#FAF5EC]">
+                    <div className="text-sm font-medium text-[#F4FBF6]">
                       {admin.displayName}
                     </div>
-                    <div className="text-xs text-[#A89E90] mt-0.5">
-                      <span className="font-mono text-[#DFBA7C]">
+                    <div className="text-xs text-[#A8CCB9] mt-0.5">
+                      <span className="font-mono text-[#C7E88B]">
                         {admin.email}
                       </span>{' '}
                       · {admin.roleLabel}
@@ -1396,7 +1400,7 @@ export function AdminPanelView({
                       <button
                         type="button"
                         onClick={() => setConfirmRevokeId(admin.id)}
-                        className="px-3.5 py-1.5 text-xs font-medium text-[#A89E90] hover:text-red-300 border border-[#D9AF72]/20 hover:border-red-400/40 rounded-full transition-colors cursor-pointer whitespace-nowrap"
+                        className="px-3.5 py-1.5 text-xs font-medium text-[#A8CCB9] hover:text-red-300 border border-[#B7DB74]/20 hover:border-red-400/40 rounded-full transition-colors cursor-pointer whitespace-nowrap"
                       >
                         Revogar acesso
                       </button>

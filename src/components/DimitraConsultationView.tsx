@@ -18,10 +18,12 @@ import {
   Stethoscope,
   Trash2,
   UserRound,
+  Video,
 } from 'lucide-react';
 import {
   DimitraChatTurn,
   sendDimitraConsultationMessage,
+  SpecialistEscalation,
 } from '../lib/aiService';
 import {
   appendConsultationMessage,
@@ -32,6 +34,8 @@ import {
 } from '../lib/firestoreService';
 import { calculateBMI } from '../lib/nutrition';
 import {
+  buildSpecialistWhatsAppUrl,
+  ClinicalSpecialty,
   CONSULTATION_MODE_LABELS,
   Consultation,
   ConsultationMessage,
@@ -40,6 +44,9 @@ import {
   MealPlan,
   Patient,
   Recipe,
+  SPECIALIST_ACADEMIC_FORMATION,
+  SPECIALIST_PROFILE,
+  SPECIALTY_LABELS,
 } from '../types';
 import { MOTION_EASE, SpotlightCard, VerbenaEmblem } from './LuxuryPrimitives';
 import { FormattedClinicalMarkdown } from './ScientificEvidenceBlock';
@@ -50,9 +57,16 @@ interface DimitraConsultationViewProps {
   mealPlans: MealPlan[];
   recipes: Recipe[];
   consultations: Consultation[];
+  specialistAvatarUrl?: string;
   initialPatientId?: string | null;
   onSaveClinicalNote: (patient: Patient, noteSnippet: string) => Promise<void>;
   onOpenPatientPlan: (patientId: string) => void;
+  onEscalateToVideo: (params: {
+    patientId: string;
+    patientName: string;
+    specialty: ClinicalSpecialty;
+    chiefComplaint: string;
+  }) => void;
   onNotify: (message: string) => void;
 }
 
@@ -149,9 +163,11 @@ export function DimitraConsultationView({
   mealPlans,
   recipes,
   consultations,
+  specialistAvatarUrl = SPECIALIST_PROFILE.photoUrl,
   initialPatientId,
   onSaveClinicalNote,
   onOpenPatientPlan,
+  onEscalateToVideo,
   onNotify,
 }: DimitraConsultationViewProps) {
   const [selectedConsultationId, setSelectedConsultationId] = useState<string | null>(
@@ -168,6 +184,8 @@ export function DimitraConsultationView({
   const [sending, setSending] = useState(false);
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [followUps, setFollowUps] = useState<string[]>([]);
+  const [latestEscalation, setLatestEscalation] =
+    useState<SpecialistEscalation | null>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
   const [savingNoteId, setSavingNoteId] = useState<string | null>(null);
 
@@ -236,6 +254,7 @@ export function DimitraConsultationView({
     setSelectedConsultationId(null);
     setMessages([]);
     setFollowUps([]);
+    setLatestEscalation(null);
     setErrorMsg(null);
   }
 
@@ -303,6 +322,7 @@ export function DimitraConsultationView({
       });
 
       setFollowUps(aiResponse.suggestedFollowUps || []);
+      setLatestEscalation(aiResponse.specialistEscalation || null);
     } catch (err) {
       setErrorMsg(
         err instanceof Error
@@ -368,15 +388,15 @@ export function DimitraConsultationView({
         <SpotlightCard glowRim className="p-5 space-y-5">
           <div className="flex items-center justify-between gap-3">
             <div className="flex items-center gap-2.5 min-w-0">
-              <div className="w-9 h-9 rounded-full bg-[#D9AF72]/15 border border-[#D9AF72]/40 flex items-center justify-center shrink-0">
+              <div className="w-9 h-9 rounded-full bg-[#B7DB74]/15 border border-[#B7DB74]/40 flex items-center justify-center shrink-0">
                 <VerbenaEmblem className="w-5 h-5" />
               </div>
               <div className="min-w-0">
-                <div className="font-editorial text-lg font-medium text-[#FAF5EC] leading-tight truncate">
+                <div className="font-editorial text-lg font-medium text-[#F4FBF6] leading-tight truncate">
                   Dra. Dimitra Bratu
                 </div>
-                <div className="text-[11px] text-[#DFBA7C] truncate">
-                  Especialista em Nutrição Clínica · IA
+                <div className="text-[11px] text-[#C7E88B] truncate">
+                  Universidade Gama Filho · RJ
                 </div>
               </div>
             </div>
@@ -394,7 +414,7 @@ export function DimitraConsultationView({
           <div>
             <label
               htmlFor="consultation-patient"
-              className="block text-xs font-medium text-[#BDB2A4] mb-1.5"
+              className="block text-xs font-medium text-[#A8CCB9] mb-1.5"
             >
               Paciente vinculado ao atendimento
             </label>
@@ -403,7 +423,7 @@ export function DimitraConsultationView({
               value={effectivePatientId}
               disabled={Boolean(activeConsultation)}
               onChange={(e) => setDraftPatientId(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
             >
               <option value="">Atendimento geral (sem prontuário)</option>
               {patients.map((p) => (
@@ -414,20 +434,20 @@ export function DimitraConsultationView({
             </select>
 
             {linkedPatient && (
-              <div className="mt-3 p-3.5 rounded-xl bg-[#0F0C09]/90 border border-[#D9AF72]/20 space-y-2">
+              <div className="mt-3 p-3.5 rounded-xl bg-[#061A17]/90 border border-[#B7DB74]/20 space-y-2">
                 <div className="flex items-center justify-between gap-2">
-                  <span className="text-xs font-semibold text-[#FAF5EC] truncate">
+                  <span className="text-xs font-semibold text-[#F4FBF6] truncate">
                     {linkedPatient.fullName}
                   </span>
                   <button
                     type="button"
                     onClick={() => onOpenPatientPlan(linkedPatient.id)}
-                    className="text-[11px] text-[#E8C589] hover:text-[#F7DFB3] cursor-pointer whitespace-nowrap"
+                    className="text-[11px] text-[#C7E88B] hover:text-[#DDF3B2] cursor-pointer whitespace-nowrap"
                   >
                     Ver plano →
                   </button>
                 </div>
-                <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-mono tabular-nums text-[#BDB2A4]">
+                <div className="flex flex-wrap gap-x-3 gap-y-1 text-[11px] font-mono tabular-nums text-[#A8CCB9]">
                   <span>
                     IMC {calculateBMI(linkedPatient.weightKg, linkedPatient.heightCm).toFixed(1)}
                   </span>
@@ -435,7 +455,7 @@ export function DimitraConsultationView({
                   <span>P {linkedPatient.targetProteinG}g</span>
                 </div>
                 {linkedActivePlan && (
-                  <div className="text-[11px] text-[#DFBA7C] truncate">
+                  <div className="text-[11px] text-[#C7E88B] truncate">
                     Plano ativo: {linkedActivePlan.title}
                   </div>
                 )}
@@ -450,7 +470,7 @@ export function DimitraConsultationView({
 
           {/* Consultation Mode Selector */}
           <div>
-            <div className="text-xs font-medium text-[#BDB2A4] mb-2">
+            <div className="text-xs font-medium text-[#A8CCB9] mb-2">
               Modalidade do atendimento
             </div>
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-1 gap-2">
@@ -466,20 +486,20 @@ export function DimitraConsultationView({
                     onClick={() => setMode(mKey)}
                     className={`w-full text-left px-3.5 py-2.5 rounded-xl border transition-all cursor-pointer disabled:opacity-50 flex items-center gap-3 ${
                       active
-                        ? 'bg-[#D9AF72]/16 border-[#E8C589]/65 text-[#FAF5EC]'
-                        : 'bg-[#110D0A]/80 border-[#D9AF72]/14 text-[#BDB2A4] hover:border-[#D9AF72]/38 hover:text-[#FAF5EC]'
+                        ? 'bg-[#B7DB74]/16 border-[#C7E88B]/65 text-[#F4FBF6]'
+                        : 'bg-[#07201C]/80 border-[#B7DB74]/14 text-[#A8CCB9] hover:border-[#B7DB74]/38 hover:text-[#F4FBF6]'
                     }`}
                   >
                     <Icon
                       className={`w-4 h-4 shrink-0 ${
-                        active ? 'text-[#F0D29C]' : 'text-[#8D8274]'
+                        active ? 'text-[#DDF3B2]' : 'text-[#85AF9B]'
                       }`}
                     />
                     <div className="min-w-0">
                       <div className="text-xs font-semibold truncate">
                         {meta.label}
                       </div>
-                      <div className="text-[11px] text-[#8D8274] truncate">
+                      <div className="text-[11px] text-[#85AF9B] truncate">
                         {meta.shortDesc}
                       </div>
                     </div>
@@ -492,19 +512,19 @@ export function DimitraConsultationView({
 
         {/* Persisted Consultations History */}
         <section className="glass-obsidian rounded-2xl overflow-hidden">
-          <div className="px-5 py-3.5 border-b border-[#D9AF72]/14 flex items-center justify-between">
-            <h2 className="text-xs font-semibold text-[#FAF5EC] tracking-wide">
+          <div className="px-5 py-3.5 border-b border-[#B7DB74]/14 flex items-center justify-between">
+            <h2 className="text-xs font-semibold text-[#F4FBF6] tracking-wide">
               Atendimentos salvos ({consultations.length})
             </h2>
           </div>
 
           {consultations.length === 0 ? (
-            <div className="p-5 text-xs text-[#8D8274] leading-relaxed">
+            <div className="p-5 text-xs text-[#85AF9B] leading-relaxed">
               Os atendimentos realizados com a Dra. Dimitra Bratu (IA) ficam
               salvos aqui para consulta posterior.
             </div>
           ) : (
-            <div className="divide-y divide-[#D9AF72]/10 max-h-[340px] overflow-y-auto">
+            <div className="divide-y divide-[#B7DB74]/10 max-h-[340px] overflow-y-auto">
               {consultations.map((cons) => {
                 const selected = cons.id === selectedConsultationId;
                 return (
@@ -512,8 +532,8 @@ export function DimitraConsultationView({
                     key={cons.id}
                     className={`group px-4 py-3.5 transition-colors flex items-start justify-between gap-2 ${
                       selected
-                        ? 'bg-[#D9AF72]/14'
-                        : 'hover:bg-[#D9AF72]/6'
+                        ? 'bg-[#B7DB74]/14'
+                        : 'hover:bg-[#B7DB74]/6'
                     }`}
                   >
                     <button
@@ -527,18 +547,18 @@ export function DimitraConsultationView({
                     >
                       <div className="flex items-center gap-1.5">
                         {cons.status === 'encerrada' && (
-                          <Lock className="w-3 h-3 text-[#8D8274] shrink-0" />
+                          <Lock className="w-3 h-3 text-[#85AF9B] shrink-0" />
                         )}
-                        <span className="text-xs font-semibold text-[#FAF5EC] truncate">
+                        <span className="text-xs font-semibold text-[#F4FBF6] truncate">
                           {cons.title}
                         </span>
                       </div>
-                      <div className="text-[11px] text-[#DFBA7C] mt-0.5 truncate">
+                      <div className="text-[11px] text-[#C7E88B] mt-0.5 truncate">
                         {cons.patientName || 'Atendimento Geral'} ·{' '}
                         {CONSULTATION_MODE_LABELS[cons.mode]}
                       </div>
                       {cons.lastMessagePreview && (
-                        <div className="text-[11px] text-[#8D8274] mt-1 line-clamp-1">
+                        <div className="text-[11px] text-[#85AF9B] mt-1 line-clamp-1">
                           {cons.lastMessagePreview}
                         </div>
                       )}
@@ -548,7 +568,7 @@ export function DimitraConsultationView({
                       type="button"
                       onClick={() => handleDeleteSession(cons)}
                       aria-label="Excluir atendimento"
-                      className="p-1.5 text-[#7C7164] hover:text-red-300 opacity-70 group-hover:opacity-100 rounded-lg transition-colors cursor-pointer shrink-0"
+                      className="p-1.5 text-[#719C88] hover:text-red-300 opacity-70 group-hover:opacity-100 rounded-lg transition-colors cursor-pointer shrink-0"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -563,75 +583,100 @@ export function DimitraConsultationView({
       {/* Right Active Consultation Room */}
       <section className="lg:col-span-8 glass-obsidian rounded-2xl overflow-hidden flex flex-col min-h-[640px] max-h-[calc(100vh-148px)]">
         {/* Room Header */}
-        <div className="px-6 py-4 border-b border-[#D9AF72]/16 bg-[#110D0A]/90 flex flex-wrap items-center justify-between gap-3">
+        <div className="px-6 py-4 border-b border-[#B7DB74]/16 bg-[#07201C]/90 flex flex-wrap items-center justify-between gap-3">
           <div className="flex items-center gap-3.5 min-w-0">
-            <div className="w-11 h-11 rounded-full bg-gradient-to-br from-[#F3D59C]/25 via-[#D9AF72]/15 to-[#0E0B08] border border-[#E8C589]/50 flex items-center justify-center shrink-0 shadow-[0_0_24px_-4px_rgba(217,175,114,0.35)]">
-              <VerbenaEmblem className="w-6 h-6" />
-            </div>
+            <img
+              src={specialistAvatarUrl}
+              alt={SPECIALIST_PROFILE.title}
+              referrerPolicy="no-referrer"
+              className="w-11 h-11 rounded-full object-cover object-top border border-[#C7E88B]/65 shrink-0 shadow-[0_0_24px_-4px_rgba(183,219,116,0.35)]"
+            />
             <div className="min-w-0">
               <div className="flex items-center gap-2 flex-wrap">
-                <h2 className="font-editorial text-2xl font-medium text-[#FAF5EC] leading-none">
+                <h2 className="font-editorial text-2xl font-medium text-[#F4FBF6] leading-none">
                   Nutricionista Dimitra Bratu
                 </h2>
-                <span className="text-[11px] px-2.5 py-0.5 rounded-full border border-[#D9AF72]/35 bg-[#D9AF72]/10 text-[#F0D29C] font-medium whitespace-nowrap">
+                <span className="text-[11px] px-2.5 py-0.5 rounded-full border border-[#B7DB74]/35 bg-[#B7DB74]/10 text-[#DDF3B2] font-medium whitespace-nowrap">
                   {CONSULTATION_MODE_LABELS[mode]}
                 </span>
               </div>
-              <p className="text-xs text-[#A89E90] mt-1 truncate">
+              <p className="text-xs text-[#A8CCB9] mt-1 truncate">
                 {linkedPatient
                   ? `Atendendo prontuário de ${linkedPatient.fullName}${
                       linkedActivePlan ? ` · Plano "${linkedActivePlan.title}" conectado` : ''
                     }`
-                  : 'Atendimento nutricional clínico com pesquisa científica em tempo real'}
+                  : `${SPECIALIST_ACADEMIC_FORMATION} · IA + Encaminhamento por Vídeo`}
               </p>
             </div>
           </div>
 
-          {activeConsultation && !isLocked && (
+          <div className="flex items-center gap-2 shrink-0">
             <button
               type="button"
-              onClick={handleConcludeSession}
-              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#CFC5B8] border border-[#D9AF72]/28 rounded-full hover:border-[#E8C589] hover:text-[#FAF5EC] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              onClick={() =>
+                onEscalateToVideo({
+                  patientId: linkedPatient?.id || '',
+                  patientName: linkedPatient?.fullName || '',
+                  specialty:
+                    latestEscalation?.specialty || 'metabolica_emagrecimento',
+                  chiefComplaint:
+                    latestEscalation?.reason ||
+                    activeConsultation?.title ||
+                    'Atendimento clínico especializado por videochamada com a Dra. Dimitra Bratu.',
+                })
+              }
+              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#DDF3B2] border border-[#B7DB74]/40 bg-[#0A2622] rounded-full hover:border-[#DDF3B2] hover:bg-[#0E332D] transition-colors cursor-pointer whitespace-nowrap"
             >
-              <Lock className="w-3.5 h-3.5 text-[#D9AF72]" />
-              Encerrar consulta
+              <Video className="w-3.5 h-3.5" />
+              <span>Videochamada</span>
             </button>
-          )}
-          {isLocked && (
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-[#A89E90] bg-[#1A1511] border border-[#D9AF72]/20 rounded-full whitespace-nowrap">
-              <Lock className="w-3 h-3 text-[#D9AF72]" />
-              Consulta encerrada
-            </span>
-          )}
+
+            {activeConsultation && !isLocked && (
+              <button
+                type="button"
+                onClick={handleConcludeSession}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#CBE3D6] border border-[#B7DB74]/28 rounded-full hover:border-[#C7E88B] hover:text-[#F4FBF6] transition-colors cursor-pointer whitespace-nowrap"
+              >
+                <Lock className="w-3.5 h-3.5 text-[#B7DB74]" />
+                Encerrar consulta
+              </button>
+            )}
+            {isLocked && (
+              <span className="inline-flex items-center gap-1.5 px-3 py-1 text-xs font-medium text-[#A8CCB9] bg-[#144239] border border-[#B7DB74]/20 rounded-full whitespace-nowrap">
+                <Lock className="w-3 h-3 text-[#B7DB74]" />
+                Consulta encerrada
+              </span>
+            )}
+          </div>
         </div>
 
         {/* Messages Viewport */}
         <div className="flex-1 overflow-y-auto px-5 sm:px-7 py-6 space-y-6">
           {messagesLoading ? (
-            <div className="flex items-center justify-center py-16 text-xs text-[#A89E90] gap-2">
-              <Loader2 className="w-4 h-4 animate-spin text-[#E8C589]" />
+            <div className="flex items-center justify-center py-16 text-xs text-[#A8CCB9] gap-2">
+              <Loader2 className="w-4 h-4 animate-spin text-[#C7E88B]" />
               Carregando histórico da consulta...
             </div>
           ) : messages.length === 0 ? (
             <div className="space-y-6 max-w-2xl mx-auto py-4">
               {/* Warm Greeting in Dimitra Bratu's Voice */}
-              <div className="p-6 rounded-2xl bg-[#15110D]/90 border border-[#D9AF72]/25 space-y-3 relative overflow-hidden">
+              <div className="p-6 rounded-2xl bg-[#0E332D]/90 border border-[#B7DB74]/25 space-y-3 relative overflow-hidden">
                 <div
                   aria-hidden="true"
-                  className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#F0D29C]/70 to-transparent"
+                  className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-[#DDF3B2]/70 to-transparent"
                 />
-                <div className="flex items-center gap-2 text-xs font-medium text-[#E8C589]">
+                <div className="flex items-center gap-2 text-xs font-medium text-[#C7E88B]">
                   <Sparkles className="w-3.5 h-3.5" />
                   <span>Boas-vindas ao Consultório Digital</span>
                 </div>
-                <p className="font-editorial text-2xl sm:text-3xl text-[#FAF5EC] leading-snug">
+                <p className="font-editorial text-2xl sm:text-3xl text-[#F4FBF6] leading-snug">
                   Olá
                   {linkedPatient
                     ? `, vamos cuidar do acompanhamento de ${linkedPatient.fullName.split(' ')[0]}`
                     : '! Eu sou a Nutricionista Dimitra Bratu'}
                   .
                 </p>
-                <p className="text-sm text-[#C7BDB0] leading-relaxed">
+                <p className="text-sm text-[#CBE3D6] leading-relaxed">
                   Estou aqui para realizar atendimentos, conduzir anamnese,
                   esclarecer dúvidas sobre alimentação, substituições do plano e
                   suplementação — sempre unindo escuta acolhedora, praticidade e
@@ -642,7 +687,7 @@ export function DimitraConsultationView({
 
               {/* Starter Prompts */}
               <div className="space-y-2.5">
-                <div className="text-xs font-medium text-[#9D9284]">
+                <div className="text-xs font-medium text-[#85AF9B]">
                   Sugestões para iniciar este atendimento
                 </div>
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
@@ -652,12 +697,12 @@ export function DimitraConsultationView({
                       type="button"
                       disabled={sending}
                       onClick={() => handleSendMessage(prompt)}
-                      className="group text-left p-4 rounded-xl bg-[#120E0B] border border-[#D9AF72]/18 hover:border-[#E8C589]/55 hover:bg-[#19130F] transition-all cursor-pointer flex items-start justify-between gap-3"
+                      className="group text-left p-4 rounded-xl bg-[#0A2622] border border-[#B7DB74]/18 hover:border-[#C7E88B]/55 hover:bg-[#144239] transition-all cursor-pointer flex items-start justify-between gap-3"
                     >
-                      <span className="text-xs text-[#DFD5C8] leading-relaxed group-hover:text-[#FAF5EC]">
+                      <span className="text-xs text-[#CBE3D6] leading-relaxed group-hover:text-[#F4FBF6]">
                         {prompt}
                       </span>
-                      <ArrowRight className="w-3.5 h-3.5 text-[#D9AF72] shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
+                      <ArrowRight className="w-3.5 h-3.5 text-[#B7DB74] shrink-0 mt-0.5 group-hover:translate-x-0.5 transition-transform" />
                     </button>
                   ))}
                 </div>
@@ -675,8 +720,8 @@ export function DimitraConsultationView({
                   className={`flex ${isUser ? 'justify-end' : 'justify-start'}`}
                 >
                   {isUser ? (
-                    <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-tr-sm px-4 py-3.5 bg-gradient-to-br from-[#2B2014] to-[#1D160E] border border-[#D9AF72]/35 text-[#FAF5EC] text-sm leading-relaxed shadow-[0_10px_30px_-14px_rgba(0,0,0,0.8)]">
-                      <div className="flex items-center gap-1.5 text-[11px] text-[#DFBA7C] mb-1">
+                    <div className="max-w-[85%] sm:max-w-[75%] rounded-2xl rounded-tr-sm px-4 py-3.5 bg-gradient-to-br from-[#144239] to-[#144239] border border-[#B7DB74]/35 text-[#F4FBF6] text-sm leading-relaxed shadow-[0_10px_30px_-14px_rgba(0,0,0,0.8)]">
+                      <div className="flex items-center gap-1.5 text-[11px] text-[#C7E88B] mb-1">
                         <UserRound className="w-3 h-3" />
                         <span>
                           {linkedPatient
@@ -687,14 +732,14 @@ export function DimitraConsultationView({
                       <p className="whitespace-pre-wrap">{msg.content}</p>
                     </div>
                   ) : (
-                    <div className="max-w-[95%] sm:max-w-[88%] rounded-2xl rounded-tl-sm p-5 bg-[#14100C]/95 border border-[#D9AF72]/22 border-l-2 border-l-[#E8C589] space-y-4 shadow-[0_14px_40px_-20px_rgba(0,0,0,0.85)]">
-                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[#D9AF72]/12">
+                    <div className="max-w-[95%] sm:max-w-[88%] rounded-2xl rounded-tl-sm p-5 bg-[#0E332D]/95 border border-[#B7DB74]/28 space-y-4 shadow-[0_14px_40px_-20px_rgba(2,6,18,0.85)]">
+                      <div className="flex items-center justify-between gap-3 pb-2.5 border-b border-[#B7DB74]/12">
                         <div className="flex items-center gap-2">
                           <VerbenaEmblem className="w-4 h-4 shrink-0" />
-                          <span className="font-editorial text-base font-medium text-[#F0D29C]">
+                          <span className="font-editorial text-base font-medium text-[#DDF3B2]">
                             Dra. Dimitra Bratu
                           </span>
-                          <span className="text-[11px] text-[#8D8274]">
+                          <span className="text-[11px] text-[#85AF9B]">
                             Nutricionista Clínica
                           </span>
                         </div>
@@ -702,11 +747,11 @@ export function DimitraConsultationView({
                           <button
                             type="button"
                             onClick={() => handleCopyMessage(msg)}
-                            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-[#BDB2A4] hover:text-[#FAF5EC] hover:bg-[#D9AF72]/10 rounded-lg transition-colors cursor-pointer"
+                            className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-[#A8CCB9] hover:text-[#F4FBF6] hover:bg-[#B7DB74]/10 rounded-lg transition-colors cursor-pointer"
                           >
                             {copiedId === msg.id ? (
                               <>
-                                <Check className="w-3 h-3 text-[#E8C589]" />
+                                <Check className="w-3 h-3 text-[#C7E88B]" />
                                 Copiado
                               </>
                             ) : (
@@ -721,7 +766,7 @@ export function DimitraConsultationView({
                               type="button"
                               disabled={savingNoteId === msg.id}
                               onClick={() => handleSaveToPatientNotes(msg)}
-                              className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-[#E8C589] hover:bg-[#D9AF72]/12 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
+                              className="inline-flex items-center gap-1 px-2.5 py-1 text-[11px] text-[#C7E88B] hover:bg-[#B7DB74]/12 rounded-lg transition-colors cursor-pointer disabled:opacity-50"
                             >
                               <BookMarked className="w-3 h-3" />
                               {savingNoteId === msg.id
@@ -735,8 +780,8 @@ export function DimitraConsultationView({
                       <FormattedClinicalMarkdown content={msg.content} />
 
                       {msg.sources && msg.sources.length > 0 && (
-                        <div className="pt-3 border-t border-[#D9AF72]/14 space-y-2">
-                          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#DFBA7C]">
+                        <div className="pt-3 border-t border-[#B7DB74]/14 space-y-2">
+                          <div className="flex items-center gap-1.5 text-[11px] font-semibold text-[#C7E88B]">
                             <Globe className="w-3.5 h-3.5" />
                             <span>
                               Referências científicas consultadas ({msg.sources.length})
@@ -749,17 +794,17 @@ export function DimitraConsultationView({
                                 href={src.uri}
                                 target="_blank"
                                 rel="noopener noreferrer"
-                                className="group flex items-start justify-between gap-2 p-2.5 rounded-lg bg-[#0F0C09] border border-[#D9AF72]/16 hover:border-[#E8C589]/50 transition-colors"
+                                className="group flex items-start justify-between gap-2 p-2.5 rounded-lg bg-[#061A17] border border-[#B7DB74]/16 hover:border-[#C7E88B]/50 transition-colors"
                               >
                                 <div className="min-w-0">
-                                  <div className="text-[11px] font-medium text-[#FAF5EC] group-hover:text-[#F0D29C] line-clamp-1">
+                                  <div className="text-[11px] font-medium text-[#F4FBF6] group-hover:text-[#DDF3B2] line-clamp-1">
                                     {src.title}
                                   </div>
-                                  <div className="text-[10px] font-mono text-[#8D8274] truncate">
+                                  <div className="text-[10px] font-mono text-[#85AF9B] truncate">
                                     {src.domain}
                                   </div>
                                 </div>
-                                <ExternalLink className="w-3 h-3 text-[#8D8274] group-hover:text-[#F0D29C] shrink-0 mt-0.5" />
+                                <ExternalLink className="w-3 h-3 text-[#85AF9B] group-hover:text-[#DDF3B2] shrink-0 mt-0.5" />
                               </a>
                             ))}
                           </div>
@@ -775,11 +820,11 @@ export function DimitraConsultationView({
           {/* Typing / Consulting State */}
           {sending && (
             <div className="flex justify-start">
-              <div className="rounded-2xl rounded-tl-sm px-5 py-4 bg-[#14100C] border border-[#D9AF72]/25 border-l-2 border-l-[#E8C589] flex items-center gap-3">
-                <Loader2 className="w-4 h-4 animate-spin text-[#E8C589] shrink-0" />
-                <div className="text-xs text-[#CFC5B8]">
-                  <span className="text-[#F0D29C] font-medium">
-                    Dra. Dimitra Bratu
+              <div className="rounded-2xl rounded-tl-sm px-5 py-4 bg-[#0E332D] border border-[#B7DB74]/30 flex items-center gap-3">
+                <Loader2 className="w-4 h-4 animate-spin text-[#C7E88B] shrink-0" />
+                <div className="text-xs text-[#CBE3D6]">
+                  <span className="text-[#DDF3B2] font-medium">
+                    IA Dra. Dimitra Bratu
                   </span>{' '}
                   está consultando evidências científicas e preparando sua
                   orientação...
@@ -788,10 +833,65 @@ export function DimitraConsultationView({
             </div>
           )}
 
+          {/* Smart Specialist Video Escalation Card */}
+          {!sending &&
+            latestEscalation?.needsSpecialistVideo &&
+            messages.length > 0 && (
+              <div className="rounded-2xl p-5 bg-gradient-to-br from-[#144239] via-[#0A2622] to-[#061A17] border border-[#C7E88B]/55 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+                <div className="space-y-1.5">
+                  <div className="flex items-center gap-2 text-xs font-semibold text-[#DDF3B2]">
+                    <Video className="w-4 h-4 text-[#B7DB74]" />
+                    <span>
+                      Encaminhamento Especializado · Videochamada com Dra.
+                      Dimitra Bratu
+                    </span>
+                  </div>
+                  <p className="text-xs text-[#CBE3D6] leading-relaxed">
+                    {latestEscalation.reason ||
+                      'Este caso exige acompanhamento clínico individualizado por videochamada.'}
+                  </p>
+                  <div className="text-[11px] text-[#A8CCB9]">
+                    Especialidade:{' '}
+                    <span className="text-[#F4FBF6] font-medium">
+                      {SPECIALTY_LABELS[latestEscalation.specialty]}
+                    </span>{' '}
+                    · {SPECIALIST_PROFILE.formation} ·{' '}
+                    <a
+                      href={buildSpecialistWhatsAppUrl(
+                        `Olá Dra. Dimitra Bratu! Preciso de atendimento especializado em ${SPECIALTY_LABELS[latestEscalation.specialty]}.`
+                      )}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-[#DDF3B2] hover:underline"
+                    >
+                      WhatsApp {SPECIALIST_PROFILE.phoneDisplay}
+                    </a>
+                  </div>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    onEscalateToVideo({
+                      patientId: linkedPatient?.id || '',
+                      patientName: linkedPatient?.fullName || '',
+                      specialty: latestEscalation.specialty,
+                      chiefComplaint:
+                        latestEscalation.reason ||
+                        'Encaminhamento da IA para avaliação clínica por videochamada.',
+                    })
+                  }
+                  className="btn-azure inline-flex items-center justify-center gap-2 px-5 py-2.5 rounded-full text-xs font-semibold cursor-pointer whitespace-nowrap shrink-0"
+                >
+                  <Video className="w-3.5 h-3.5" />
+                  <span>Agendar / Iniciar Vídeo</span>
+                </button>
+              </div>
+            )}
+
           {/* Contextual Quick Follow-Up Suggestions */}
           {!sending && !isLocked && followUps.length > 0 && messages.length > 0 && (
             <div className="pt-1 space-y-2">
-              <div className="text-[11px] text-[#8D8274]">
+              <div className="text-[11px] text-[#85AF9B]">
                 Continuar atendimento:
               </div>
               <div className="flex flex-wrap gap-2">
@@ -800,7 +900,7 @@ export function DimitraConsultationView({
                     key={q}
                     type="button"
                     onClick={() => handleSendMessage(q)}
-                    className="text-left text-xs px-3.5 py-2 rounded-full bg-[#15110D] border border-[#D9AF72]/28 text-[#E8C589] hover:border-[#F0D29C] hover:bg-[#D9AF72]/12 transition-colors cursor-pointer"
+                    className="text-left text-xs px-3.5 py-2 rounded-full bg-[#0E332D] border border-[#B7DB74]/28 text-[#C7E88B] hover:border-[#DDF3B2] hover:bg-[#B7DB74]/12 transition-colors cursor-pointer"
                   >
                     {q}
                   </button>
@@ -822,9 +922,9 @@ export function DimitraConsultationView({
         </div>
 
         {/* Composer Footer */}
-        <div className="p-4 sm:p-5 border-t border-[#D9AF72]/16 bg-[#100D0A]/95">
+        <div className="p-4 sm:p-5 border-t border-[#B7DB74]/16 bg-[#07201C]/95">
           {isLocked ? (
-            <div className="flex items-center justify-between gap-4 text-xs text-[#A89E90]">
+            <div className="flex items-center justify-between gap-4 text-xs text-[#A8CCB9]">
               <span>
                 Esta consulta foi encerrada e arquivada. Inicie um novo
                 atendimento para continuar conversando com a Dra. Dimitra Bratu.
@@ -854,7 +954,7 @@ export function DimitraConsultationView({
                   maxLength={4000}
                   disabled={sending}
                   placeholder="Escreva sua dúvida nutricional, relate sintomas, rotina ou peça uma substituição para a Dra. Dimitra Bratu..."
-                  className="w-full px-4 py-3 text-sm bg-[#0B0907] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none leading-relaxed"
+                  className="w-full px-4 py-3 text-sm bg-[#041210] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none leading-relaxed"
                 />
               </div>
               <button

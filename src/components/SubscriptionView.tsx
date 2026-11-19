@@ -222,20 +222,20 @@ export function SubscriptionView({
         <SpotlightCard glowRim className="p-6 sm:p-8 rounded-3xl">
           <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-6">
             <div className="space-y-3">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#D9AF72]/16 border border-[#E8C589]/45 text-xs font-semibold text-[#F0D29C]">
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#B7DB74]/16 border border-[#C7E88B]/45 text-xs font-semibold text-[#DDF3B2]">
                 <Crown className="w-3.5 h-3.5" />
                 <span>Assinatura Anual Ativa · 12 Meses</span>
               </div>
-              <h2 className="font-editorial text-3xl sm:text-4xl font-medium text-[#FAF5EC] leading-tight">
+              <h2 className="font-editorial text-3xl sm:text-4xl font-medium text-[#F4FBF6] leading-tight">
                 {activeSubscription.subscriberName}
               </h2>
-              <p className="text-sm text-[#CFC5B8]">
+              <p className="text-sm text-[#CBE3D6]">
                 Especialidade selecionada:{' '}
-                <strong className="text-[#F0D29C] font-semibold">
+                <strong className="text-[#DDF3B2] font-semibold">
                   {SPECIALTY_LABELS[activeSubscription.specialty]}
                 </strong>
               </p>
-              <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs font-mono tabular-nums text-[#A89E90]">
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-1.5 text-xs font-mono tabular-nums text-[#A8CCB9]">
                 <span>Comprovante: {activeSubscription.receiptCode}</span>
                 <span>Vigência até: {validUntilFormatted}</span>
                 <span>{PAYMENT_METHOD_LABELS[activeSubscription.paymentMethod]}</span>
@@ -254,9 +254,9 @@ export function SubscriptionView({
               <button
                 type="button"
                 onClick={onGoToCompounding}
-                className="inline-flex items-center gap-2 px-5 py-3 text-xs font-medium text-[#F5EFE6] border border-[#D9AF72]/38 rounded-full hover:border-[#F0D29C] hover:bg-[#D9AF72]/10 transition-colors cursor-pointer whitespace-nowrap"
+                className="inline-flex items-center gap-2 px-5 py-3 text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/38 rounded-full hover:border-[#DDF3B2] hover:bg-[#B7DB74]/10 transition-colors cursor-pointer whitespace-nowrap"
               >
-                <FlaskConical className="w-4 h-4 text-[#E8C589]" />
+                <FlaskConical className="w-4 h-4 text-[#C7E88B]" />
                 <span>Vitaminas Manipuladas</span>
               </button>
             </div>
@@ -269,52 +269,52 @@ export function SubscriptionView({
             <button
               type="button"
               onClick={onGoToVideo}
-              className="text-left p-4 rounded-2xl bg-[#120E0B] border border-[#D9AF72]/20 hover:border-[#E8C589]/55 transition-colors cursor-pointer group"
+              className="text-left p-4 rounded-2xl bg-[#0A2622] border border-[#B7DB74]/20 hover:border-[#C7E88B]/55 transition-colors cursor-pointer group"
             >
-              <Video className="w-5 h-5 text-[#E8C589] mb-2" />
-              <div className="text-xs font-semibold text-[#FAF5EC] group-hover:text-[#F0D29C]">
+              <Video className="w-5 h-5 text-[#C7E88B] mb-2" />
+              <div className="text-xs font-semibold text-[#F4FBF6] group-hover:text-[#DDF3B2]">
                 Consulta por Vídeo
               </div>
-              <div className="text-[11px] text-[#8D8274] mt-0.5">
+              <div className="text-[11px] text-[#85AF9B] mt-0.5">
                 Agendar ou entrar na sala ao vivo
               </div>
             </button>
             <button
               type="button"
               onClick={onGoToCompounding}
-              className="text-left p-4 rounded-2xl bg-[#120E0B] border border-[#D9AF72]/20 hover:border-[#E8C589]/55 transition-colors cursor-pointer group"
+              className="text-left p-4 rounded-2xl bg-[#0A2622] border border-[#B7DB74]/20 hover:border-[#C7E88B]/55 transition-colors cursor-pointer group"
             >
-              <FlaskConical className="w-5 h-5 text-[#E8C589] mb-2" />
-              <div className="text-xs font-semibold text-[#FAF5EC] group-hover:text-[#F0D29C]">
+              <FlaskConical className="w-5 h-5 text-[#C7E88B] mb-2" />
+              <div className="text-xs font-semibold text-[#F4FBF6] group-hover:text-[#DDF3B2]">
                 Fórmulas Manipuladas
               </div>
-              <div className="text-[11px] text-[#8D8274] mt-0.5">
+              <div className="text-[11px] text-[#85AF9B] mt-0.5">
                 Receituário para farmácia de manipulação
               </div>
             </button>
             <button
               type="button"
               onClick={onGoToRecipes}
-              className="text-left p-4 rounded-2xl bg-[#120E0B] border border-[#D9AF72]/20 hover:border-[#E8C589]/55 transition-colors cursor-pointer group"
+              className="text-left p-4 rounded-2xl bg-[#0A2622] border border-[#B7DB74]/20 hover:border-[#C7E88B]/55 transition-colors cursor-pointer group"
             >
-              <BookOpen className="w-5 h-5 text-[#E8C589] mb-2" />
-              <div className="text-xs font-semibold text-[#FAF5EC] group-hover:text-[#F0D29C]">
+              <BookOpen className="w-5 h-5 text-[#C7E88B] mb-2" />
+              <div className="text-xs font-semibold text-[#F4FBF6] group-hover:text-[#DDF3B2]">
                 Receitas Terapêuticas
               </div>
-              <div className="text-[11px] text-[#8D8274] mt-0.5">
+              <div className="text-[11px] text-[#85AF9B] mt-0.5">
                 Preparações assinadas para sua saúde
               </div>
             </button>
             <button
               type="button"
               onClick={onGoToConsultation}
-              className="text-left p-4 rounded-2xl bg-[#120E0B] border border-[#D9AF72]/20 hover:border-[#E8C589]/55 transition-colors cursor-pointer group"
+              className="text-left p-4 rounded-2xl bg-[#0A2622] border border-[#B7DB74]/20 hover:border-[#C7E88B]/55 transition-colors cursor-pointer group"
             >
-              <Sparkles className="w-5 h-5 text-[#E8C589] mb-2" />
-              <div className="text-xs font-semibold text-[#FAF5EC] group-hover:text-[#F0D29C]">
+              <Sparkles className="w-5 h-5 text-[#C7E88B] mb-2" />
+              <div className="text-xs font-semibold text-[#F4FBF6] group-hover:text-[#DDF3B2]">
                 Dra. Dimitra IA 24h
               </div>
-              <div className="text-[11px] text-[#8D8274] mt-0.5">
+              <div className="text-[11px] text-[#85AF9B] mt-0.5">
                 Tirar dúvidas a qualquer momento
               </div>
             </button>
@@ -327,10 +327,10 @@ export function SubscriptionView({
           className="glass-obsidian rounded-2xl p-6 space-y-6"
         >
           <div>
-            <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+            <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
               Especialidade Clínica das Suas Vitaminas Manipuladas
             </h3>
-            <p className="text-xs text-[#A89E90] mt-1">
+            <p className="text-xs text-[#A8CCB9] mt-1">
               Você pode atualizar o foco clínico do seu tratamento nutricional ao
               longo dos 12 meses de assinatura.
             </p>
@@ -346,13 +346,13 @@ export function SubscriptionView({
                   onClick={() => setSpecialty(spec.id)}
                   className={`text-left p-4 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-2 ${
                     selected
-                      ? 'bg-[#D9AF72]/15 border-[#F0D29C] shadow-[0_0_24px_-10px_rgba(240,210,156,0.4)]'
-                      : 'bg-[#120E0B] border-[#D9AF72]/16 hover:border-[#D9AF72]/45'
+                      ? 'bg-[#B7DB74]/15 border-[#DDF3B2] shadow-[0_0_24px_-10px_rgba(240,210,156,0.4)]'
+                      : 'bg-[#0A2622] border-[#B7DB74]/16 hover:border-[#B7DB74]/45'
                   }`}
                 >
                   <div>
                     <div className="flex items-center justify-between gap-2 mb-1">
-                      <span className="text-[11px] font-medium text-[#DFBA7C]">
+                      <span className="text-[11px] font-medium text-[#C7E88B]">
                         {spec.focusTag}
                       </span>
                       {selected && (
@@ -361,14 +361,14 @@ export function SubscriptionView({
                         </span>
                       )}
                     </div>
-                    <div className="font-editorial text-xl font-medium text-[#FAF5EC] leading-snug">
+                    <div className="font-editorial text-xl font-medium text-[#F4FBF6] leading-snug">
                       {spec.title}
                     </div>
-                    <p className="text-xs text-[#A89E90] mt-1.5 leading-relaxed">
+                    <p className="text-xs text-[#A8CCB9] mt-1.5 leading-relaxed">
                       {spec.description}
                     </p>
                   </div>
-                  <div className="pt-2 border-t border-[#D9AF72]/12 text-[11px] font-mono text-[#CFC5B8]">
+                  <div className="pt-2 border-t border-[#B7DB74]/12 text-[11px] font-mono text-[#CBE3D6]">
                     {spec.keyActives}
                   </div>
                 </button>
@@ -378,7 +378,7 @@ export function SubscriptionView({
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 WhatsApp / Contato
               </label>
               <input
@@ -386,11 +386,11 @@ export function SubscriptionView({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="(11) 99999-0000"
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Alergias ou intolerâncias
               </label>
               <input
@@ -398,11 +398,11 @@ export function SubscriptionView({
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
                 placeholder="Ex.: Sem lactose, alergia a corantes..."
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Foco atual de saúde / sintomas
               </label>
               <input
@@ -410,16 +410,16 @@ export function SubscriptionView({
                 value={healthFocus}
                 onChange={(e) => setHealthFocus(e.target.value)}
                 placeholder="Ex.: Cansaço vespertino, melhora do sono..."
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
           </div>
 
-          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#D9AF72]/14">
+          <div className="flex flex-wrap items-center justify-between gap-3 pt-2 border-t border-[#B7DB74]/14">
             <button
               type="button"
               onClick={handleCancel}
-              className="text-xs text-[#8D8274] hover:text-red-300 transition-colors cursor-pointer"
+              className="text-xs text-[#85AF9B] hover:text-red-300 transition-colors cursor-pointer"
             >
               Encerrar renovação da assinatura
             </button>
@@ -443,30 +443,31 @@ export function SubscriptionView({
       <SpotlightCard glowRim className="p-6 sm:p-8 rounded-3xl">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 items-center">
           <div className="lg:col-span-7 space-y-4">
-            <div className="inline-flex items-center gap-2 text-xs tracking-[0.2em] text-[#DFBA7C] font-medium">
+            <div className="inline-flex items-center gap-2 text-xs tracking-[0.2em] text-[#C7E88B] font-medium">
               <Crown className="w-4 h-4" />
               <span>PROGRAMA ANUAL EXCLUSIVO · 12 MESES</span>
             </div>
-            <h2 className="font-editorial text-3xl sm:text-5xl font-medium text-[#FAF5EC] leading-[1.08]">
+            <h2 className="font-editorial text-3xl sm:text-5xl font-medium text-[#F4FBF6] leading-[1.08]">
               Acompanhamento de Saúde &{' '}
-              <span className="italic text-[#E8C589]">
+              <span className="italic text-[#C7E88B]">
                 Vitaminas Manipuladas
               </span>
             </h2>
-            <p className="text-sm text-[#C7BDB0] leading-relaxed">
+            <p className="text-sm text-[#CBE3D6] leading-relaxed">
               Escolha sua especialidade clínica e ative sua assinatura de{' '}
-              <strong className="text-[#FAF5EC]">12 meses</strong> com a{' '}
-              <strong className="text-[#F0D29C]">
-                Nutricionista Dimitra Bratu
-              </strong>
-              : consultas exclusivas por videochamada, fórmulas de vitaminas
+              <strong className="text-[#F4FBF6]">12 meses</strong> com a{' '}
+              <strong className="text-[#DDF3B2]">
+                Nutricionista Dra. Dimitra Bratu
+              </strong>{' '}
+              (formada pela Universidade Gama Filho — Rio de Janeiro, RJ):
+              consultas especializadas por videochamada, fórmulas de vitaminas
               manipuladas prontas para farmácia de manipulação e receitas
               personalizadas para o seu tratamento.
             </p>
           </div>
 
-          <div className="lg:col-span-5 p-5 rounded-2xl bg-[#120E0B]/95 border border-[#D9AF72]/25 space-y-3">
-            <div className="flex items-center gap-2 text-xs font-semibold text-[#F0D29C]">
+          <div className="lg:col-span-5 p-5 rounded-2xl bg-[#0A2622]/95 border border-[#B7DB74]/25 space-y-3">
+            <div className="flex items-center gap-2 text-xs font-semibold text-[#DDF3B2]">
               <VerbenaEmblem className="w-5 h-5" />
               <span>Incluso nos 12 meses de acompanhamento</span>
             </div>
@@ -474,9 +475,9 @@ export function SubscriptionView({
               {INCLUDED_BENEFITS.map((item) => (
                 <li
                   key={item}
-                  className="flex items-start gap-2.5 text-xs text-[#CFC5B8] leading-relaxed"
+                  className="flex items-start gap-2.5 text-xs text-[#CBE3D6] leading-relaxed"
                 >
-                  <Check className="w-3.5 h-3.5 text-[#E8C589] shrink-0 mt-0.5" />
+                  <Check className="w-3.5 h-3.5 text-[#C7E88B] shrink-0 mt-0.5" />
                   <span>{item}</span>
                 </li>
               ))}
@@ -488,10 +489,10 @@ export function SubscriptionView({
       {/* Step 1: Choose Clinical Specialty */}
       <section className="space-y-4">
         <div>
-          <p className="text-xs tracking-[0.2em] text-[#DFBA7C] mb-1">
+          <p className="text-xs tracking-[0.2em] text-[#C7E88B] mb-1">
             Passo 1 de 3
           </p>
-          <h3 className="font-editorial text-3xl font-medium text-[#FAF5EC]">
+          <h3 className="font-editorial text-3xl font-medium text-[#F4FBF6]">
             Escolha a Especialidade do Seu Tratamento & Manipulados
           </h3>
         </div>
@@ -506,33 +507,33 @@ export function SubscriptionView({
                 onClick={() => setSpecialty(spec.id)}
                 className={`text-left p-5 rounded-2xl border transition-all cursor-pointer flex flex-col justify-between gap-3 ${
                   selected
-                    ? 'bg-[#D9AF72]/15 border-[#F0D29C] shadow-[0_0_28px_-10px_rgba(240,210,156,0.45)]'
-                    : 'glass-obsidian hover:border-[#D9AF72]/45'
+                    ? 'bg-[#B7DB74]/15 border-[#DDF3B2] shadow-[0_0_28px_-10px_rgba(240,210,156,0.45)]'
+                    : 'glass-obsidian hover:border-[#B7DB74]/45'
                 }`}
               >
                 <div>
                   <div className="flex items-center justify-between gap-2 mb-2">
-                    <span className="text-[11px] font-medium text-[#DFBA7C]">
+                    <span className="text-[11px] font-medium text-[#C7E88B]">
                       {spec.focusTag}
                     </span>
                     <span
                       className={`w-5 h-5 rounded-full flex items-center justify-center border ${
                         selected
                           ? 'btn-gold border-transparent'
-                          : 'border-[#D9AF72]/35'
+                          : 'border-[#B7DB74]/35'
                       }`}
                     >
                       {selected && <Check className="w-3 h-3" />}
                     </span>
                   </div>
-                  <div className="font-editorial text-2xl font-medium text-[#FAF5EC] leading-snug">
+                  <div className="font-editorial text-2xl font-medium text-[#F4FBF6] leading-snug">
                     {spec.title}
                   </div>
-                  <p className="text-xs text-[#B7ADA0] mt-2 leading-relaxed">
+                  <p className="text-xs text-[#94AED6] mt-2 leading-relaxed">
                     {spec.description}
                   </p>
                 </div>
-                <div className="pt-3 border-t border-[#D9AF72]/14 text-[11px] font-mono text-[#DFBA7C]">
+                <div className="pt-3 border-t border-[#B7DB74]/14 text-[11px] font-mono text-[#C7E88B]">
                   {spec.keyActives}
                 </div>
               </button>
@@ -546,17 +547,17 @@ export function SubscriptionView({
         {/* Step 2: Clinical Intake */}
         <section className="lg:col-span-6 glass-obsidian rounded-2xl p-6 space-y-4">
           <div>
-            <p className="text-xs tracking-[0.2em] text-[#DFBA7C] mb-1">
+            <p className="text-xs tracking-[0.2em] text-[#C7E88B] mb-1">
               Passo 2 de 3
             </p>
-            <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+            <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
               Seus Dados para o Atendimento Exclusivo
             </h3>
           </div>
 
           <div className="space-y-4">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Nome completo do paciente assinante
               </label>
               <input
@@ -565,12 +566,12 @@ export function SubscriptionView({
                 value={subscriberName}
                 onChange={(e) => setSubscriberName(e.target.value)}
                 placeholder="Seu nome completo"
-                className="w-full px-4 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-4 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 WhatsApp para lembretes de videochamada
               </label>
               <input
@@ -578,12 +579,12 @@ export function SubscriptionView({
                 value={phone}
                 onChange={(e) => setPhone(e.target.value)}
                 placeholder="(11) 99999-0000"
-                className="w-full px-4 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-4 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Principal queixa de saúde ou objetivo para a Dra. Dimitra
               </label>
               <textarea
@@ -591,12 +592,12 @@ export function SubscriptionView({
                 value={healthFocus}
                 onChange={(e) => setHealthFocus(e.target.value)}
                 placeholder="Ex.: Quero ajustar exames de vitamina D e ferritina, melhorar disposição, sono e montar uma fórmula manipulada sob medida."
-                className="w-full px-4 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none"
+                className="w-full px-4 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Alergias, restrições alimentares ou medicações em uso
               </label>
               <input
@@ -604,7 +605,7 @@ export function SubscriptionView({
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
                 placeholder="Ex.: Intolerância à lactose, sem glúten..."
-                className="w-full px-4 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-4 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
           </div>
@@ -613,10 +614,10 @@ export function SubscriptionView({
         {/* Step 3: 12-Month Payment */}
         <section className="lg:col-span-6 glass-obsidian rounded-2xl p-6 space-y-5">
           <div>
-            <p className="text-xs tracking-[0.2em] text-[#DFBA7C] mb-1">
+            <p className="text-xs tracking-[0.2em] text-[#C7E88B] mb-1">
               Passo 3 de 3
             </p>
-            <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+            <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
               Pagamento Referente a 12 Meses
             </h3>
           </div>
@@ -632,31 +633,31 @@ export function SubscriptionView({
                   onClick={() => setPaymentMethod(opt.id)}
                   className={`w-full text-left p-4 rounded-xl border transition-all cursor-pointer flex items-center justify-between gap-4 ${
                     selected
-                      ? 'bg-[#D9AF72]/15 border-[#F0D29C]'
-                      : 'bg-[#120E0B] border-[#D9AF72]/18 hover:border-[#D9AF72]/45'
+                      ? 'bg-[#B7DB74]/15 border-[#DDF3B2]'
+                      : 'bg-[#0A2622] border-[#B7DB74]/18 hover:border-[#B7DB74]/45'
                   }`}
                 >
                   <div className="flex items-center gap-3 min-w-0">
-                    <div className="w-9 h-9 rounded-lg bg-[#D9AF72]/12 border border-[#D9AF72]/30 flex items-center justify-center shrink-0">
-                      <Icon className="w-4 h-4 text-[#E8C589]" />
+                    <div className="w-9 h-9 rounded-lg bg-[#B7DB74]/12 border border-[#B7DB74]/30 flex items-center justify-center shrink-0">
+                      <Icon className="w-4 h-4 text-[#C7E88B]" />
                     </div>
                     <div className="min-w-0">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="text-sm font-semibold text-[#FAF5EC]">
+                        <span className="text-sm font-semibold text-[#F4FBF6]">
                           {opt.title}
                         </span>
                         {opt.badge && (
-                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#D9AF72]/20 text-[#F0D29C]">
+                          <span className="text-[10px] font-semibold px-2 py-0.5 rounded-full bg-[#B7DB74]/20 text-[#DDF3B2]">
                             {opt.badge}
                           </span>
                         )}
                       </div>
-                      <div className="text-xs text-[#9D9284] mt-0.5">
+                      <div className="text-xs text-[#85AF9B] mt-0.5">
                         {opt.installmentLabel}
                       </div>
                     </div>
                   </div>
-                  <div className="text-right font-mono tabular-nums text-sm font-semibold text-[#F0D29C] shrink-0">
+                  <div className="text-right font-mono tabular-nums text-sm font-semibold text-[#DDF3B2] shrink-0">
                     {opt.priceText}
                   </div>
                 </button>
@@ -664,21 +665,21 @@ export function SubscriptionView({
             })}
           </div>
 
-          <div className="p-4 rounded-xl bg-[#120E0B] border border-[#D9AF72]/16 space-y-2 text-xs">
-            <div className="flex justify-between text-[#BDB2A4]">
+          <div className="p-4 rounded-xl bg-[#0A2622] border border-[#B7DB74]/16 space-y-2 text-xs">
+            <div className="flex justify-between text-[#A8CCB9]">
               <span>Programa Anual (12 meses)</span>
-              <span className="font-mono tabular-nums text-[#FAF5EC]">
+              <span className="font-mono tabular-nums text-[#F4FBF6]">
                 {SPECIALTY_LABELS[specialty]}
               </span>
             </div>
-            <div className="flex justify-between text-[#BDB2A4]">
+            <div className="flex justify-between text-[#A8CCB9]">
               <span>Condição escolhida</span>
-              <span className="font-mono tabular-nums font-semibold text-[#F0D29C]">
+              <span className="font-mono tabular-nums font-semibold text-[#DDF3B2]">
                 {selectedPayment.priceText}
               </span>
             </div>
-            <div className="pt-2 border-t border-[#D9AF72]/12 flex items-start gap-2 text-[11px] text-[#8D8274]">
-              <ShieldCheck className="w-4 h-4 text-[#D9AF72] shrink-0 mt-0.5" />
+            <div className="pt-2 border-t border-[#B7DB74]/12 flex items-start gap-2 text-[11px] text-[#85AF9B]">
+              <ShieldCheck className="w-4 h-4 text-[#B7DB74] shrink-0 mt-0.5" />
               <span>
                 Confirmação imediata de matrícula anual (ambiente integrado sem
                 cobrança de cartão real). Acesso liberado instantaneamente para

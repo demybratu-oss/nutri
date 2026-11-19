@@ -47,7 +47,7 @@ const DEFAULT_RECIPE = {
 };
 
 const INPUT_CLASS =
-  'w-full px-3.5 py-2 text-sm bg-[#120E0B] text-[#FAF5EC] placeholder-[#6F6559] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589]';
+  'w-full px-3.5 py-2 text-sm bg-[#0A2622] text-[#F4FBF6] placeholder-[#85AF9B] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B]';
 
 export function RecipeModal({
   open,
@@ -149,11 +149,11 @@ export function RecipeModal({
       aria-modal="true"
       aria-labelledby="recipe-modal-title"
     >
-      <div className="glass-obsidian border-[#D9AF72]/30 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
-        <div className="flex items-center justify-between px-6 py-4 border-b border-[#D9AF72]/15">
+      <div className="glass-obsidian border-[#B7DB74]/30 rounded-2xl w-full max-w-3xl max-h-[90vh] flex flex-col overflow-hidden">
+        <div className="flex items-center justify-between px-6 py-4 border-b border-[#B7DB74]/15">
           <h2
             id="recipe-modal-title"
-            className="font-editorial text-2xl font-medium text-[#FAF5EC]"
+            className="font-editorial text-2xl font-medium text-[#F4FBF6]"
           >
             {initialRecipe ? 'Editar Receita' : 'Nova Receita Clínica'}
           </h2>
@@ -161,7 +161,7 @@ export function RecipeModal({
             type="button"
             onClick={onClose}
             aria-label="Fechar janela"
-            className="p-2 text-[#A89E90] hover:text-[#FAF5EC] rounded-lg hover:bg-[#D9AF72]/10 transition-colors cursor-pointer"
+            className="p-2 text-[#A8CCB9] hover:text-[#F4FBF6] rounded-lg hover:bg-[#B7DB74]/10 transition-colors cursor-pointer"
           >
             <X className="w-4 h-4" />
           </button>
@@ -176,7 +176,7 @@ export function RecipeModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="sm:col-span-2">
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Título da receita
               </label>
               <input
@@ -191,7 +191,7 @@ export function RecipeModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Refeição indicada
               </label>
               <select
@@ -213,7 +213,7 @@ export function RecipeModal({
           </div>
 
           <div>
-            <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+            <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
               Descrição breve
             </label>
             <input
@@ -228,7 +228,7 @@ export function RecipeModal({
 
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Medida da porção
               </label>
               <input
@@ -244,7 +244,7 @@ export function RecipeModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Tempo (min)
               </label>
               <input
@@ -259,7 +259,7 @@ export function RecipeModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Rendimento (porções)
               </label>
               <input
@@ -274,7 +274,7 @@ export function RecipeModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Foto ilustrativa
               </label>
               <select
@@ -291,8 +291,8 @@ export function RecipeModal({
             </div>
           </div>
 
-          <div className="pt-4 border-t border-[#D9AF72]/14 space-y-3">
-            <h3 className="text-xs font-semibold tracking-wider text-[#E8C589]">
+          <div className="pt-4 border-t border-[#B7DB74]/14 space-y-3">
+            <h3 className="text-xs font-semibold tracking-wider text-[#C7E88B]">
               Informação nutricional (por porção)
             </h3>
             <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
@@ -304,7 +304,7 @@ export function RecipeModal({
                 { label: 'Fibras (g)', key: 'fiberG', max: 80, step: '0.5' },
               ].map((f) => (
                 <div key={f.key}>
-                  <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                  <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                     {f.label}
                   </label>
                   <input
@@ -323,9 +323,9 @@ export function RecipeModal({
             </div>
           </div>
 
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#D9AF72]/14">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-4 border-t border-[#B7DB74]/14">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Ingredientes (um por linha)
               </label>
               <textarea
@@ -339,7 +339,7 @@ export function RecipeModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Modo de preparo (um passo por linha)
               </label>
               <textarea
@@ -356,7 +356,7 @@ export function RecipeModal({
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Características dietéticas (separadas por vírgula)
               </label>
               <input
@@ -368,7 +368,7 @@ export function RecipeModal({
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Orientação clínica / substituição
               </label>
               <input
@@ -384,11 +384,11 @@ export function RecipeModal({
             </div>
           </div>
 
-          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#D9AF72]/14">
+          <div className="flex items-center justify-end gap-3 pt-4 border-t border-[#B7DB74]/14">
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 text-xs font-medium text-[#FAF5EC] bg-[#15110E] border border-[#D9AF72]/25 rounded-full hover:border-[#E8C589] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="px-5 py-2.5 text-xs font-medium text-[#F4FBF6] bg-[#0E332D] border border-[#B7DB74]/25 rounded-full hover:border-[#C7E88B] transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
               Cancelar
             </button>

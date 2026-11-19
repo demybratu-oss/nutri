@@ -8,8 +8,10 @@ import {
   CheckCircle2,
   Clock,
   FlaskConical,
+  Mail,
   Mic,
   MicOff,
+  Phone,
   PhoneOff,
   Plus,
   Save,
@@ -24,13 +26,23 @@ import {
 } from '../lib/firestoreService';
 import {
   AnnualSubscription,
+  buildSpecialistWhatsAppUrl,
   CLINICAL_SPECIALTIES,
   ClinicalSpecialty,
   Patient,
+  SPECIALIST_ACADEMIC_FORMATION,
+  SPECIALIST_PROFILE,
   SPECIALTY_LABELS,
   VideoSession,
 } from '../types';
-import { SpotlightCard, VerbenaEmblem } from './LuxuryPrimitives';
+import { SpotlightCard } from './LuxuryPrimitives';
+
+export interface VideoCallPrefill {
+  patientId?: string;
+  patientName?: string;
+  specialty: ClinicalSpecialty;
+  chiefComplaint: string;
+}
 
 interface VideoConsultationViewProps {
   userId: string;
@@ -40,6 +52,8 @@ interface VideoConsultationViewProps {
   specialistAvatarUrl?: string;
   initialSessionId?: string | null;
   onConsumeInitialSession?: () => void;
+  prefill?: VideoCallPrefill | null;
+  onConsumePrefill?: () => void;
   onCreateCompoundingFromCall: (params: {
     patientId: string;
     patientName: string;
@@ -65,6 +79,8 @@ export function VideoConsultationView({
   specialistAvatarUrl,
   initialSessionId,
   onConsumeInitialSession,
+  prefill,
+  onConsumePrefill,
   onCreateCompoundingFromCall,
   onOpenRecipes,
   onNotify,
@@ -127,6 +143,15 @@ export function VideoConsultationView({
     onConsumeInitialSession?.();
     void handleJoinExisting(target);
   }, [initialSessionId, videoSessions]);
+
+  useEffect(() => {
+    if (!prefill) return;
+    if (prefill.patientId) setSelectedPatientId(prefill.patientId);
+    if (prefill.patientName) setCustomPatientName(prefill.patientName);
+    setSpecialty(prefill.specialty);
+    if (prefill.chiefComplaint) setChiefComplaint(prefill.chiefComplaint);
+    onConsumePrefill?.();
+  }, [prefill]);
 
   useEffect(() => {
     if (!inCall) return;
@@ -305,17 +330,17 @@ export function VideoConsultationView({
         <SpotlightCard glowRim className="rounded-3xl overflow-hidden">
           <div className="grid grid-cols-1 lg:grid-cols-12">
             {/* Left Video Stage */}
-            <div className="lg:col-span-7 bg-[#090705] p-5 sm:p-6 flex flex-col justify-between gap-4 border-b lg:border-b-0 lg:border-r border-[#D9AF72]/18">
+            <div className="lg:col-span-7 bg-[#041210] p-5 sm:p-6 flex flex-col justify-between gap-4 border-b lg:border-b-0 lg:border-r border-[#B7DB74]/18">
               <div className="flex items-center justify-between gap-3">
                 <div>
-                  <p className="text-[11px] tracking-[0.18em] text-[#DFBA7C] font-medium">
+                  <p className="text-[11px] tracking-[0.18em] text-[#C7E88B] font-medium">
                     SALA EXCLUSIVA · VIDEOCHAMADA
                   </p>
-                  <h2 className="font-editorial text-2xl text-[#FAF5EC]">
+                  <h2 className="font-editorial text-2xl text-[#F4FBF6]">
                     Nutricionista Dimitra Bratu & {activeSession.patientName}
                   </h2>
                 </div>
-                <div className="px-3 py-1 rounded-full bg-[#19130F] border border-[#D9AF72]/35 font-mono tabular-nums text-xs text-[#F0D29C] shrink-0">
+                <div className="px-3 py-1 rounded-full bg-[#144239] border border-[#B7DB74]/35 font-mono tabular-nums text-xs text-[#DDF3B2] shrink-0">
                   {formatTimer(callSeconds)}
                 </div>
               </div>
@@ -323,32 +348,32 @@ export function VideoConsultationView({
               {/* Split Video Frames: Dra. Dimitra Stage + Local Patient/Camera Feed */}
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 {/* Dra. Dimitra Bratu Clinical Presence */}
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-[#1C150F] via-[#120E0A] to-[#0A0806] border border-[#D9AF72]/30 flex flex-col items-center justify-center p-5 text-center">
-                  {specialistAvatarUrl ? (
-                    <img
-                      src={specialistAvatarUrl}
-                      alt="Nutricionista Dimitra Bratu"
-                      referrerPolicy="no-referrer"
-                      className="w-20 h-20 rounded-full object-cover border-2 border-[#E8C589]/70 mb-3 shadow-[0_0_40px_-6px_rgba(217,175,114,0.45)]"
-                    />
-                  ) : (
-                    <div className="w-16 h-16 rounded-full bg-[#D9AF72]/14 border border-[#E8C589]/55 flex items-center justify-center mb-3 shadow-[0_0_40px_-6px_rgba(217,175,114,0.45)]">
-                      <VerbenaEmblem className="w-9 h-9" />
-                    </div>
-                  )}
-                  <div className="font-editorial text-2xl text-[#FAF5EC]">
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-gradient-to-br from-[#144239] via-[#061A17] to-[#041210] border border-[#B7DB74]/30 flex flex-col items-center justify-center p-5 text-center">
+                  <img
+                    src={specialistAvatarUrl || SPECIALIST_PROFILE.photoUrl}
+                    alt="Nutricionista Dra. Dimitra Bratu"
+                    referrerPolicy="no-referrer"
+                    className="w-24 h-24 rounded-full object-cover object-top border-2 border-[#C7E88B]/75 mb-3 shadow-[0_0_40px_-6px_rgba(183,219,116,0.38)]"
+                  />
+                  <div className="font-editorial text-2xl text-[#F4FBF6]">
                     Dra. Dimitra Bratu
                   </div>
-                  <div className="text-xs text-[#DFBA7C] mt-0.5">
+                  <div className="text-xs text-[#C7E88B] mt-0.5">
                     Nutricionista Clínica Especialista
                   </div>
-                  <div className="mt-3 text-[11px] px-3 py-1 rounded-full bg-[#D9AF72]/12 border border-[#D9AF72]/28 text-[#E8C589]">
+                  <div className="text-[11px] text-[#A8CCB9] mt-0.5">
+                    Universidade Gama Filho · Rio de Janeiro - RJ
+                  </div>
+                  <div className="text-[11px] font-mono text-[#DDF3B2] mt-1">
+                    {SPECIALIST_PROFILE.email} · {SPECIALIST_PROFILE.phoneDisplay}
+                  </div>
+                  <div className="mt-3 text-[11px] px-3 py-1 rounded-full bg-[#B7DB74]/12 border border-[#B7DB74]/28 text-[#C7E88B]">
                     {SPECIALTY_LABELS[activeSession.specialty]}
                   </div>
                 </div>
 
                 {/* Live Local Camera Feed */}
-                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#110D0A] border border-[#D9AF72]/25 flex items-center justify-center">
+                <div className="relative aspect-[4/3] rounded-2xl overflow-hidden bg-[#07201C] border border-[#B7DB74]/25 flex items-center justify-center">
                   <video
                     ref={localVideoRef}
                     autoPlay
@@ -360,25 +385,25 @@ export function VideoConsultationView({
                   />
                   {(!camEnabled || mediaError) && (
                     <div className="p-4 text-center space-y-2">
-                      <VideoOff className="w-8 h-8 text-[#8D8274] mx-auto" />
-                      <div className="text-xs font-medium text-[#FAF5EC]">
+                      <VideoOff className="w-8 h-8 text-[#85AF9B] mx-auto" />
+                      <div className="text-xs font-medium text-[#F4FBF6]">
                         {activeSession.patientName}
                       </div>
-                      <p className="text-[11px] text-[#8D8274] leading-relaxed">
+                      <p className="text-[11px] text-[#85AF9B] leading-relaxed">
                         {mediaError || 'Câmera pausada'}
                       </p>
                       {mediaError && (
                         <button
                           type="button"
                           onClick={startLocalMedia}
-                          className="text-[11px] text-[#E8C589] hover:underline cursor-pointer"
+                          className="text-[11px] text-[#C7E88B] hover:underline cursor-pointer"
                         >
                           Tentar ativar câmera novamente
                         </button>
                       )}
                     </div>
                   )}
-                  <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-full bg-black/70 text-[11px] text-[#FAF5EC] backdrop-blur-xs">
+                  <div className="absolute bottom-2.5 left-3 px-2.5 py-1 rounded-full bg-black/70 text-[11px] text-[#F4FBF6] backdrop-blur-xs">
                     Você · {activeSession.patientName.split(' ')[0]}
                   </div>
                 </div>
@@ -391,12 +416,12 @@ export function VideoConsultationView({
                   onClick={toggleMic}
                   className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-medium border transition-colors cursor-pointer ${
                     micEnabled
-                      ? 'bg-[#18130F] border-[#D9AF72]/35 text-[#FAF5EC]'
+                      ? 'bg-[#144239] border-[#B7DB74]/35 text-[#F4FBF6]'
                       : 'bg-red-950/70 border-red-400/40 text-red-200'
                   }`}
                 >
                   {micEnabled ? (
-                    <Mic className="w-4 h-4 text-[#E8C589]" />
+                    <Mic className="w-4 h-4 text-[#C7E88B]" />
                   ) : (
                     <MicOff className="w-4 h-4" />
                   )}
@@ -408,12 +433,12 @@ export function VideoConsultationView({
                   onClick={toggleCam}
                   className={`inline-flex items-center gap-2 px-4 py-2.5 rounded-full text-xs font-medium border transition-colors cursor-pointer ${
                     camEnabled
-                      ? 'bg-[#18130F] border-[#D9AF72]/35 text-[#FAF5EC]'
+                      ? 'bg-[#144239] border-[#B7DB74]/35 text-[#F4FBF6]'
                       : 'bg-red-950/70 border-red-400/40 text-red-200'
                   }`}
                 >
                   {camEnabled ? (
-                    <Camera className="w-4 h-4 text-[#E8C589]" />
+                    <Camera className="w-4 h-4 text-[#C7E88B]" />
                   ) : (
                     <CameraOff className="w-4 h-4" />
                   )}
@@ -432,20 +457,20 @@ export function VideoConsultationView({
             </div>
 
             {/* Right Clinical Notes & Prescription Handoff */}
-            <div className="lg:col-span-5 p-5 sm:p-6 bg-[#130F0C] flex flex-col gap-4">
+            <div className="lg:col-span-5 p-5 sm:p-6 bg-[#0A2622] flex flex-col gap-4">
               <div>
-                <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+                <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                   Prontuário da Videochamada
                 </h3>
-                <p className="text-xs text-[#A89E90] mt-0.5">
+                <p className="text-xs text-[#A8CCB9] mt-0.5">
                   Registre sintomas, exames e condutas para gerar imediatamente as
                   vitaminas manipuladas.
                 </p>
               </div>
 
               {activeSession.chiefComplaint && (
-                <div className="p-3 rounded-xl bg-[#0F0C09] border border-[#D9AF72]/18 text-xs text-[#CFC5B8]">
-                  <span className="text-[#DFBA7C] font-medium block mb-0.5">
+                <div className="p-3 rounded-xl bg-[#061A17] border border-[#B7DB74]/18 text-xs text-[#CBE3D6]">
+                  <span className="text-[#C7E88B] font-medium block mb-0.5">
                     Queixa principal informada:
                   </span>
                   {activeSession.chiefComplaint}
@@ -457,7 +482,7 @@ export function VideoConsultationView({
                 value={callNotesDraft}
                 onChange={(e) => setCallNotesDraft(e.target.value)}
                 placeholder="Ex.: Paciente relata fadiga à tarde, vitamina D em 22 ng/mL, ferritina 28, sono fragmentado. Combinado fórmula manipulada noturna + ajuste de café da manhã proteico..."
-                className="w-full flex-1 px-4 py-3 text-sm bg-[#0B0907] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none leading-relaxed"
+                className="w-full flex-1 px-4 py-3 text-sm bg-[#041210] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none leading-relaxed"
               />
 
               <div className="flex flex-wrap gap-2.5">
@@ -465,9 +490,9 @@ export function VideoConsultationView({
                   type="button"
                   disabled={savingNotes}
                   onClick={handleSaveCallNotes}
-                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-medium text-[#F5EFE6] border border-[#D9AF72]/35 hover:border-[#F0D29C] hover:bg-[#D9AF72]/10 transition-colors cursor-pointer"
+                  className="inline-flex items-center gap-1.5 px-4 py-2.5 rounded-full text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/35 hover:border-[#DDF3B2] hover:bg-[#B7DB74]/10 transition-colors cursor-pointer"
                 >
-                  <Save className="w-3.5 h-3.5 text-[#E8C589]" />
+                  <Save className="w-3.5 h-3.5 text-[#C7E88B]" />
                   <span>{savingNotes ? 'Salvando...' : 'Salvar notas'}</span>
                 </button>
                 <button
@@ -501,24 +526,44 @@ export function VideoConsultationView({
         {/* New Video Session Form */}
         <SpotlightCard className="lg:col-span-5 p-6 space-y-5">
           <div>
-            <p className="text-xs tracking-[0.2em] text-[#DFBA7C] mb-1">
-              Atendimento por vídeo
+            <p className="text-xs font-medium text-[#C7E88B] mb-1">
+              {SPECIALIST_ACADEMIC_FORMATION}
             </p>
-            <h2 className="font-editorial text-3xl font-medium text-[#FAF5EC] leading-tight">
+            <h2 className="font-editorial text-3xl font-bold text-[#F4FBF6] leading-tight">
               Videochamada com a{' '}
-              <span className="italic text-[#E8C589]">Dra. Dimitra Bratu</span>
+              <span className="text-[#C7E88B]">Dra. Dimitra Bratu</span>
             </h2>
-            <p className="text-xs text-[#A89E90] mt-1.5 leading-relaxed">
-              Agende ou inicie agora sua consulta por vídeo para avaliação
-              individualizada de saúde, definição das vitaminas manipuladas e
-              receitas terapêuticas.
+            <p className="text-xs text-[#A8CCB9] mt-1.5 leading-relaxed">
+              Agende ou inicie agora sua consulta especializada por vídeo para
+              avaliação individualizada de saúde, leitura de exames, definição
+              das vitaminas manipuladas e receitas terapêuticas.
             </p>
+            <div className="flex flex-wrap items-center gap-x-4 gap-y-1.5 pt-2.5 text-[11px] font-mono text-[#DDF3B2]">
+              <a
+                href={buildSpecialistWhatsAppUrl(
+                  'Olá Dra. Dimitra Bratu! Gostaria de confirmar minha consulta por videochamada.'
+                )}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 hover:text-white transition-colors"
+              >
+                <Phone className="w-3 h-3 text-[#B7DB74]" />
+                <span>WhatsApp {SPECIALIST_PROFILE.phoneDisplay}</span>
+              </a>
+              <a
+                href={`mailto:${SPECIALIST_PROFILE.email}`}
+                className="inline-flex items-center gap-1.5 text-[#A8CCB9] hover:text-white transition-colors"
+              >
+                <Mail className="w-3 h-3 text-[#B7DB74]" />
+                <span>{SPECIALIST_PROFILE.email}</span>
+              </a>
+            </div>
           </div>
 
           <div className="space-y-4">
             {patients.length > 0 && (
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Paciente cadastrado (opcional)
                 </label>
                 <select
@@ -528,7 +573,7 @@ export function VideoConsultationView({
                     const found = patients.find((p) => p.id === e.target.value);
                     if (found) setCustomPatientName(found.fullName);
                   }}
-                  className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 >
                   <option value="">Selecionar ou informar nome abaixo</option>
                   {patients.map((p) => (
@@ -541,7 +586,7 @@ export function VideoConsultationView({
             )}
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Nome do paciente
               </label>
               <input
@@ -549,12 +594,12 @@ export function VideoConsultationView({
                 value={customPatientName}
                 onChange={(e) => setCustomPatientName(e.target.value)}
                 placeholder="Nome completo do paciente"
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Especialidade do tratamento nutricional
               </label>
               <select
@@ -562,7 +607,7 @@ export function VideoConsultationView({
                 onChange={(e) =>
                   setSpecialty(e.target.value as ClinicalSpecialty)
                 }
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
               >
                 {CLINICAL_SPECIALTIES.map((spec) => (
                   <option key={spec.id} value={spec.id}>
@@ -574,34 +619,34 @@ export function VideoConsultationView({
 
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Data
                 </label>
                 <input
                   type="date"
                   value={scheduledDate}
                   onChange={(e) => setScheduledDate(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Horário
                 </label>
                 <input
                   type="time"
                   value={scheduledTime}
                   onChange={(e) => setScheduledTime(e.target.value)}
-                  className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589]"
+                  className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B]"
                 />
               </div>
             </div>
 
             {occupiedSlotsForDate.length > 0 && (
-              <div className="text-xs text-[#A89E90] space-y-1">
+              <div className="text-xs text-[#A8CCB9] space-y-1">
                 <div className="font-mono tabular-nums">
                   Horários ocupados em {scheduledDate}:{' '}
-                  <span className="text-[#DFBA7C]">
+                  <span className="text-[#C7E88B]">
                     {occupiedSlotsForDate
                       .map(
                         (s) =>
@@ -620,7 +665,7 @@ export function VideoConsultationView({
             )}
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Queixa principal / exames para avaliar no vídeo
               </label>
               <textarea
@@ -628,7 +673,7 @@ export function VideoConsultationView({
                 value={chiefComplaint}
                 onChange={(e) => setChiefComplaint(e.target.value)}
                 placeholder="Descreva sintomas, exames recentes ou dúvidas para a Dra. Dimitra Bratu..."
-                className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/25 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none"
+                className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/25 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none"
               />
             </div>
 
@@ -646,9 +691,9 @@ export function VideoConsultationView({
                 type="button"
                 disabled={creating}
                 onClick={() => handleScheduleOrStart(false)}
-                className="inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-medium text-[#F5EFE6] border border-[#D9AF72]/35 rounded-full hover:border-[#F0D29C] hover:bg-[#D9AF72]/10 transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap"
+                className="inline-flex items-center justify-center gap-2 px-5 py-3 text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/35 rounded-full hover:border-[#DDF3B2] hover:bg-[#B7DB74]/10 transition-colors cursor-pointer disabled:opacity-60 whitespace-nowrap"
               >
-                <Plus className="w-4 h-4 text-[#E8C589]" />
+                <Plus className="w-4 h-4 text-[#C7E88B]" />
                 <span>Agendar</span>
               </button>
             </div>
@@ -657,12 +702,12 @@ export function VideoConsultationView({
 
         {/* Sessions List */}
         <section className="lg:col-span-7 glass-obsidian rounded-2xl overflow-hidden">
-          <div className="px-6 py-4 border-b border-[#D9AF72]/16 flex items-center justify-between gap-3">
+          <div className="px-6 py-4 border-b border-[#B7DB74]/16 flex items-center justify-between gap-3">
             <div>
-              <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+              <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                 Agenda & Histórico de Videochamadas
               </h3>
-              <p className="text-xs text-[#A89E90]">
+              <p className="text-xs text-[#A8CCB9]">
                 Entre na sala ou gere diretamente as vitaminas manipuladas após a
                 consulta
               </p>
@@ -670,7 +715,7 @@ export function VideoConsultationView({
             <button
               type="button"
               onClick={onOpenRecipes}
-              className="text-xs font-medium text-[#E5C38A] hover:text-[#F7DFB3] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
+              className="text-xs font-medium text-[#C7E88B] hover:text-[#DDF3B2] inline-flex items-center gap-1.5 cursor-pointer whitespace-nowrap"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Receitas</span>
@@ -679,26 +724,26 @@ export function VideoConsultationView({
 
           {videoSessions.length === 0 ? (
             <div className="p-8 text-center space-y-2">
-              <Video className="w-8 h-8 text-[#D9AF72]/60 mx-auto" />
-              <div className="text-sm font-medium text-[#FAF5EC]">
+              <Video className="w-8 h-8 text-[#B7DB74]/60 mx-auto" />
+              <div className="text-sm font-medium text-[#F4FBF6]">
                 Nenhuma videochamada registrada ainda
               </div>
-              <p className="text-xs text-[#8D8274] max-w-md mx-auto">
+              <p className="text-xs text-[#85AF9B] max-w-md mx-auto">
                 Use o painel ao lado para iniciar sua consulta por vídeo agora ou
                 agendar um horário com a Nutricionista Dimitra Bratu.
               </p>
             </div>
           ) : (
-            <div className="divide-y divide-[#D9AF72]/12">
+            <div className="divide-y divide-[#B7DB74]/12">
               {videoSessions.map((session) => (
                 <div
                   key={session.id}
-                  className="p-5 hover:bg-[#D9AF72]/5 transition-colors space-y-3"
+                  className="p-5 hover:bg-[#B7DB74]/5 transition-colors space-y-3"
                 >
                   <div className="flex flex-wrap items-start justify-between gap-3">
                     <div>
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-medium text-[#FAF5EC]">
+                        <span className="font-medium text-[#F4FBF6]">
                           {session.patientName}
                         </span>
                         <span
@@ -706,17 +751,17 @@ export function VideoConsultationView({
                             session.status === 'concluida'
                               ? 'border-emerald-400/35 bg-emerald-950/50 text-emerald-300'
                               : session.status === 'em_andamento'
-                              ? 'border-[#F0D29C]/60 bg-[#D9AF72]/18 text-[#F0D29C]'
-                              : 'border-[#D9AF72]/28 bg-[#1A140F] text-[#DFBA7C]'
+                              ? 'border-[#DDF3B2]/60 bg-[#B7DB74]/18 text-[#DDF3B2]'
+                              : 'border-[#B7DB74]/28 bg-[#144239] text-[#C7E88B]'
                           }`}
                         >
                           {STATUS_LABELS[session.status]}
                         </span>
                       </div>
-                      <div className="text-xs text-[#DFBA7C] mt-1">
+                      <div className="text-xs text-[#C7E88B] mt-1">
                         {SPECIALTY_LABELS[session.specialty]}
                       </div>
-                      <div className="flex items-center gap-4 text-xs font-mono tabular-nums text-[#8D8274] mt-1">
+                      <div className="flex items-center gap-4 text-xs font-mono tabular-nums text-[#85AF9B] mt-1">
                         <span className="inline-flex items-center gap-1">
                           <Calendar className="w-3 h-3" />
                           {session.scheduledDate}
@@ -759,7 +804,7 @@ export function VideoConsultationView({
                               .join('\n'),
                           })
                         }
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#F0D29C] border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/14 transition-colors cursor-pointer whitespace-nowrap"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#DDF3B2] border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/14 transition-colors cursor-pointer whitespace-nowrap"
                       >
                         <FlaskConical className="w-3.5 h-3.5" />
                         <span>Gerar manipulados</span>
@@ -777,7 +822,7 @@ export function VideoConsultationView({
                           onNotify('Registro de videochamada removido.');
                         }}
                         aria-label="Excluir videochamada"
-                        className="p-1.5 text-[#8D8274] hover:text-red-300 rounded-lg transition-colors cursor-pointer"
+                        className="p-1.5 text-[#85AF9B] hover:text-red-300 rounded-lg transition-colors cursor-pointer"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                       </button>
@@ -785,16 +830,16 @@ export function VideoConsultationView({
                   </div>
 
                   {(session.chiefComplaint || session.callNotes) && (
-                    <div className="p-3 rounded-xl bg-[#100D0A] border border-[#D9AF72]/14 text-xs text-[#BDB2A4] space-y-1">
+                    <div className="p-3 rounded-xl bg-[#07201C] border border-[#B7DB74]/14 text-xs text-[#A8CCB9] space-y-1">
                       {session.chiefComplaint && (
                         <div>
-                          <span className="text-[#DFBA7C]">Objetivo:</span>{' '}
+                          <span className="text-[#C7E88B]">Objetivo:</span>{' '}
                           {session.chiefComplaint}
                         </div>
                       )}
                       {session.callNotes && (
                         <div className="flex items-start gap-1.5">
-                          <CheckCircle2 className="w-3.5 h-3.5 text-[#E8C589] shrink-0 mt-0.5" />
+                          <CheckCircle2 className="w-3.5 h-3.5 text-[#C7E88B] shrink-0 mt-0.5" />
                           <span className="line-clamp-3">{session.callNotes}</span>
                         </div>
                       )}

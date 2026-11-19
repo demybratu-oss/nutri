@@ -820,9 +820,14 @@ export function subscribeToSiteSettings(
         onData(DEFAULT_SITE_SETTINGS);
         return;
       }
+      const remote = snap.data() as Partial<SiteSettings>;
       onData({
         ...DEFAULT_SITE_SETTINGS,
-        ...(snap.data() as Partial<SiteSettings>),
+        ...remote,
+        whatsappContact:
+          remote.whatsappContact && remote.whatsappContact.trim().length > 0
+            ? remote.whatsappContact
+            : DEFAULT_SITE_SETTINGS.whatsappContact,
       });
     },
     () => {

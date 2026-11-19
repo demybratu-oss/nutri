@@ -8,6 +8,13 @@ export const RECIPE_IMAGES = {
   abobora: '/src/assets/images/recipe_creme_abobora_1795058608905.jpg',
 } as const;
 
+export const BOTANICAL_THEME_IMAGES = {
+  heroWaterfall: '/src/assets/images/hero_botanical_waterfall_1795063828458.jpg',
+  apothecaryVessel: '/src/assets/images/apothecary_emerald_vessel_1795063830537.jpg',
+  bioactivesEditorial: '/src/assets/images/botanical_bioactives_editorial_1795063830576.jpg',
+  springWaterBackdrop: '/src/assets/images/emerald_spring_water_texture_1795063830580.jpg',
+} as const;
+
 export function buildDemoClinicalData(uid: string): {
   patients: Array<Omit<Patient, 'createdAt' | 'updatedAt'>>;
   recipes: Array<Omit<Recipe, 'createdAt' | 'updatedAt'>>;

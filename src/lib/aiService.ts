@@ -191,11 +191,24 @@ export interface DimitraGuestProfile {
   restrictions?: string;
 }
 
+export interface SpecialistEscalation {
+  needsSpecialistVideo: boolean;
+  specialty:
+    | 'metabolica_emagrecimento'
+    | 'imunidade_longevidade'
+    | 'saude_intestinal'
+    | 'saude_mulher_hormonal'
+    | 'performance_massa_magra'
+    | 'sono_ansiedade_cognicao';
+  reason: string;
+}
+
 export interface DimitraConsultationResponse {
   reply: string;
   sources: GroundingSource[];
   searchQueries: string[];
   suggestedFollowUps: string[];
+  specialistEscalation?: SpecialistEscalation | null;
   generatedAt: string;
 }
 

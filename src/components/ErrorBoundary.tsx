@@ -39,15 +39,15 @@ export class ErrorBoundary extends React.Component<
       }
 
       return (
-        <div className="min-h-screen bg-[#0B0907] text-[#F5EFE6] flex items-center justify-center p-6">
+        <div className="min-h-screen bg-[#041210] text-[#F4FBF6] flex items-center justify-center p-6">
           <div className="max-w-lg w-full glass-obsidian rounded-2xl p-8">
             <div className="flex items-center gap-3 text-amber-400 mb-4">
               <AlertTriangle className="w-5 h-5 shrink-0" />
-              <h1 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+              <h1 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
                 Não foi possível concluir a operação
               </h1>
             </div>
-            <p className="text-sm text-[#BEB4A7] leading-relaxed mb-6">
+            <p className="text-sm text-[#CBE3D6] leading-relaxed mb-6">
               {friendlyMessage}
             </p>
             <button

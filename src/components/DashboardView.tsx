@@ -114,14 +114,14 @@ export function DashboardView({
     return (
       <div className="space-y-8">
         <SpotlightCard glowRim className="p-8 sm:p-12 max-w-3xl">
-          <p className="text-xs tracking-[0.2em] text-[#DFBA7C] mb-3">
+          <p className="text-xs tracking-[0.2em] text-[#C7E88B] mb-3">
             Consultório pronto para atendimento
           </p>
-          <h2 className="font-editorial text-3xl sm:text-4xl font-medium text-[#FAF5EC] leading-tight mb-4">
+          <h2 className="font-editorial text-3xl sm:text-4xl font-medium text-[#F4FBF6] leading-tight mb-4">
             Comece cadastrando seus pacientes ou{' '}
-            <span className="italic text-[#E8C589]">carregue casos clínicos</span>
+            <span className="italic text-[#C7E88B]">carregue casos clínicos</span>
           </h2>
-          <p className="text-sm text-[#BEB4A7] leading-relaxed mb-8">
+          <p className="text-sm text-[#CBE3D6] leading-relaxed mb-8">
             Você pode iniciar do zero ou popular seu consultório com 4 pacientes
             brasileiros realistas, 6 receitas clínicas fotografadas e 3 planos
             alimentares personalizados completos para explorar todos os recursos
@@ -142,9 +142,9 @@ export function DashboardView({
             <button
               type="button"
               onClick={onOpenNewPatient}
-              className="inline-flex items-center gap-2 px-5 py-3 text-xs font-medium text-[#F5EFE6] border border-[#D9AF72]/35 rounded-full hover:border-[#F0D29C] hover:bg-[#D9AF72]/10 transition-colors cursor-pointer whitespace-nowrap shrink-0"
+              className="inline-flex items-center gap-2 px-5 py-3 text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/35 rounded-full hover:border-[#DDF3B2] hover:bg-[#B7DB74]/10 transition-colors cursor-pointer whitespace-nowrap shrink-0"
             >
-              <Plus className="w-4 h-4 text-[#E8C589]" />
+              <Plus className="w-4 h-4 text-[#C7E88B]" />
               Cadastrar primeiro paciente
             </button>
           </div>
@@ -168,51 +168,51 @@ export function DashboardView({
       {/* 4-column Smoked Glass KPI Strip mirroring reference's rounded bar */}
       <section aria-label="Resumo do consultório">
         <SpotlightCard glowRim className="rounded-2xl">
-          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#D9AF72]/15">
+          <div className="grid grid-cols-2 lg:grid-cols-4 divide-y lg:divide-y-0 lg:divide-x divide-[#B7DB74]/15">
             <div className="p-6">
-              <div className="text-xs text-[#A89E90] mb-1.5">
+              <div className="text-xs text-[#A8CCB9] mb-1.5">
                 Pacientes em acompanhamento
               </div>
-              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#FAF5EC]">
+              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#F4FBF6]">
                 {activePatients.length}
               </div>
-              <div className="text-xs text-[#8D8274] mt-1">
+              <div className="text-xs text-[#85AF9B] mt-1">
                 {patients.length} cadastrados no total
               </div>
             </div>
 
             <div className="p-6">
-              <div className="text-xs text-[#A89E90] mb-1.5">
+              <div className="text-xs text-[#A8CCB9] mb-1.5">
                 Planos alimentares ativos
               </div>
-              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#E8C589]">
+              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#C7E88B]">
                 {activePlans.length}
               </div>
-              <div className="text-xs text-[#8D8274] mt-1">
+              <div className="text-xs text-[#85AF9B] mt-1">
                 {mealPlans.length} prescrições registradas
               </div>
             </div>
 
             <div className="p-6">
-              <div className="text-xs text-[#A89E90] mb-1.5">
+              <div className="text-xs text-[#A8CCB9] mb-1.5">
                 Biblioteca de receitas
               </div>
-              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#FAF5EC]">
+              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#F4FBF6]">
                 {recipes.length}
               </div>
-              <div className="text-xs text-[#8D8274] mt-1">
+              <div className="text-xs text-[#85AF9B] mt-1">
                 Prontas para vincular aos planos
               </div>
             </div>
 
             <div className="p-6">
-              <div className="text-xs text-[#A89E90] mb-1.5">
+              <div className="text-xs text-[#A8CCB9] mb-1.5">
                 Meta energética média
               </div>
-              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#FAF5EC]">
+              <div className="font-editorial text-3xl font-semibold tabular-nums text-[#F4FBF6]">
                 {avgCalories > 0 ? `${avgCalories} kcal` : '—'}
               </div>
-              <div className="text-xs text-[#8D8274] mt-1">
+              <div className="text-xs text-[#85AF9B] mt-1">
                 Baseada nos pacientes ativos
               </div>
             </div>
@@ -235,20 +235,20 @@ export function DashboardView({
       <SpotlightCard glowRim className="p-5 sm:p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-5">
           <div className="flex items-start gap-3.5">
-            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#F3D59C]/25 to-[#B5833E]/15 border border-[#E8C589]/45 text-[#F0D29C] flex items-center justify-center shrink-0">
+            <div className="w-11 h-11 rounded-xl bg-gradient-to-br from-[#DDF3B2]/25 to-[#6E8D3E]/15 border border-[#C7E88B]/45 text-[#DDF3B2] flex items-center justify-center shrink-0">
               <MessageCircleHeart className="w-5 h-5" />
             </div>
             <div>
-              <p className="text-[11px] tracking-[0.18em] text-[#DFBA7C] font-medium">
+              <p className="text-[11px] tracking-[0.18em] text-[#C7E88B] font-medium">
                 Atendimento Inteligente 24h
               </p>
-              <h2 className="font-editorial text-2xl font-medium text-[#FAF5EC] leading-snug mt-0.5">
+              <h2 className="font-editorial text-2xl font-medium text-[#F4FBF6] leading-snug mt-0.5">
                 Consultório Digital ·{' '}
-                <span className="italic text-[#E8C589]">
+                <span className="italic text-[#C7E88B]">
                   Nutricionista Dimitra Bratu (IA)
                 </span>
               </h2>
-              <p className="text-xs text-[#BDB2A4] mt-1 max-w-2xl">
+              <p className="text-xs text-[#A8CCB9] mt-1 max-w-2xl">
                 Realize atendimentos, anamnese guiada e tire dúvidas de pacientes
                 com a voz clínica da Dra. Dimitra Bratu, conectada ao prontuário,
                 plano alimentar ativo e bases científicas em tempo real.
@@ -271,14 +271,14 @@ export function DashboardView({
       <SpotlightCard className="p-5 sm:p-6">
         <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
           <div className="flex items-start gap-3.5">
-            <div className="w-10 h-10 rounded-xl bg-[#D9AF72]/12 border border-[#D9AF72]/30 text-[#E8C589] flex items-center justify-center shrink-0">
+            <div className="w-10 h-10 rounded-xl bg-[#B7DB74]/12 border border-[#B7DB74]/30 text-[#C7E88B] flex items-center justify-center shrink-0">
               <Microscope className="w-4 h-4" />
             </div>
             <div>
-              <h2 className="font-editorial text-xl font-medium text-[#FAF5EC]">
+              <h2 className="font-editorial text-xl font-medium text-[#F4FBF6]">
                 Consulta ativa em bibliotecas de ciência da nutrição
               </h2>
-              <p className="text-xs text-[#A89E90] mt-0.5">
+              <p className="text-xs text-[#A8CCB9] mt-0.5">
                 PubMed, Cochrane, ESPEN, ISSN, SBD, ABESO e SciELO atualizados em tempo real
               </p>
             </div>
@@ -289,13 +289,13 @@ export function DashboardView({
             className="flex flex-col sm:flex-row gap-2.5 flex-1 lg:max-w-xl"
           >
             <div className="relative flex-1">
-              <Search className="w-4 h-4 text-[#8D8274] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+              <Search className="w-4 h-4 text-[#85AF9B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
               <input
                 type="text"
                 value={quickQuery}
                 onChange={(e) => setQuickQuery(e.target.value)}
                 placeholder="Pergunte sobre diretrizes, suplementos, macros ou patologias..."
-                className="w-full pl-10 pr-4 py-2.5 text-xs bg-[#0E0B08]/90 text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/22 rounded-full focus:outline-none focus:border-[#E8C589]"
+                className="w-full pl-10 pr-4 py-2.5 text-xs bg-[#061A17]/90 text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/22 rounded-full focus:outline-none focus:border-[#C7E88B]"
               />
             </div>
             <button
@@ -311,19 +311,19 @@ export function DashboardView({
 
       {/* Active Patients & Personalized Plans Table */}
       <section className="glass-obsidian rounded-2xl overflow-hidden">
-        <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[#D9AF72]/14">
+        <div className="flex items-center justify-between gap-4 px-6 py-5 border-b border-[#B7DB74]/14">
           <div>
-            <h2 className="font-editorial text-2xl font-medium text-[#FAF5EC]">
+            <h2 className="font-editorial text-2xl font-medium text-[#F4FBF6]">
               Pacientes e Planos Personalizados
             </h2>
-            <p className="text-xs text-[#A89E90] mt-0.5">
+            <p className="text-xs text-[#A8CCB9] mt-0.5">
               Acesso direto ao plano alimentar e adequação calórica de cada paciente
             </p>
           </div>
           <button
             type="button"
             onClick={onNavigatePatients}
-            className="text-xs font-medium text-[#E5C38A] hover:text-[#F7DFB3] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
+            className="text-xs font-medium text-[#C7E88B] hover:text-[#DDF3B2] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap shrink-0"
           >
             Ver todos os pacientes
             <ArrowUpRight className="w-3.5 h-3.5" />
@@ -333,7 +333,7 @@ export function DashboardView({
         <div className="overflow-x-auto">
           <table className="w-full text-left border-collapse">
             <thead>
-              <tr className="border-b border-[#D9AF72]/14 text-xs font-medium text-[#9D9284] bg-[#100D0A]/60">
+              <tr className="border-b border-[#B7DB74]/14 text-xs font-medium text-[#85AF9B] bg-[#07201C]/60">
                 <th className="py-3.5 px-6">Paciente</th>
                 <th className="py-3.5 px-4">Objetivo</th>
                 <th className="py-3.5 px-4 text-right">IMC</th>
@@ -342,7 +342,7 @@ export function DashboardView({
                 <th className="py-3.5 px-6 text-right">Ação</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#D9AF72]/10 text-sm">
+            <tbody className="divide-y divide-[#B7DB74]/10 text-sm">
               {patients.slice(0, 6).map((patient) => {
                 const patientPlan =
                   mealPlans.find(
@@ -356,34 +356,34 @@ export function DashboardView({
                 return (
                   <tr
                     key={patient.id}
-                    className="hover:bg-[#D9AF72]/6 transition-colors"
+                    className="hover:bg-[#B7DB74]/6 transition-colors"
                   >
                     <td className="py-4 px-6">
-                      <div className="font-medium text-[#FAF5EC]">
+                      <div className="font-medium text-[#F4FBF6]">
                         {patient.fullName}
                       </div>
-                      <div className="text-xs text-[#8F8476] mt-0.5">
+                      <div className="text-xs text-[#85AF9B] mt-0.5">
                         {patient.restrictions.length > 0
                           ? patient.restrictions.slice(0, 2).join(' · ')
                           : 'Sem restrições informadas'}
                       </div>
                     </td>
-                    <td className="py-4 px-4 text-[#CFC5B8]">
+                    <td className="py-4 px-4 text-[#CBE3D6]">
                       {GOAL_LABELS[patient.goal]}
                     </td>
-                    <td className="py-4 px-4 text-right font-mono tabular-nums text-[#CFC5B8]">
+                    <td className="py-4 px-4 text-right font-mono tabular-nums text-[#CBE3D6]">
                       {bmi.toFixed(1)}
                     </td>
-                    <td className="py-4 px-4 text-right font-mono tabular-nums text-[#FAF5EC]">
+                    <td className="py-4 px-4 text-right font-mono tabular-nums text-[#F4FBF6]">
                       {patient.targetCalories} kcal
                     </td>
                     <td className="py-4 px-4">
                       {patientPlan ? (
                         <div>
-                          <div className="text-[#FAF5EC] font-medium truncate max-w-[230px]">
+                          <div className="text-[#F4FBF6] font-medium truncate max-w-[230px]">
                             {patientPlan.title}
                           </div>
-                          <div className="text-xs font-mono tabular-nums text-[#DFBA7C]">
+                          <div className="text-xs font-mono tabular-nums text-[#C7E88B]">
                             {plannedKcal} kcal planejadas ·{' '}
                             {patientPlan.meals.length} refeições
                           </div>
@@ -398,7 +398,7 @@ export function DashboardView({
                       <button
                         type="button"
                         onClick={() => onOpenPatientPlan(patient.id)}
-                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#F0D29C] border border-[#D9AF72]/35 bg-[#D9AF72]/10 rounded-full hover:bg-[#D9AF72]/20 hover:border-[#F0D29C] transition-colors cursor-pointer whitespace-nowrap"
+                        className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-medium text-[#DDF3B2] border border-[#B7DB74]/35 bg-[#B7DB74]/10 rounded-full hover:bg-[#B7DB74]/20 hover:border-[#DDF3B2] transition-colors cursor-pointer whitespace-nowrap"
                       >
                         {patientPlan ? 'Abrir plano' : 'Criar plano'}
                       </button>
@@ -417,10 +417,10 @@ export function DashboardView({
       <section>
         <div className="flex items-end justify-between gap-4 mb-5">
           <div>
-            <p className="text-xs tracking-[0.2em] text-[#DFBA7C] mb-1">
+            <p className="text-xs tracking-[0.2em] text-[#C7E88B] mb-1">
               Acervo assinado
             </p>
-            <h2 className="font-editorial text-3xl font-medium text-[#FAF5EC]">
+            <h2 className="font-editorial text-3xl font-medium text-[#F4FBF6]">
               Receitas Clínicas em Destaque
             </h2>
           </div>
@@ -428,14 +428,14 @@ export function DashboardView({
             <button
               type="button"
               onClick={onOpenNewRecipe}
-              className="text-xs font-medium text-[#BDB2A4] hover:text-[#FAF5EC] cursor-pointer whitespace-nowrap"
+              className="text-xs font-medium text-[#A8CCB9] hover:text-[#F4FBF6] cursor-pointer whitespace-nowrap"
             >
               Nova receita
             </button>
             <button
               type="button"
               onClick={onNavigateRecipes}
-              className="text-xs font-medium text-[#E5C38A] hover:text-[#F7DFB3] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
+              className="text-xs font-medium text-[#C7E88B] hover:text-[#DDF3B2] inline-flex items-center gap-1 cursor-pointer whitespace-nowrap"
             >
               Biblioteca completa
               <ArrowUpRight className="w-3.5 h-3.5" />
@@ -452,7 +452,7 @@ export function DashboardView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.35, delay: idx * 0.06, ease: MOTION_EASE }}
               onClick={() => onSelectRecipe(recipe)}
-              className="group text-left glass-obsidian rounded-2xl overflow-hidden hover:border-[#E8C589]/45 transition-all duration-300 cursor-pointer flex flex-col"
+              className="group text-left glass-obsidian rounded-2xl overflow-hidden hover:border-[#C7E88B]/45 transition-all duration-300 cursor-pointer flex flex-col"
             >
               <div className="relative overflow-hidden">
                 <RecipeImage
@@ -463,22 +463,22 @@ export function DashboardView({
                 />
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 bg-gradient-to-t from-[#120E0B] via-transparent to-transparent"
+                  className="absolute inset-0 bg-gradient-to-t from-[#0A2622] via-transparent to-transparent"
                 />
               </div>
               <div className="p-5 flex-1 flex flex-col">
-                <div className="text-xs text-[#A89E90] mb-1">
+                <div className="text-xs text-[#A8CCB9] mb-1">
                   {RECIPE_CATEGORY_LABELS[recipe.category]} ·{' '}
                   <span className="font-mono tabular-nums">
                     {recipe.prepTimeMin} min
                   </span>
                 </div>
-                <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC] leading-snug mb-3">
+                <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6] leading-snug mb-3">
                   {recipe.title}
                 </h3>
-                <div className="mt-auto pt-3 border-t border-[#D9AF72]/14 flex items-center justify-between gap-3">
-                  <div className="text-xs font-mono tabular-nums text-[#BDB2A4]">
-                    <span className="font-semibold text-[#F0D29C]">
+                <div className="mt-auto pt-3 border-t border-[#B7DB74]/14 flex items-center justify-between gap-3">
+                  <div className="text-xs font-mono tabular-nums text-[#A8CCB9]">
+                    <span className="font-semibold text-[#DDF3B2]">
                       {recipe.calories} kcal
                     </span>{' '}
                     · P {recipe.proteinG}g · C {recipe.carbsG}g

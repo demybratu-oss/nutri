@@ -77,33 +77,33 @@ export function RecipesView({
       <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-4">
         <div className="flex flex-col sm:flex-row sm:items-center gap-3 flex-1">
           <div className="relative flex-1 max-w-md">
-            <Search className="w-4 h-4 text-[#8D8274] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
+            <Search className="w-4 h-4 text-[#85AF9B] absolute left-3.5 top-1/2 -translate-y-1/2 pointer-events-none" />
             <input
               type="search"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               placeholder="Buscar por nome, ingrediente ou característica..."
-              className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#15110E] text-[#FAF5EC] placeholder-[#7C7164] border border-[#D9AF72]/22 rounded-full focus:outline-none focus:border-[#E8C589]"
+              className="w-full pl-10 pr-4 py-2.5 text-sm bg-[#0E332D] text-[#F4FBF6] placeholder-[#719C88] border border-[#B7DB74]/22 rounded-full focus:outline-none focus:border-[#C7E88B]"
             />
           </div>
           <button
             type="button"
             onClick={onOpenAiRecipeGenerator}
-            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#F0D29C] bg-[#D9AF72]/12 border border-[#D9AF72]/35 rounded-full hover:bg-[#D9AF72]/20 hover:border-[#F0D29C] transition-colors cursor-pointer whitespace-nowrap shrink-0"
+            className="inline-flex items-center justify-center gap-2 px-4 py-2.5 text-xs font-semibold text-[#DDF3B2] bg-[#B7DB74]/12 border border-[#B7DB74]/35 rounded-full hover:bg-[#B7DB74]/20 hover:border-[#DDF3B2] transition-colors cursor-pointer whitespace-nowrap shrink-0"
           >
             <FlaskConical className="w-3.5 h-3.5" />
             Criar receita com evidência
           </button>
         </div>
 
-        <div className="flex items-center gap-1 p-1 bg-[#15110E] border border-[#D9AF72]/18 rounded-full overflow-x-auto">
+        <div className="flex items-center gap-1 p-1 bg-[#0E332D] border border-[#B7DB74]/18 rounded-full overflow-x-auto">
           <button
             type="button"
             onClick={() => setCategoryFilter('all')}
             className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
               categoryFilter === 'all'
                 ? 'btn-gold font-semibold'
-                : 'text-[#BDB2A4] hover:text-[#FAF5EC]'
+                : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
             }`}
           >
             Todas ({recipes.length})
@@ -116,7 +116,7 @@ export function RecipesView({
               className={`px-3.5 py-1.5 text-xs font-medium rounded-full transition-colors cursor-pointer whitespace-nowrap shrink-0 ${
                 categoryFilter === cat
                   ? 'btn-gold font-semibold'
-                  : 'text-[#BDB2A4] hover:text-[#FAF5EC]'
+                  : 'text-[#A8CCB9] hover:text-[#F4FBF6]'
               }`}
             >
               {RECIPE_CATEGORY_LABELS[cat]}
@@ -128,7 +128,7 @@ export function RecipesView({
       {/* Dietary Filter Bar */}
       {availableTags.length > 0 && (
         <div className="flex items-center gap-2 flex-wrap">
-          <span className="text-xs font-medium text-[#9D9284]">
+          <span className="text-xs font-medium text-[#85AF9B]">
             Perfil dietético:
           </span>
           <button
@@ -136,8 +136,8 @@ export function RecipesView({
             onClick={() => setTagFilter('all')}
             className={`px-3 py-1 text-xs rounded-full transition-colors cursor-pointer whitespace-nowrap ${
               tagFilter === 'all'
-                ? 'bg-[#D9AF72]/20 text-[#F5DCAC] border border-[#D9AF72]/50 font-medium'
-                : 'bg-[#15110E] border border-[#D9AF72]/16 text-[#A89E90] hover:text-[#FAF5EC]'
+                ? 'bg-[#B7DB74]/20 text-[#DDF3B2] border border-[#B7DB74]/50 font-medium'
+                : 'bg-[#0E332D] border border-[#B7DB74]/16 text-[#A8CCB9] hover:text-[#F4FBF6]'
             }`}
           >
             Qualquer perfil
@@ -149,8 +149,8 @@ export function RecipesView({
               onClick={() => setTagFilter(tagFilter === tag ? 'all' : tag)}
               className={`px-3 py-1 text-xs rounded-full transition-colors cursor-pointer whitespace-nowrap ${
                 tagFilter === tag
-                  ? 'bg-[#D9AF72]/20 text-[#F5DCAC] border border-[#D9AF72]/50 font-medium'
-                  : 'bg-[#15110E] border border-[#D9AF72]/16 text-[#A89E90] hover:text-[#FAF5EC]'
+                  ? 'bg-[#B7DB74]/20 text-[#DDF3B2] border border-[#B7DB74]/50 font-medium'
+                  : 'bg-[#0E332D] border border-[#B7DB74]/16 text-[#A8CCB9] hover:text-[#F4FBF6]'
               }`}
             >
               {tag}
@@ -161,12 +161,12 @@ export function RecipesView({
 
       {filtered.length === 0 ? (
         <div className="glass-obsidian rounded-2xl p-10 text-center">
-          <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC] mb-2">
+          <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6] mb-2">
             {recipes.length === 0
               ? 'Sua biblioteca de receitas está vazia'
               : 'Nenhuma receita corresponde aos filtros'}
           </h3>
-          <p className="text-sm text-[#A89E90] mb-6">
+          <p className="text-sm text-[#A8CCB9] mb-6">
             {recipes.length === 0
               ? 'Cadastre receitas padronizadas com composição nutricional para prescrever nos planos dos seus pacientes.'
               : 'Limpe os filtros ou cadastre uma nova preparação.'}
@@ -190,7 +190,7 @@ export function RecipesView({
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.32, delay: idx * 0.04, ease: MOTION_EASE }}
               onClick={() => onSelectRecipe(recipe)}
-              className="group text-left glass-obsidian rounded-2xl overflow-hidden hover:border-[#E8C589]/50 transition-all duration-300 cursor-pointer flex flex-col"
+              className="group text-left glass-obsidian rounded-2xl overflow-hidden hover:border-[#C7E88B]/50 transition-all duration-300 cursor-pointer flex flex-col"
             >
               <div className="relative overflow-hidden">
                 <RecipeImage
@@ -201,12 +201,12 @@ export function RecipesView({
                 />
                 <div
                   aria-hidden="true"
-                  className="absolute inset-0 bg-gradient-to-t from-[#120E0B] via-transparent to-transparent"
+                  className="absolute inset-0 bg-gradient-to-t from-[#0A2622] via-transparent to-transparent"
                 />
               </div>
 
               <div className="p-5 flex-1 flex flex-col">
-                <div className="text-xs text-[#9D9284] mb-1">
+                <div className="text-xs text-[#85AF9B] mb-1">
                   {RECIPE_CATEGORY_LABELS[recipe.category]} ·{' '}
                   <span className="font-mono tabular-nums">
                     {recipe.prepTimeMin} min
@@ -214,28 +214,28 @@ export function RecipesView({
                   · {recipe.portionLabel}
                 </div>
 
-                <h3 className="font-editorial text-2xl font-medium text-[#FAF5EC] leading-snug mb-1.5">
+                <h3 className="font-editorial text-2xl font-medium text-[#F4FBF6] leading-snug mb-1.5">
                   {recipe.title}
                 </h3>
 
                 {recipe.description && (
-                  <p className="text-xs text-[#B5AAA0] line-clamp-2 leading-relaxed mb-3">
+                  <p className="text-xs text-[#CBE3D6] line-clamp-2 leading-relaxed mb-3">
                     {recipe.description}
                   </p>
                 )}
 
                 {recipe.dietaryTags.length > 0 && (
-                  <p className="text-xs text-[#DFBA7C] mb-3 truncate">
+                  <p className="text-xs text-[#C7E88B] mb-3 truncate">
                     {recipe.dietaryTags.join(' · ')}
                   </p>
                 )}
 
-                <div className="mt-auto pt-3 border-t border-[#D9AF72]/14 flex items-center justify-between gap-3">
+                <div className="mt-auto pt-3 border-t border-[#B7DB74]/14 flex items-center justify-between gap-3">
                   <div className="text-xs font-mono tabular-nums">
-                    <span className="font-semibold text-[#F0D29C]">
+                    <span className="font-semibold text-[#DDF3B2]">
                       {recipe.calories} kcal
                     </span>{' '}
-                    <span className="text-[#A89E90]">
+                    <span className="text-[#A8CCB9]">
                       · P {recipe.proteinG}g · C {recipe.carbsG}g · G {recipe.fatG}g
                     </span>
                   </div>

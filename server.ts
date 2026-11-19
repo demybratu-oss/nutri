@@ -602,19 +602,31 @@ Garanta coerência matemática dos macronutrientes (kcal ≈ 4*P + 4*C + 9*G) e 
         contextBlock += `\n\nRECEITAS ASSINADAS DO SEU CONSULTÓRIO (indique quando fizer sentido para o paciente):\n${recipeSummary}`;
       }
 
-      const systemInstruction = `Você é a **Nutricionista Dimitra Bratu**, especialista em Nutrição Clínica, Comportamental e Esportiva Baseada em Evidências, atendendo pacientes em Português do Brasil.
+      const systemInstruction = `Você é o **Atendimento Inteligente da Nutricionista Dra. Dimitra Bratu** (formada em Nutrição pela **Universidade Gama Filho — Rio de Janeiro, RJ**), atuando com Nutrição Clínica, Comportamental e Esportiva Baseada em Evidências em Português do Brasil.
 
-IDENTIDADE E TOM DE VOZ:
-- Fale sempre em primeira pessoa como a própria Nutricionista Dimitra Bratu ("Na minha prática clínica...", "Vamos ajustar juntos...", "Eu recomendo...").
-- Seja calorosa, acolhedora, elegante, didática, objetiva e profundamente técnica quando necessário — sem julgamentos e sem terrorismo nutricional.
-- Use busca na web ativa (PubMed, Cochrane, ESPEN, ISSN, SBD, ABESO, OMS, SciELO, Tabela TACO/TBCA, Guia Alimentar para a População Brasileira) para fundamentar suas orientações com a ciência mais atual.
-- Utilize medidas caseiras brasileiras acessíveis (colher de sopa, xícara, filé médio, gramas) e estruture respostas mais densas com subtítulos curtos (###) e listas objetivas para leitura confortável.
-- Ética e segurança clínica: você não diagnostica doenças médicas nem altera prescrições de medicamentos. Se o paciente relatar sinais de alerta (dor aguda, desmaios, distúrbios graves, gestação de risco, ajustes de insulina ou medicação controlada), oriente com empatia a avaliação presencial conjunta com o médico e o acompanhamento individualizado.
+IDENTIDADE, FORMAÇÃO, CONTATO OFICIAL E PAPEL NO ATENDIMENTO EM 2 NÍVEIS:
+- Você representa o atendimento inicial inteligente (IA 24h) do consultório digital da **Nutricionista Dra. Dimitra Bratu** (**Formação: Universidade Gama Filho — Rio de Janeiro, RJ**).
+- Contatos oficiais da Dra. Dimitra Bratu (informe sempre que o paciente pedir contato direto, envio de exames ou confirmação de videochamada):
+  • E-mail profissional: **demybratu@gmail.com**
+  • Celular e WhatsApp: **+55 (21) 98098-4243** (+5521980984243)
+- Responda com acolhimento, clareza, elegância e rigor técnico, consultando a busca na web ativa (PubMed, Cochrane, ESPEN, ISSN, SBD, ABESO, OMS, SciELO, Tabela TACO/TBCA, Guia Alimentar para a População Brasileira).
+- Utilize medidas caseiras brasileiras acessíveis (colher de sopa, xícara, filé médio, gramas) e estruture respostas mais densas com subtítulos curtos (###) e listas objetivas.
+- **TRIAGEM INTELIGENTE PARA ATENDIMENTO ESPECIALIZADO COM VIDEOCHAMADA**:
+  - Para dúvidas gerais sobre alimentação saudável, substituições simples, conceitos nutricionais e orientação educativa inicial, resolva de forma completa aqui mesmo.
+  - Sempre que o paciente apresentar uma demanda **mais especializada ou individualizada** — como pedido de **vitaminas manipuladas / fórmula para farmácia de manipulação**, **avaliação de exames laboratoriais**, **condições clínicas específicas** (diabetes, resistência à insulina, SOP, hipotireoidismo, disbiose, intestino irritável, gestação, transtornos alimentares, alergias severas, fadiga crônica, queda de cabelo, distúrbios do sono/ansiedade), **plano alimentar individualizado completo** ou **acompanhamento clínico aprofundado** — entregue uma orientação inicial segura baseada em evidências E recomende expressamente o **Atendimento Especializado por Videochamada com a Nutricionista Dra. Dimitra Bratu (Universidade Gama Filho — Rio de Janeiro, RJ · WhatsApp +55 (21) 98098-4243 · demybratu@gmail.com)**.
+- Ética e segurança clínica: nunca substitua diagnóstico médico nem altere medicamentos prescritos.
 
 ${modeInstruction}${contextBlock}
 
 FORMATO FINAL OBRIGATÓRIO:
-Ao final da sua resposta, adicione exatamente o marcador abaixo seguido de 3 sugestões curtas de próximas perguntas ou respostas rápidas que o paciente poderia clicar para continuar o atendimento (cada uma em uma linha começando com "- ", máximo 75 caracteres cada):
+Ao final da sua resposta, adicione exatamente estes dois blocos:
+
+1) Se o caso se beneficiar de atendimento especializado por videochamada com a Dra. Dimitra Bratu (ou se o paciente pedir consulta/videochamada/manipulados/exames/plano individualizado/tratamento clínico), adicione:
+---ESCALONAMENTO---
+{"needsSpecialistVideo": true, "specialty": "UMA_DAS_CHAVES_ABAIXO", "reason": "Frase curta de 1 linha explicando por que a videochamada com a Dra. Dimitra Bratu é recomendada para este caso"}
+(Use exatamente uma destas chaves em "specialty": "metabolica_emagrecimento", "imunidade_longevidade", "saude_intestinal", "saude_mulher_hormonal", "performance_massa_magra", "sono_ansiedade_cognicao". Se for apenas uma dúvida geral simples sem necessidade de encaminhamento especializado, retorne {"needsSpecialistVideo": false, "specialty": "metabolica_emagrecimento", "reason": ""})
+
+2) Em seguida, adicione exatamente 3 sugestões curtas de próximas perguntas (cada uma em uma linha começando com "- ", máximo 75 caracteres):
 ---SUGESTOES---
 - Sugestão 1
 - Sugestão 2
@@ -637,12 +649,26 @@ Ao final da sua resposta, adicione exatamente o marcador abaixo seguido de 3 sug
       const rawText = (response.text || '').trim();
       let reply = rawText;
       let suggestedFollowUps: string[] = [];
+      let specialistEscalation: {
+        needsSpecialistVideo: boolean;
+        specialty: string;
+        reason: string;
+      } | null = null;
 
-      const marker = '---SUGESTOES---';
-      const markerIdx = rawText.indexOf(marker);
-      if (markerIdx !== -1) {
-        reply = rawText.slice(0, markerIdx).trim();
-        const followUpBlock = rawText.slice(markerIdx + marker.length).trim();
+      const validSpecialties = new Set([
+        'metabolica_emagrecimento',
+        'imunidade_longevidade',
+        'saude_intestinal',
+        'saude_mulher_hormonal',
+        'performance_massa_magra',
+        'sono_ansiedade_cognicao',
+      ]);
+
+      const suggestionsMarker = '---SUGESTOES---';
+      const suggestionsIdx = reply.indexOf(suggestionsMarker);
+      if (suggestionsIdx !== -1) {
+        const followUpBlock = reply.slice(suggestionsIdx + suggestionsMarker.length).trim();
+        reply = reply.slice(0, suggestionsIdx).trim();
         suggestedFollowUps = followUpBlock
           .split('\n')
           .map((line) => line.replace(/^[-*•\d.)\s]+/, '').trim())
@@ -650,9 +676,36 @@ Ao final da sua resposta, adicione exatamente o marcador abaixo seguido de 3 sug
           .slice(0, 3);
       }
 
+      const escalationMarker = '---ESCALONAMENTO---';
+      const escalationIdx = reply.indexOf(escalationMarker);
+      if (escalationIdx !== -1) {
+        const escalationRaw = reply.slice(escalationIdx + escalationMarker.length).trim();
+        reply = reply.slice(0, escalationIdx).trim();
+        try {
+          const jsonMatch = escalationRaw.match(/\{[\s\S]*\}/);
+          if (jsonMatch) {
+            const parsed = JSON.parse(jsonMatch[0]);
+            if (parsed && typeof parsed.needsSpecialistVideo === 'boolean') {
+              specialistEscalation = {
+                needsSpecialistVideo: parsed.needsSpecialistVideo,
+                specialty: validSpecialties.has(parsed.specialty)
+                  ? parsed.specialty
+                  : 'metabolica_emagrecimento',
+                reason:
+                  typeof parsed.reason === 'string'
+                    ? parsed.reason.trim().slice(0, 260)
+                    : '',
+              };
+            }
+          }
+        } catch {
+          // Ignore malformed escalation block and keep clean reply
+        }
+      }
+
       if (!reply) {
         reply =
-          'Olá! Sou a Nutricionista Dimitra Bratu. Tive uma instabilidade momentânea ao formular sua orientação — pode repetir sua dúvida para que eu te ajude agora mesmo?';
+          'Olá! Sou o atendimento inteligente da Nutricionista Dra. Dimitra Bratu (Universidade Gama Filho — RJ). Tive uma instabilidade momentânea ao formular sua orientação — pode repetir sua dúvida para que eu te ajude agora mesmo?';
       }
 
       const { sources, searchQueries } = extractGroundingMetadata(response);
@@ -661,6 +714,7 @@ Ao final da sua resposta, adicione exatamente o marcador abaixo seguido de 3 sug
         sources,
         searchQueries,
         suggestedFollowUps,
+        specialistEscalation,
         generatedAt: new Date().toISOString(),
       });
     } catch (error) {

@@ -32,6 +32,7 @@ import {
   CompoundingPrescription,
   Patient,
   Recipe,
+  SPECIALIST_PROFILE,
   SPECIALTY_LABELS,
 } from '../types';
 import { SpotlightCard } from './LuxuryPrimitives';
@@ -317,7 +318,7 @@ export function CompoundingPrescriptionsView({
           <button
             type="button"
             onClick={() => setPrintMode(false)}
-            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#FAF5EC] border border-[#D9AF72]/35 rounded-full hover:border-[#F0D29C] cursor-pointer"
+            className="inline-flex items-center gap-2 px-4 py-2 text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/35 rounded-full hover:border-[#DDF3B2] cursor-pointer"
           >
             <ArrowLeft className="w-3.5 h-3.5" />
             Voltar ao editor
@@ -336,14 +337,17 @@ export function CompoundingPrescriptionsView({
         <article className="bg-white text-slate-900 rounded-2xl p-8 sm:p-12 max-w-3xl mx-auto shadow-2xl border border-slate-200 space-y-7">
           <header className="border-b-2 border-slate-900 pb-5 flex flex-wrap items-end justify-between gap-4">
             <div>
-              <p className="text-[11px] tracking-[0.22em] uppercase text-amber-800 font-semibold">
+              <p className="text-[11px] tracking-[0.22em] uppercase text-sky-800 font-semibold">
                 Prescrição Nutricional Magistral · Farmácia de Manipulação
               </p>
-              <h1 className="font-editorial text-3xl font-semibold text-slate-900 mt-1">
-                Nutricionista Dimitra Bratu
+              <h1 className="font-editorial text-3xl font-bold text-slate-900 mt-1">
+                {SPECIALIST_PROFILE.title}
               </h1>
               <p className="text-xs text-slate-600 mt-0.5">
-                Nutrição Clínica Especializada & Suplementação Individualizada
+                Nutrição Clínica Especializada · Formação: {SPECIALIST_PROFILE.formation}
+              </p>
+              <p className="text-[11px] font-mono text-slate-500 mt-0.5">
+                {SPECIALIST_PROFILE.email} · Celular / WhatsApp: {SPECIALIST_PROFILE.phoneDisplay}
               </p>
             </div>
             <div className="text-right text-xs text-slate-600 font-mono">
@@ -463,7 +467,13 @@ export function CompoundingPrescriptionsView({
             </div>
             <div className="text-center min-w-[240px]">
               <div className="border-t border-slate-800 pt-2 text-sm font-editorial font-semibold text-slate-900">
-                Nutricionista Dimitra Bratu
+                {SPECIALIST_PROFILE.title}
+              </div>
+              <div className="text-[11px] text-slate-600">
+                {SPECIALIST_PROFILE.formation}
+              </div>
+              <div className="text-[10px] font-mono text-slate-500">
+                {SPECIALIST_PROFILE.email} · {SPECIALIST_PROFILE.phoneDisplay}
               </div>
               <div className="text-[11px] text-slate-500">
                 Assinatura e Carimbo Profissional / CRN
@@ -482,10 +492,10 @@ export function CompoundingPrescriptionsView({
         <SpotlightCard glowRim className="p-5 space-y-4">
           <div className="flex items-center justify-between gap-2">
             <div>
-              <h2 className="font-editorial text-2xl font-medium text-[#FAF5EC] leading-none">
+              <h2 className="font-editorial text-2xl font-medium text-[#F4FBF6] leading-none">
                 Manipulados
               </h2>
-              <p className="text-xs text-[#A89E90] mt-1">
+              <p className="text-xs text-[#A8CCB9] mt-1">
                 {prescriptions.length} fórmulas registradas
               </p>
             </div>
@@ -500,7 +510,7 @@ export function CompoundingPrescriptionsView({
           </div>
 
           {prescriptions.length === 0 ? (
-            <div className="p-4 rounded-xl bg-[#110D0A] border border-[#D9AF72]/14 text-xs text-[#8D8274] leading-relaxed">
+            <div className="p-4 rounded-xl bg-[#07201C] border border-[#B7DB74]/14 text-xs text-[#85AF9B] leading-relaxed">
               Crie prescrições de vitaminas manipuladas por especialidade para
               entregar à farmácia de manipulação de cada paciente.
             </div>
@@ -513,8 +523,8 @@ export function CompoundingPrescriptionsView({
                     key={rx.id}
                     className={`p-3.5 rounded-xl border transition-colors flex items-start justify-between gap-2 ${
                       selected
-                        ? 'bg-[#D9AF72]/14 border-[#F0D29C]/60'
-                        : 'bg-[#120E0B] border-[#D9AF72]/16 hover:border-[#D9AF72]/40'
+                        ? 'bg-[#B7DB74]/14 border-[#DDF3B2]/60'
+                        : 'bg-[#0A2622] border-[#B7DB74]/16 hover:border-[#B7DB74]/40'
                     }`}
                   >
                     <button
@@ -524,16 +534,16 @@ export function CompoundingPrescriptionsView({
                     >
                       <div className="flex items-center gap-1.5">
                         {rx.status === 'emitida' && (
-                          <Lock className="w-3 h-3 text-[#E8C589] shrink-0" />
+                          <Lock className="w-3 h-3 text-[#C7E88B] shrink-0" />
                         )}
-                        <span className="text-xs font-semibold text-[#FAF5EC] truncate">
+                        <span className="text-xs font-semibold text-[#F4FBF6] truncate">
                           {rx.formulaTitle}
                         </span>
                       </div>
-                      <div className="text-[11px] text-[#DFBA7C] mt-0.5 truncate">
+                      <div className="text-[11px] text-[#C7E88B] mt-0.5 truncate">
                         {rx.patientName} · {rx.actives.length} ativos
                       </div>
-                      <div className="text-[10px] text-[#8D8274] mt-0.5 truncate">
+                      <div className="text-[10px] text-[#85AF9B] mt-0.5 truncate">
                         {SPECIALTY_LABELS[rx.specialty]}
                       </div>
                     </button>
@@ -546,7 +556,7 @@ export function CompoundingPrescriptionsView({
                         onNotify('Receituário removido.');
                       }}
                       aria-label="Excluir fórmula"
-                      className="p-1 text-[#7C7164] hover:text-red-300 cursor-pointer shrink-0"
+                      className="p-1 text-[#719C88] hover:text-red-300 cursor-pointer shrink-0"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -560,12 +570,12 @@ export function CompoundingPrescriptionsView({
 
       {/* Right Column: Formula Builder & AI Compounding Assistant */}
       <section className="lg:col-span-8 glass-obsidian rounded-2xl p-6 space-y-6">
-        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#D9AF72]/16">
+        <div className="flex flex-wrap items-center justify-between gap-3 pb-4 border-b border-[#B7DB74]/16">
           <div>
-            <p className="text-xs tracking-[0.18em] text-[#DFBA7C] font-medium">
+            <p className="text-xs tracking-[0.18em] text-[#C7E88B] font-medium">
               FARMÁCIA DE MANIPULAÇÃO · DRA. DIMITRA BRATU
             </p>
-            <h2 className="font-editorial text-3xl font-medium text-[#FAF5EC]">
+            <h2 className="font-editorial text-3xl font-medium text-[#F4FBF6]">
               Prescrição de Vitaminas Manipuladas
             </h2>
           </div>
@@ -574,15 +584,15 @@ export function CompoundingPrescriptionsView({
             <button
               type="button"
               onClick={() => setPrintMode(true)}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#F5EFE6] border border-[#D9AF72]/35 rounded-full hover:border-[#F0D29C] hover:bg-[#D9AF72]/10 transition-colors cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/35 rounded-full hover:border-[#DDF3B2] hover:bg-[#B7DB74]/10 transition-colors cursor-pointer whitespace-nowrap"
             >
-              <Printer className="w-3.5 h-3.5 text-[#E8C589]" />
+              <Printer className="w-3.5 h-3.5 text-[#C7E88B]" />
               <span>Receituário PDF</span>
             </button>
             <button
               type="button"
               onClick={onOpenRecipes}
-              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#DFBA7C] border border-[#D9AF72]/25 rounded-full hover:border-[#F0D29C] transition-colors cursor-pointer whitespace-nowrap"
+              className="inline-flex items-center gap-1.5 px-4 py-2 text-xs font-medium text-[#C7E88B] border border-[#B7DB74]/25 rounded-full hover:border-[#DDF3B2] transition-colors cursor-pointer whitespace-nowrap"
             >
               <BookOpen className="w-3.5 h-3.5" />
               <span>Receitas</span>
@@ -591,11 +601,11 @@ export function CompoundingPrescriptionsView({
         </div>
 
         {/* Clinical Context & AI Formula Generator */}
-        <div className="p-5 rounded-2xl bg-[#120E0B] border border-[#D9AF72]/22 space-y-4">
+        <div className="p-5 rounded-2xl bg-[#0A2622] border border-[#B7DB74]/22 space-y-4">
           <div className="grid grid-cols-1 md:grid-cols-3 gap-3.5">
             {patients.length > 0 && (
               <div>
-                <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+                <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                   Vincular paciente
                 </label>
                 <select
@@ -610,7 +620,7 @@ export function CompoundingPrescriptionsView({
                       if (found.clinicalNotes) setCaseContext(found.clinicalNotes);
                     }
                   }}
-                  className="w-full px-3 py-2.5 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                  className="w-full px-3 py-2.5 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                 >
                   <option value="">Paciente avulso / assinante</option>
                   {patients.map((p) => (
@@ -623,7 +633,7 @@ export function CompoundingPrescriptionsView({
             )}
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Nome do paciente no receituário
               </label>
               <input
@@ -632,12 +642,12 @@ export function CompoundingPrescriptionsView({
                 value={patientName}
                 onChange={(e) => setPatientName(e.target.value)}
                 placeholder="Nome completo"
-                className="w-full px-3 py-2.5 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                className="w-full px-3 py-2.5 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
               />
             </div>
 
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Especialidade clínica
               </label>
               <select
@@ -646,7 +656,7 @@ export function CompoundingPrescriptionsView({
                 onChange={(e) =>
                   setSpecialty(e.target.value as ClinicalSpecialty)
                 }
-                className="w-full px-3 py-2.5 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                className="w-full px-3 py-2.5 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
               >
                 {CLINICAL_SPECIALTIES.map((spec) => (
                   <option key={spec.id} value={spec.id}>
@@ -659,7 +669,7 @@ export function CompoundingPrescriptionsView({
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-3.5">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Caso clínico, exames ou notas da videochamada
               </label>
               <textarea
@@ -668,11 +678,11 @@ export function CompoundingPrescriptionsView({
                 value={caseContext}
                 onChange={(e) => setCaseContext(e.target.value)}
                 placeholder="Ex.: Fadiga, queda de cabelo, vitamina D 21 ng/mL, B12 310 pg/mL, sono leve..."
-                className="w-full px-3.5 py-2.5 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none disabled:opacity-60"
+                className="w-full px-3.5 py-2.5 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none disabled:opacity-60"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Alergias e restrições obrigatórias
               </label>
               <textarea
@@ -681,14 +691,14 @@ export function CompoundingPrescriptionsView({
                 value={allergies}
                 onChange={(e) => setAllergies(e.target.value)}
                 placeholder="Ex.: Sem lactose, vegano, alergia a corantes..."
-                className="w-full px-3.5 py-2.5 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none disabled:opacity-60"
+                className="w-full px-3.5 py-2.5 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none disabled:opacity-60"
               />
             </div>
           </div>
 
           {!isIssued && (
             <div className="flex flex-wrap items-center justify-between gap-3 pt-1">
-              <span className="text-[11px] text-[#9D9284]">
+              <span className="text-[11px] text-[#85AF9B]">
                 Busca científica ativa em PubMed, ESPEN, ISSN, CFN 656/2020 e
                 ANVISA IN 28
               </span>
@@ -716,7 +726,7 @@ export function CompoundingPrescriptionsView({
         {/* Formula Details */}
         <div className="grid grid-cols-1 md:grid-cols-12 gap-4">
           <div className="md:col-span-6">
-            <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+            <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
               Título da fórmula manipulada
             </label>
             <input
@@ -725,11 +735,11 @@ export function CompoundingPrescriptionsView({
               value={formulaTitle}
               onChange={(e) => setFormulaTitle(e.target.value)}
               placeholder="Ex.: Fórmula Magistral de Energia e Imunidade"
-              className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+              className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
             />
           </div>
           <div className="md:col-span-3">
-            <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+            <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
               Forma farmacêutica
             </label>
             <input
@@ -737,12 +747,12 @@ export function CompoundingPrescriptionsView({
               disabled={isIssued}
               value={pharmaceuticalForm}
               onChange={(e) => setPharmaceuticalForm(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-sm bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+              className="w-full px-3.5 py-2.5 text-sm bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
             />
           </div>
           <div className="md:col-span-3 grid grid-cols-2 gap-2">
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Doses
               </label>
               <input
@@ -752,11 +762,11 @@ export function CompoundingPrescriptionsView({
                 disabled={isIssued}
                 value={totalDoses}
                 onChange={(e) => setTotalDoses(Number(e.target.value))}
-                className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
               />
             </div>
             <div>
-              <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+              <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
                 Dias
               </label>
               <input
@@ -766,7 +776,7 @@ export function CompoundingPrescriptionsView({
                 disabled={isIssued}
                 value={durationDays}
                 onChange={(e) => setDurationDays(Number(e.target.value))}
-                className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                className="w-full px-3 py-2.5 text-sm font-mono tabular-nums bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
               />
             </div>
           </div>
@@ -775,7 +785,7 @@ export function CompoundingPrescriptionsView({
         {/* Actives Table */}
         <div className="space-y-3">
           <div className="flex items-center justify-between gap-2">
-            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#DFBA7C] flex items-center gap-2">
+            <h3 className="text-xs font-semibold uppercase tracking-wider text-[#C7E88B] flex items-center gap-2">
               <FlaskConical className="w-3.5 h-3.5" />
               Composição da Fórmula (Ativos & Dosagens)
             </h3>
@@ -783,7 +793,7 @@ export function CompoundingPrescriptionsView({
               <button
                 type="button"
                 onClick={() => setActives((prev) => [...prev, { ...EMPTY_ACTIVE }])}
-                className="text-xs font-medium text-[#E8C589] hover:text-[#F7DFB3] inline-flex items-center gap-1 cursor-pointer"
+                className="text-xs font-medium text-[#C7E88B] hover:text-[#DDF3B2] inline-flex items-center gap-1 cursor-pointer"
               >
                 <Plus className="w-3.5 h-3.5" />
                 Adicionar ativo
@@ -795,7 +805,7 @@ export function CompoundingPrescriptionsView({
             {actives.map((act, idx) => (
               <div
                 key={idx}
-                className="grid grid-cols-1 sm:grid-cols-12 gap-2 p-3 rounded-xl bg-[#110D0A] border border-[#D9AF72]/16 items-center"
+                className="grid grid-cols-1 sm:grid-cols-12 gap-2 p-3 rounded-xl bg-[#07201C] border border-[#B7DB74]/16 items-center"
               >
                 <input
                   type="text"
@@ -809,7 +819,7 @@ export function CompoundingPrescriptionsView({
                     )
                   }
                   placeholder="Vitamina / Mineral (ex.: Magnésio Bisglicinato)"
-                  className="sm:col-span-4 px-3 py-2 text-xs bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/20 rounded-lg focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                  className="sm:col-span-4 px-3 py-2 text-xs bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/20 rounded-lg focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                 />
                 <input
                   type="text"
@@ -823,7 +833,7 @@ export function CompoundingPrescriptionsView({
                     )
                   }
                   placeholder="Dose"
-                  className="sm:col-span-2 px-3 py-2 text-xs font-mono tabular-nums bg-[#0B0907] text-[#F0D29C] border border-[#D9AF72]/20 rounded-lg focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                  className="sm:col-span-2 px-3 py-2 text-xs font-mono tabular-nums bg-[#041210] text-[#DDF3B2] border border-[#B7DB74]/20 rounded-lg focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                 />
                 <input
                   type="text"
@@ -837,7 +847,7 @@ export function CompoundingPrescriptionsView({
                     )
                   }
                   placeholder="mg / mcg / UI"
-                  className="sm:col-span-1 px-2.5 py-2 text-xs font-mono bg-[#0B0907] text-[#FAF5EC] border border-[#D9AF72]/20 rounded-lg focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                  className="sm:col-span-1 px-2.5 py-2 text-xs font-mono bg-[#041210] text-[#F4FBF6] border border-[#B7DB74]/20 rounded-lg focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                 />
                 <input
                   type="text"
@@ -851,7 +861,7 @@ export function CompoundingPrescriptionsView({
                     )
                   }
                   placeholder="Finalidade clínica"
-                  className="sm:col-span-4 px-3 py-2 text-xs bg-[#0B0907] text-[#CFC5B8] border border-[#D9AF72]/20 rounded-lg focus:outline-none focus:border-[#E8C589] disabled:opacity-60"
+                  className="sm:col-span-4 px-3 py-2 text-xs bg-[#041210] text-[#CBE3D6] border border-[#B7DB74]/20 rounded-lg focus:outline-none focus:border-[#C7E88B] disabled:opacity-60"
                 />
                 <div className="sm:col-span-1 flex justify-end">
                   {!isIssued && actives.length > 1 && (
@@ -861,7 +871,7 @@ export function CompoundingPrescriptionsView({
                         setActives((prev) => prev.filter((_, i) => i !== idx))
                       }
                       aria-label="Remover ativo"
-                      className="p-1.5 text-[#7C7164] hover:text-red-300 cursor-pointer"
+                      className="p-1.5 text-[#719C88] hover:text-red-300 cursor-pointer"
                     >
                       <Trash2 className="w-3.5 h-3.5" />
                     </button>
@@ -875,7 +885,7 @@ export function CompoundingPrescriptionsView({
         {/* Posology & Pharmacy Instructions */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+            <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
               Posologia e horário de uso
             </label>
             <textarea
@@ -883,11 +893,11 @@ export function CompoundingPrescriptionsView({
               disabled={isIssued}
               value={posology}
               onChange={(e) => setPosology(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none disabled:opacity-60"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none disabled:opacity-60"
             />
           </div>
           <div>
-            <label className="block text-xs font-medium text-[#BDB2A4] mb-1.5">
+            <label className="block text-xs font-medium text-[#A8CCB9] mb-1.5">
               Orientações à Farmácia de Manipulação
             </label>
             <textarea
@@ -895,7 +905,7 @@ export function CompoundingPrescriptionsView({
               disabled={isIssued}
               value={pharmacyNotes}
               onChange={(e) => setPharmacyNotes(e.target.value)}
-              className="w-full px-3.5 py-2.5 text-xs bg-[#0E0B08] text-[#FAF5EC] border border-[#D9AF72]/24 rounded-xl focus:outline-none focus:border-[#E8C589] resize-none disabled:opacity-60"
+              className="w-full px-3.5 py-2.5 text-xs bg-[#061A17] text-[#F4FBF6] border border-[#B7DB74]/24 rounded-xl focus:outline-none focus:border-[#C7E88B] resize-none disabled:opacity-60"
             />
           </div>
         </div>
@@ -903,21 +913,21 @@ export function CompoundingPrescriptionsView({
         {(clinicalRationale || precautions) && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {clinicalRationale && (
-              <div className="p-4 rounded-xl bg-[#110D0A] border border-[#D9AF72]/18 space-y-1">
-                <div className="text-xs font-semibold text-[#F0D29C]">
+              <div className="p-4 rounded-xl bg-[#07201C] border border-[#B7DB74]/18 space-y-1">
+                <div className="text-xs font-semibold text-[#DDF3B2]">
                   Fundamentação Científica
                 </div>
-                <p className="text-xs text-[#CFC5B8] leading-relaxed">
+                <p className="text-xs text-[#CBE3D6] leading-relaxed">
                   {clinicalRationale}
                 </p>
               </div>
             )}
             {precautions && (
-              <div className="p-4 rounded-xl bg-[#110D0A] border border-[#D9AF72]/18 space-y-1">
+              <div className="p-4 rounded-xl bg-[#07201C] border border-[#B7DB74]/18 space-y-1">
                 <div className="text-xs font-semibold text-amber-300">
                   Precauções e Segurança
                 </div>
-                <p className="text-xs text-[#CFC5B8] leading-relaxed">
+                <p className="text-xs text-[#CBE3D6] leading-relaxed">
                   {precautions}
                 </p>
               </div>
@@ -927,21 +937,21 @@ export function CompoundingPrescriptionsView({
 
         {/* Recommended Therapeutic Recipes */}
         {recommendedRecipes.length > 0 && (
-          <div className="p-4 rounded-xl bg-[#120E0B] border border-[#D9AF72]/20 space-y-2">
+          <div className="p-4 rounded-xl bg-[#0A2622] border border-[#B7DB74]/20 space-y-2">
             <div className="flex items-center justify-between gap-2">
-              <div className="text-xs font-semibold text-[#F0D29C] flex items-center gap-1.5">
+              <div className="text-xs font-semibold text-[#DDF3B2] flex items-center gap-1.5">
                 <BookOpen className="w-3.5 h-3.5" />
                 <span>Receitas Terapêuticas Integradas ao Tratamento</span>
               </div>
               <button
                 type="button"
                 onClick={onOpenRecipes}
-                className="text-[11px] text-[#E8C589] hover:underline cursor-pointer"
+                className="text-[11px] text-[#C7E88B] hover:underline cursor-pointer"
               >
                 Abrir acervo de receitas →
               </button>
             </div>
-            <ul className="space-y-1 text-xs text-[#CFC5B8] list-disc pl-4 marker:text-[#D9AF72]">
+            <ul className="space-y-1 text-xs text-[#CBE3D6] list-disc pl-4 marker:text-[#B7DB74]">
               {recommendedRecipes.map((r, i) => (
                 <li key={i}>{r}</li>
               ))}
@@ -951,8 +961,8 @@ export function CompoundingPrescriptionsView({
 
         {/* Grounded Scientific Citations */}
         {aiSources.length > 0 && (
-          <div className="pt-3 border-t border-[#D9AF72]/14 space-y-2">
-            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#DFBA7C]">
+          <div className="pt-3 border-t border-[#B7DB74]/14 space-y-2">
+            <div className="flex items-center gap-1.5 text-xs font-semibold text-[#C7E88B]">
               <Globe className="w-3.5 h-3.5" />
               <span>Referências científicas consultadas ({aiSources.length})</span>
             </div>
@@ -963,17 +973,17 @@ export function CompoundingPrescriptionsView({
                   href={src.uri}
                   target="_blank"
                   rel="noopener noreferrer"
-                  className="group flex items-start justify-between gap-2 p-2.5 rounded-lg bg-[#0F0C09] border border-[#D9AF72]/16 hover:border-[#E8C589]/50 transition-colors"
+                  className="group flex items-start justify-between gap-2 p-2.5 rounded-lg bg-[#061A17] border border-[#B7DB74]/16 hover:border-[#C7E88B]/50 transition-colors"
                 >
                   <div className="min-w-0">
-                    <div className="text-[11px] font-medium text-[#FAF5EC] group-hover:text-[#F0D29C] line-clamp-1">
+                    <div className="text-[11px] font-medium text-[#F4FBF6] group-hover:text-[#DDF3B2] line-clamp-1">
                       {src.title}
                     </div>
-                    <div className="text-[10px] font-mono text-[#8D8274] truncate">
+                    <div className="text-[10px] font-mono text-[#85AF9B] truncate">
                       {src.domain}
                     </div>
                   </div>
-                  <ExternalLink className="w-3 h-3 text-[#8D8274] group-hover:text-[#F0D29C] shrink-0 mt-0.5" />
+                  <ExternalLink className="w-3 h-3 text-[#85AF9B] group-hover:text-[#DDF3B2] shrink-0 mt-0.5" />
                 </a>
               ))}
             </div>
@@ -990,7 +1000,7 @@ export function CompoundingPrescriptionsView({
         )}
 
         {/* Action Footer */}
-        <div className="pt-4 border-t border-[#D9AF72]/16 flex flex-wrap items-center justify-between gap-3">
+        <div className="pt-4 border-t border-[#B7DB74]/16 flex flex-wrap items-center justify-between gap-3">
           {isIssued ? (
             <div className="inline-flex items-center gap-2 text-xs text-emerald-300 font-medium">
               <CheckCircle2 className="w-4 h-4" />
@@ -1004,9 +1014,9 @@ export function CompoundingPrescriptionsView({
                 type="button"
                 disabled={saving}
                 onClick={() => handleSave(false)}
-                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-[#FAF5EC] border border-[#D9AF72]/35 rounded-full hover:border-[#F0D29C] hover:bg-[#D9AF72]/10 transition-colors cursor-pointer disabled:opacity-50"
+                className="inline-flex items-center gap-1.5 px-4 py-2.5 text-xs font-medium text-[#F4FBF6] border border-[#B7DB74]/35 rounded-full hover:border-[#DDF3B2] hover:bg-[#B7DB74]/10 transition-colors cursor-pointer disabled:opacity-50"
               >
-                <Save className="w-3.5 h-3.5 text-[#E8C589]" />
+                <Save className="w-3.5 h-3.5 text-[#C7E88B]" />
                 <span>{saving ? 'Salvando...' : 'Salvar rascunho'}</span>
               </button>
               <button
@@ -1024,7 +1034,7 @@ export function CompoundingPrescriptionsView({
           <button
             type="button"
             onClick={() => setPrintMode(true)}
-            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#E8C589] hover:text-[#F7DFB3] cursor-pointer whitespace-nowrap"
+            className="inline-flex items-center gap-1.5 text-xs font-medium text-[#C7E88B] hover:text-[#DDF3B2] cursor-pointer whitespace-nowrap"
           >
             <Printer className="w-3.5 h-3.5" />
             <span>Visualizar e imprimir receita</span>
