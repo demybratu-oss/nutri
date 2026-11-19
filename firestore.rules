@@ -1,0 +1,877 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // Global Default-Deny Catch-All Safety Net
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // =========================================================================
+    // Global Hardened Primitives & Admin RBAC
+    // =========================================================================
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isVerifiedUser() {
+      return isSignedIn() && request.auth.token.email_verified == true;
+    }
+
+    function emailKey(email) {
+      return email.lower().replace('[^a-z0-9]', '_');
+    }
+
+    function isSuperAdmin() {
+      return isVerifiedUser()
+        && request.auth.token.email is string
+        && request.auth.token.email.lower() == 'demybratu@gmail.com';
+    }
+
+    function isAdmin() {
+      return isSuperAdmin()
+        || (
+          isVerifiedUser()
+          && (
+            exists(/databases/$(database)/documents/admins/$(request.auth.uid))
+            || (
+              request.auth.token.email is string
+              && exists(/databases/$(database)/documents/admins/$(emailKey(request.auth.token.email)))
+            )
+          )
+        );
+    }
+
+    function incoming() {
+      return request.resource.data;
+    }
+
+    function existing() {
+      return resource.data;
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() >= 1 && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    function isValidString(val, minLen, maxLen) {
+      return val is string && val.size() >= minLen && val.size() <= maxLen;
+    }
+
+    function isValidNumberRange(val, minVal, maxVal) {
+      return (val is int || val is float) && val >= minVal && val <= maxVal;
+    }
+
+    function isValidStringList(listVal, maxItems) {
+      return listVal is list
+        && listVal.size() <= maxItems
+        && (listVal.size() == 0 || (listVal[0] is string && listVal[0].size() <= 300));
+    }
+
+    function isValidSpecialty(val) {
+      return val in [
+        'metabolica_emagrecimento',
+        'imunidade_longevidade',
+        'saude_intestinal',
+        'saude_mulher_hormonal',
+        'performance_massa_magra',
+        'sono_ansiedade_cognicao'
+      ];
+    }
+
+    // =========================================================================
+    // Entity Validation Blueprints (Anti-Update-Gap)
+    // =========================================================================
+
+    function isValidPatient(data) {
+      return data.keys().hasAll([
+          'nutritionistId', 'fullName', 'email', 'phone', 'birthYear', 'sex',
+          'weightKg', 'heightCm', 'activityLevel', 'goal', 'restrictions',
+          'clinicalNotes', 'targetCalories', 'targetProteinG', 'targetCarbsG',
+          'targetFatG', 'waterTargetLiters', 'status', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'nutritionistId', 'fullName', 'email', 'phone', 'birthYear', 'sex',
+          'weightKg', 'heightCm', 'activityLevel', 'goal', 'restrictions',
+          'clinicalNotes', 'targetCalories', 'targetProteinG', 'targetCarbsG',
+          'targetFatG', 'waterTargetLiters', 'status', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.nutritionistId)
+        && isValidString(data.fullName, 2, 120)
+        && isValidString(data.email, 0, 160)
+        && isValidString(data.phone, 0, 40)
+        && data.birthYear is int && data.birthYear >= 1920 && data.birthYear <= 2026
+        && data.sex in ['F', 'M']
+        && isValidNumberRange(data.weightKg, 20, 300)
+        && isValidNumberRange(data.heightCm, 100, 240)
+        && data.activityLevel in ['sedentario', 'leve', 'moderado', 'intenso', 'atleta']
+        && data.goal in ['emagrecimento', 'hipertrofia', 'reeducacao', 'controle_glicemico', 'performance']
+        && isValidStringList(data.restrictions, 15)
+        && isValidString(data.clinicalNotes, 0, 1500)
+        && isValidNumberRange(data.targetCalories, 800, 6000)
+        && isValidNumberRange(data.targetProteinG, 20, 400)
+        && isValidNumberRange(data.targetCarbsG, 0, 800)
+        && isValidNumberRange(data.targetFatG, 10, 250)
+        && isValidNumberRange(data.waterTargetLiters, 0.5, 8)
+        && data.status in ['ativo', 'em_acompanhamento', 'arquivado']
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidRecipe(data) {
+      return data.keys().hasAll([
+          'nutritionistId', 'title', 'category', 'description', 'prepTimeMin',
+          'servings', 'portionLabel', 'calories', 'proteinG', 'carbsG', 'fatG',
+          'fiberG', 'dietaryTags', 'ingredients', 'instructions', 'clinicalTip',
+          'imageUrl', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'nutritionistId', 'title', 'category', 'description', 'prepTimeMin',
+          'servings', 'portionLabel', 'calories', 'proteinG', 'carbsG', 'fatG',
+          'fiberG', 'dietaryTags', 'ingredients', 'instructions', 'clinicalTip',
+          'imageUrl', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.nutritionistId)
+        && isValidString(data.title, 2, 120)
+        && data.category in ['cafe_da_manha', 'almoco', 'jantar', 'lanche', 'ceia', 'sobremesa_fit']
+        && isValidString(data.description, 0, 400)
+        && data.prepTimeMin is int && data.prepTimeMin >= 1 && data.prepTimeMin <= 360
+        && data.servings is int && data.servings >= 1 && data.servings <= 20
+        && isValidString(data.portionLabel, 1, 80)
+        && isValidNumberRange(data.calories, 0, 2500)
+        && isValidNumberRange(data.proteinG, 0, 200)
+        && isValidNumberRange(data.carbsG, 0, 300)
+        && isValidNumberRange(data.fatG, 0, 150)
+        && isValidNumberRange(data.fiberG, 0, 80)
+        && isValidStringList(data.dietaryTags, 10)
+        && isValidStringList(data.ingredients, 30)
+        && isValidStringList(data.instructions, 20)
+        && isValidString(data.clinicalTip, 0, 500)
+        && isValidString(data.imageUrl, 0, 300)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidMealsList(meals) {
+      return meals is list
+        && meals.size() <= 10
+        && (
+          meals.size() == 0
+          || (
+            meals[0] is map
+            && meals[0].keys().hasAll(['id', 'time', 'name', 'notes', 'items'])
+            && meals[0].keys().hasOnly(['id', 'time', 'name', 'notes', 'items'])
+            && isValidString(meals[0].id, 1, 64)
+            && isValidString(meals[0].time, 1, 16)
+            && isValidString(meals[0].name, 1, 80)
+            && isValidString(meals[0].notes, 0, 400)
+            && meals[0].items is list
+            && meals[0].items.size() <= 20
+          )
+        );
+    }
+
+    function isValidMealPlan(data) {
+      return data.keys().hasAll([
+          'nutritionistId', 'patientId', 'title', 'objectiveSummary', 'status',
+          'targetCalories', 'targetProteinG', 'targetCarbsG', 'targetFatG',
+          'waterTargetLiters', 'generalGuidance', 'meals', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'nutritionistId', 'patientId', 'title', 'objectiveSummary', 'status',
+          'targetCalories', 'targetProteinG', 'targetCarbsG', 'targetFatG',
+          'waterTargetLiters', 'generalGuidance', 'meals', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.nutritionistId)
+        && isValidId(data.patientId)
+        && isValidString(data.title, 2, 140)
+        && isValidString(data.objectiveSummary, 0, 400)
+        && data.status in ['rascunho', 'ativo', 'concluido']
+        && isValidNumberRange(data.targetCalories, 800, 6000)
+        && isValidNumberRange(data.targetProteinG, 20, 400)
+        && isValidNumberRange(data.targetCarbsG, 0, 800)
+        && isValidNumberRange(data.targetFatG, 10, 250)
+        && isValidNumberRange(data.waterTargetLiters, 0.5, 8)
+        && isValidString(data.generalGuidance, 0, 2000)
+        && isValidMealsList(data.meals)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidSourcesList(sources) {
+      return sources is list
+        && sources.size() <= 12
+        && (
+          sources.size() == 0
+          || (
+            sources[0] is map
+            && sources[0].keys().hasAll(['title', 'uri', 'domain'])
+            && sources[0].keys().hasOnly(['title', 'uri', 'domain'])
+            && isValidString(sources[0].title, 1, 240)
+            && isValidString(sources[0].uri, 1, 600)
+            && isValidString(sources[0].domain, 1, 160)
+          )
+        );
+    }
+
+    function isValidConsultation(data) {
+      return data.keys().hasAll([
+          'nutritionistId', 'patientId', 'patientName', 'title', 'mode',
+          'status', 'lastMessagePreview', 'messageCount', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'nutritionistId', 'patientId', 'patientName', 'title', 'mode',
+          'status', 'lastMessagePreview', 'messageCount', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.nutritionistId)
+        && (data.patientId == '' || isValidId(data.patientId))
+        && isValidString(data.patientName, 0, 120)
+        && isValidString(data.title, 2, 140)
+        && data.mode in ['consulta', 'anamnese', 'plano_substituicoes', 'suplementacao']
+        && data.status in ['aberta', 'encerrada']
+        && isValidString(data.lastMessagePreview, 0, 240)
+        && data.messageCount is int && data.messageCount >= 0 && data.messageCount <= 500
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidConsultationMessage(data) {
+      return data.keys().hasAll([
+          'nutritionistId', 'role', 'content', 'sources', 'createdAt'
+        ])
+        && data.keys().hasOnly([
+          'nutritionistId', 'role', 'content', 'sources', 'createdAt'
+        ])
+        && isValidId(data.nutritionistId)
+        && data.role in ['user', 'assistant']
+        && isValidString(data.content, 1, 8000)
+        && isValidSourcesList(data.sources)
+        && data.createdAt is timestamp;
+    }
+
+    function isValidSubscription(data) {
+      return data.keys().hasAll([
+          'userId', 'subscriberName', 'subscriberEmail', 'phone', 'specialty',
+          'healthFocus', 'allergies', 'planDurationMonths', 'paymentMethod',
+          'totalAmountBrl', 'installmentLabel', 'status', 'validUntilIso',
+          'receiptCode', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'subscriberName', 'subscriberEmail', 'phone', 'specialty',
+          'healthFocus', 'allergies', 'planDurationMonths', 'paymentMethod',
+          'totalAmountBrl', 'installmentLabel', 'status', 'validUntilIso',
+          'receiptCode', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.userId)
+        && isValidString(data.subscriberName, 2, 120)
+        && isValidString(data.subscriberEmail, 0, 160)
+        && isValidString(data.phone, 0, 40)
+        && isValidSpecialty(data.specialty)
+        && isValidString(data.healthFocus, 0, 600)
+        && isValidString(data.allergies, 0, 300)
+        && data.planDurationMonths is int && data.planDurationMonths == 12
+        && data.paymentMethod in ['cartao_12x', 'pix_anual', 'boleto_anual']
+        && isValidNumberRange(data.totalAmountBrl, 100, 50000)
+        && isValidString(data.installmentLabel, 2, 80)
+        && data.status in ['ativa', 'cancelada']
+        && isValidString(data.validUntilIso, 10, 40)
+        && isValidString(data.receiptCode, 4, 40)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidVideoSession(data) {
+      return data.keys().hasAll([
+          'userId', 'patientId', 'patientName', 'specialty', 'scheduledDate',
+          'scheduledTime', 'status', 'chiefComplaint', 'callNotes',
+          'durationMinutes', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'patientId', 'patientName', 'specialty', 'scheduledDate',
+          'scheduledTime', 'status', 'chiefComplaint', 'callNotes',
+          'durationMinutes', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.userId)
+        && (data.patientId == '' || isValidId(data.patientId))
+        && isValidString(data.patientName, 2, 120)
+        && isValidSpecialty(data.specialty)
+        && isValidString(data.scheduledDate, 8, 20)
+        && isValidString(data.scheduledTime, 4, 12)
+        && data.status in ['agendada', 'em_andamento', 'concluida', 'cancelada']
+        && isValidString(data.chiefComplaint, 0, 600)
+        && isValidString(data.callNotes, 0, 3000)
+        && data.durationMinutes is int && data.durationMinutes >= 0 && data.durationMinutes <= 240
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidActivesList(actives) {
+      return actives is list
+        && actives.size() <= 20
+        && (
+          actives.size() == 0
+          || (
+            actives[0] is map
+            && actives[0].keys().hasAll(['name', 'dosage', 'unit', 'purpose'])
+            && actives[0].keys().hasOnly(['name', 'dosage', 'unit', 'purpose'])
+            && isValidString(actives[0].name, 1, 120)
+            && isValidString(actives[0].dosage, 1, 40)
+            && isValidString(actives[0].unit, 1, 24)
+            && isValidString(actives[0].purpose, 0, 240)
+          )
+        );
+    }
+
+    function isValidCompoundingPrescription(data) {
+      return data.keys().hasAll([
+          'userId', 'patientId', 'patientName', 'specialty', 'formulaTitle',
+          'pharmaceuticalForm', 'totalDoses', 'durationDays', 'posology',
+          'pharmacyNotes', 'clinicalRationale', 'precautions', 'status',
+          'actives', 'recommendedRecipes', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'userId', 'patientId', 'patientName', 'specialty', 'formulaTitle',
+          'pharmaceuticalForm', 'totalDoses', 'durationDays', 'posology',
+          'pharmacyNotes', 'clinicalRationale', 'precautions', 'status',
+          'actives', 'recommendedRecipes', 'createdAt', 'updatedAt'
+        ])
+        && isValidId(data.userId)
+        && (data.patientId == '' || isValidId(data.patientId))
+        && isValidString(data.patientName, 2, 120)
+        && isValidSpecialty(data.specialty)
+        && isValidString(data.formulaTitle, 2, 140)
+        && isValidString(data.pharmaceuticalForm, 2, 100)
+        && data.totalDoses is int && data.totalDoses >= 1 && data.totalDoses <= 365
+        && data.durationDays is int && data.durationDays >= 1 && data.durationDays <= 365
+        && isValidString(data.posology, 2, 500)
+        && isValidString(data.pharmacyNotes, 0, 800)
+        && isValidString(data.clinicalRationale, 0, 1500)
+        && isValidString(data.precautions, 0, 800)
+        && data.status in ['rascunho', 'emitida']
+        && isValidActivesList(data.actives)
+        && isValidStringList(data.recommendedRecipes, 10)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidAdminUser(data) {
+      return data.keys().hasAll([
+          'email', 'displayName', 'roleLabel', 'addedByEmail', 'createdAt', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'email', 'displayName', 'roleLabel', 'addedByEmail', 'createdAt', 'updatedAt'
+        ])
+        && isValidString(data.email, 5, 160)
+        && isValidString(data.displayName, 2, 120)
+        && isValidString(data.roleLabel, 0, 80)
+        && isValidString(data.addedByEmail, 0, 160)
+        && data.createdAt is timestamp
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidSiteSettings(data) {
+      return data.keys().hasAll([
+          'brandName', 'brandSubtitle', 'heroEyebrow', 'heroTitle', 'heroDescription',
+          'methodTitle', 'methodDescription', 'bannerTitle', 'bannerDescription',
+          'annualPlanHeadline', 'annualCardInstallmentBrl', 'annualCardTotalBrl',
+          'annualPixTotalBrl', 'annualPixDiscountLabel', 'annualBoletoTotalBrl',
+          'whatsappContact', 'instagramHandle', 'updatedByEmail', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'brandName', 'brandSubtitle', 'heroEyebrow', 'heroTitle', 'heroDescription',
+          'methodTitle', 'methodDescription', 'bannerTitle', 'bannerDescription',
+          'annualPlanHeadline', 'annualCardInstallmentBrl', 'annualCardTotalBrl',
+          'annualPixTotalBrl', 'annualPixDiscountLabel', 'annualBoletoTotalBrl',
+          'whatsappContact', 'instagramHandle', 'updatedByEmail', 'updatedAt'
+        ])
+        && isValidString(data.brandName, 2, 80)
+        && isValidString(data.brandSubtitle, 0, 80)
+        && isValidString(data.heroEyebrow, 0, 120)
+        && isValidString(data.heroTitle, 4, 160)
+        && isValidString(data.heroDescription, 0, 600)
+        && isValidString(data.methodTitle, 0, 140)
+        && isValidString(data.methodDescription, 0, 700)
+        && isValidString(data.bannerTitle, 0, 120)
+        && isValidString(data.bannerDescription, 0, 600)
+        && isValidString(data.annualPlanHeadline, 0, 120)
+        && isValidNumberRange(data.annualCardInstallmentBrl, 10, 10000)
+        && isValidNumberRange(data.annualCardTotalBrl, 100, 100000)
+        && isValidNumberRange(data.annualPixTotalBrl, 100, 100000)
+        && isValidString(data.annualPixDiscountLabel, 0, 40)
+        && isValidNumberRange(data.annualBoletoTotalBrl, 100, 100000)
+        && isValidString(data.whatsappContact, 0, 60)
+        && isValidString(data.instagramHandle, 0, 60)
+        && isValidString(data.updatedByEmail, 0, 160)
+        && data.updatedAt is timestamp;
+    }
+
+    function isValidSiteMedia(data) {
+      return data.keys().hasAll([
+          'slotKey', 'label', 'imageUrl', 'altText', 'isPublic', 'updatedByEmail', 'updatedAt'
+        ])
+        && data.keys().hasOnly([
+          'slotKey', 'label', 'imageUrl', 'altText', 'isPublic', 'updatedByEmail', 'updatedAt'
+        ])
+        && isValidId(data.slotKey)
+        && isValidString(data.label, 2, 120)
+        && isValidString(data.imageUrl, 1, 450000)
+        && isValidString(data.altText, 0, 200)
+        && data.isPublic is bool
+        && data.isPublic == true
+        && isValidString(data.updatedByEmail, 0, 160)
+        && data.updatedAt is timestamp;
+    }
+
+    // =========================================================================
+    // Collection: /admins/{adminId} (Strictly Admin-Only RBAC Registry)
+    // =========================================================================
+    match /admins/{adminId} {
+      allow get: if isValidId(adminId)
+        && (
+          isSuperAdmin()
+          || (
+            isVerifiedUser()
+            && (
+              adminId == request.auth.uid
+              || (
+                request.auth.token.email is string
+                && adminId == emailKey(request.auth.token.email)
+              )
+            )
+          )
+        );
+
+      allow list: if isAdmin();
+
+      allow create: if isAdmin()
+        && isValidId(adminId)
+        && isValidAdminUser(incoming())
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isAdmin()
+        && isValidId(adminId)
+        && isValidAdminUser(incoming())
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && incoming().diff(existing()).affectedKeys().hasOnly([
+          'displayName', 'roleLabel', 'updatedAt'
+        ]);
+
+      allow delete: if isAdmin()
+        && isValidId(adminId);
+    }
+
+    // =========================================================================
+    // Collection: /siteSettings/{settingsId} (Public Read, Admin-Only Write)
+    // =========================================================================
+    match /siteSettings/{settingsId} {
+      allow get: if isValidId(settingsId);
+      allow list: if false;
+
+      allow create: if isAdmin()
+        && isValidId(settingsId)
+        && isValidSiteSettings(incoming())
+        && incoming().updatedAt == request.time;
+
+      allow update: if isAdmin()
+        && isValidId(settingsId)
+        && isValidSiteSettings(incoming())
+        && incoming().updatedAt == request.time;
+
+      allow delete: if isAdmin() && isValidId(settingsId);
+    }
+
+    // =========================================================================
+    // Collection: /siteMedia/{slotId} (Public Visual Assets, Admin-Only Write)
+    // =========================================================================
+    match /siteMedia/{slotId} {
+      allow get: if isValidId(slotId) && existing().isPublic == true;
+      allow list: if existing().isPublic == true;
+
+      allow create: if isAdmin()
+        && isValidId(slotId)
+        && isValidSiteMedia(incoming())
+        && incoming().slotKey == slotId
+        && incoming().updatedAt == request.time;
+
+      allow update: if isAdmin()
+        && isValidId(slotId)
+        && isValidSiteMedia(incoming())
+        && incoming().slotKey == slotId
+        && incoming().updatedAt == request.time;
+
+      allow delete: if isAdmin() && isValidId(slotId);
+    }
+
+    // =========================================================================
+    // Collection: /patients/{patientId} (PII isolated to owner or Admin)
+    // =========================================================================
+    match /patients/{patientId} {
+      allow get: if isSignedIn()
+        && isValidId(patientId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+
+      allow list: if (isSignedIn() && existing().nutritionistId == request.auth.uid)
+        || isAdmin();
+
+      allow create: if isVerifiedUser()
+        && isValidId(patientId)
+        && isValidPatient(incoming())
+        && incoming().nutritionistId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(patientId)
+        && isValidPatient(incoming())
+        && (existing().nutritionistId == request.auth.uid || isAdmin())
+        && incoming().nutritionistId == existing().nutritionistId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin()
+          || incoming().diff(existing()).affectedKeys().hasOnly([
+            'fullName', 'email', 'phone', 'birthYear', 'sex',
+            'weightKg', 'heightCm', 'activityLevel', 'goal', 'restrictions',
+            'clinicalNotes', 'targetCalories', 'targetProteinG', 'targetCarbsG',
+            'targetFatG', 'waterTargetLiters', 'status', 'updatedAt'
+          ])
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(patientId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+    }
+
+    // =========================================================================
+    // Collection: /recipes/{recipeId}
+    // =========================================================================
+    match /recipes/{recipeId} {
+      allow get: if isSignedIn()
+        && isValidId(recipeId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+
+      allow list: if (isSignedIn() && existing().nutritionistId == request.auth.uid)
+        || isAdmin();
+
+      allow create: if isVerifiedUser()
+        && isValidId(recipeId)
+        && isValidRecipe(incoming())
+        && incoming().nutritionistId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(recipeId)
+        && isValidRecipe(incoming())
+        && (existing().nutritionistId == request.auth.uid || isAdmin())
+        && incoming().nutritionistId == existing().nutritionistId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin()
+          || incoming().diff(existing()).affectedKeys().hasOnly([
+            'title', 'category', 'description', 'prepTimeMin', 'servings',
+            'portionLabel', 'calories', 'proteinG', 'carbsG', 'fatG', 'fiberG',
+            'dietaryTags', 'ingredients', 'instructions', 'clinicalTip',
+            'imageUrl', 'updatedAt'
+          ])
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(recipeId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+    }
+
+    // =========================================================================
+    // Collection: /mealPlans/{planId}
+    // =========================================================================
+    match /mealPlans/{planId} {
+      allow get: if isSignedIn()
+        && isValidId(planId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+
+      allow list: if (isSignedIn() && existing().nutritionistId == request.auth.uid)
+        || isAdmin();
+
+      allow create: if isVerifiedUser()
+        && isValidId(planId)
+        && isValidMealPlan(incoming())
+        && incoming().nutritionistId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && exists(/databases/$(database)/documents/patients/$(incoming().patientId))
+        && get(/databases/$(database)/documents/patients/$(incoming().patientId)).data.nutritionistId == request.auth.uid;
+
+      allow update: if isVerifiedUser()
+        && isValidId(planId)
+        && isValidMealPlan(incoming())
+        && (existing().nutritionistId == request.auth.uid || isAdmin())
+        && (existing().status != 'concluido' || isAdmin())
+        && incoming().nutritionistId == existing().nutritionistId
+        && incoming().patientId == existing().patientId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin()
+          || (
+            exists(/databases/$(database)/documents/patients/$(existing().patientId))
+            && get(/databases/$(database)/documents/patients/$(existing().patientId)).data.nutritionistId == request.auth.uid
+            && (
+              incoming().diff(existing()).affectedKeys().hasOnly([
+                'title', 'objectiveSummary', 'targetCalories', 'targetProteinG',
+                'targetCarbsG', 'targetFatG', 'waterTargetLiters', 'generalGuidance',
+                'meals', 'status', 'updatedAt'
+              ])
+              ||
+              (incoming().status == 'concluido' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
+            )
+          )
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(planId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+    }
+
+    // =========================================================================
+    // Collection: /consultations/{consultationId}
+    // =========================================================================
+    match /consultations/{consultationId} {
+      allow get: if isSignedIn()
+        && isValidId(consultationId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+
+      allow list: if (isSignedIn() && existing().nutritionistId == request.auth.uid)
+        || isAdmin();
+
+      allow create: if isVerifiedUser()
+        && isValidId(consultationId)
+        && isValidConsultation(incoming())
+        && incoming().nutritionistId == request.auth.uid
+        && incoming().status == 'aberta'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          incoming().patientId == ''
+          || (
+            exists(/databases/$(database)/documents/patients/$(incoming().patientId))
+            && get(/databases/$(database)/documents/patients/$(incoming().patientId)).data.nutritionistId == request.auth.uid
+          )
+        );
+
+      allow update: if isVerifiedUser()
+        && isValidId(consultationId)
+        && isValidConsultation(incoming())
+        && (existing().nutritionistId == request.auth.uid || isAdmin())
+        && (existing().status != 'encerrada' || isAdmin())
+        && incoming().nutritionistId == existing().nutritionistId
+        && incoming().patientId == existing().patientId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin()
+          || incoming().diff(existing()).affectedKeys().hasOnly([
+            'title', 'mode', 'lastMessagePreview', 'messageCount', 'updatedAt'
+          ])
+          ||
+          (incoming().status == 'encerrada' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(consultationId)
+        && (existing().nutritionistId == request.auth.uid || isAdmin());
+
+      match /messages/{messageId} {
+        allow get: if isSignedIn()
+          && isValidId(consultationId)
+          && isValidId(messageId)
+          && (
+            (
+              existing().nutritionistId == request.auth.uid
+              && get(/databases/$(database)/documents/consultations/$(consultationId)).data.nutritionistId == request.auth.uid
+            )
+            || isAdmin()
+          );
+
+        allow list: if (
+            isSignedIn()
+            && isValidId(consultationId)
+            && existing().nutritionistId == request.auth.uid
+          )
+          || isAdmin();
+
+        allow create: if isVerifiedUser()
+          && isValidId(consultationId)
+          && isValidId(messageId)
+          && isValidConsultationMessage(incoming())
+          && incoming().nutritionistId == request.auth.uid
+          && incoming().createdAt == request.time
+          && exists(/databases/$(database)/documents/consultations/$(consultationId))
+          && get(/databases/$(database)/documents/consultations/$(consultationId)).data.nutritionistId == request.auth.uid
+          && get(/databases/$(database)/documents/consultations/$(consultationId)).data.status != 'encerrada';
+
+        allow update: if false;
+
+        allow delete: if isVerifiedUser()
+          && isValidId(consultationId)
+          && isValidId(messageId)
+          && (
+            (
+              existing().nutritionistId == request.auth.uid
+              && get(/databases/$(database)/documents/consultations/$(consultationId)).data.nutritionistId == request.auth.uid
+            )
+            || isAdmin()
+          );
+      }
+    }
+
+    // =========================================================================
+    // Collection: /subscriptions/{subscriptionId} (PII isolated to owner or Admin)
+    // =========================================================================
+    match /subscriptions/{subscriptionId} {
+      allow get: if isSignedIn()
+        && isValidId(subscriptionId)
+        && (existing().userId == request.auth.uid || isAdmin());
+
+      allow list: if (isSignedIn() && existing().userId == request.auth.uid)
+        || isAdmin();
+
+      allow create: if isVerifiedUser()
+        && isValidId(subscriptionId)
+        && isValidSubscription(incoming())
+        && incoming().userId == request.auth.uid
+        && incoming().status == 'ativa'
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time;
+
+      allow update: if isVerifiedUser()
+        && isValidId(subscriptionId)
+        && isValidSubscription(incoming())
+        && (existing().userId == request.auth.uid || isAdmin())
+        && (existing().status != 'cancelada' || isAdmin())
+        && incoming().userId == existing().userId
+        && incoming().planDurationMonths == existing().planDurationMonths
+        && incoming().receiptCode == existing().receiptCode
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin()
+          ||
+          // Action: Update chosen specialty & clinical preferences
+          incoming().diff(existing()).affectedKeys().hasOnly([
+            'specialty', 'healthFocus', 'allergies', 'phone', 'updatedAt'
+          ])
+          ||
+          // Action: Cancel subscription (terminal for standard user)
+          (incoming().status == 'cancelada' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
+        );
+
+      allow delete: if isAdmin() && isValidId(subscriptionId);
+    }
+
+    // =========================================================================
+    // Collection: /videoSessions/{sessionId}
+    // =========================================================================
+    match /videoSessions/{sessionId} {
+      allow get: if isSignedIn()
+        && isValidId(sessionId)
+        && (existing().userId == request.auth.uid || isAdmin());
+
+      allow list: if (isSignedIn() && existing().userId == request.auth.uid)
+        || isAdmin();
+
+      allow create: if isVerifiedUser()
+        && isValidId(sessionId)
+        && isValidVideoSession(incoming())
+        && incoming().userId == request.auth.uid
+        && incoming().status in ['agendada', 'em_andamento']
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          incoming().patientId == ''
+          || (
+            exists(/databases/$(database)/documents/patients/$(incoming().patientId))
+            && get(/databases/$(database)/documents/patients/$(incoming().patientId)).data.nutritionistId == request.auth.uid
+          )
+        );
+
+      allow update: if isVerifiedUser()
+        && isValidId(sessionId)
+        && isValidVideoSession(incoming())
+        && (existing().userId == request.auth.uid || isAdmin())
+        && ((existing().status != 'concluida' && existing().status != 'cancelada') || isAdmin())
+        && incoming().userId == existing().userId
+        && incoming().patientId == existing().patientId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin()
+          || incoming().diff(existing()).affectedKeys().hasOnly([
+            'specialty', 'scheduledDate', 'scheduledTime', 'chiefComplaint',
+            'callNotes', 'durationMinutes', 'status', 'updatedAt'
+          ])
+          ||
+          (incoming().status == 'cancelada' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(sessionId)
+        && (existing().userId == request.auth.uid || isAdmin());
+    }
+
+    // =========================================================================
+    // Collection: /compoundingPrescriptions/{prescriptionId}
+    // =========================================================================
+    match /compoundingPrescriptions/{prescriptionId} {
+      allow get: if isSignedIn()
+        && isValidId(prescriptionId)
+        && (existing().userId == request.auth.uid || isAdmin());
+
+      allow list: if (isSignedIn() && existing().userId == request.auth.uid)
+        || isAdmin();
+
+      allow create: if isVerifiedUser()
+        && isValidId(prescriptionId)
+        && isValidCompoundingPrescription(incoming())
+        && incoming().userId == request.auth.uid
+        && incoming().createdAt == request.time
+        && incoming().updatedAt == request.time
+        && (
+          incoming().patientId == ''
+          || (
+            exists(/databases/$(database)/documents/patients/$(incoming().patientId))
+            && get(/databases/$(database)/documents/patients/$(incoming().patientId)).data.nutritionistId == request.auth.uid
+          )
+        );
+
+      allow update: if isVerifiedUser()
+        && isValidId(prescriptionId)
+        && isValidCompoundingPrescription(incoming())
+        && (existing().userId == request.auth.uid || isAdmin())
+        && (existing().status != 'emitida' || isAdmin())
+        && incoming().userId == existing().userId
+        && incoming().patientId == existing().patientId
+        && incoming().createdAt == existing().createdAt
+        && incoming().updatedAt == request.time
+        && (
+          isAdmin()
+          || incoming().diff(existing()).affectedKeys().hasOnly([
+            'patientName', 'specialty', 'formulaTitle', 'pharmaceuticalForm',
+            'totalDoses', 'durationDays', 'posology', 'pharmacyNotes',
+            'clinicalRationale', 'precautions', 'actives', 'recommendedRecipes',
+            'status', 'updatedAt'
+          ])
+          ||
+          (incoming().status == 'emitida' && incoming().diff(existing()).affectedKeys().hasOnly(['status', 'updatedAt']))
+        );
+
+      allow delete: if isVerifiedUser()
+        && isValidId(prescriptionId)
+        && (existing().userId == request.auth.uid || isAdmin());
+    }
+  }
+}

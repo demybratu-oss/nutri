@@ -1,0 +1,161 @@
+@import "tailwindcss";
+
+@theme {
+  --font-serif: "Cormorant Garamond", Georgia, serif;
+  --font-sans: "Plus Jakarta Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, SFMono-Regular, monospace;
+}
+
+@layer base {
+  html {
+    font-family: var(--font-sans);
+    color-scheme: dark;
+    scroll-behavior: smooth;
+    background-color: #0b0907;
+    color: #f5efe6;
+  }
+
+  body {
+    letter-spacing: 0.008em;
+    background-color: #0b0907;
+    background-image:
+      radial-gradient(ellipse 75% 45% at 50% -10%, rgba(217, 175, 114, 0.13), transparent 70%),
+      radial-gradient(ellipse 55% 35% at 85% 25%, rgba(186, 134, 66, 0.07), transparent 65%);
+    background-attachment: fixed;
+  }
+
+  h1, h2, h3 {
+    text-wrap: balance;
+  }
+
+  select option {
+    background-color: #16120e;
+    color: #f5efe6;
+  }
+}
+
+.font-editorial {
+  font-family: var(--font-serif);
+}
+
+.tabular-nums {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Signature brushed champagne-gold button inspired by reference */
+.btn-gold {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #f3d7a3 0%, #d4a661 52%, #b5833e 100%);
+  color: #120d08;
+  box-shadow:
+    0 1px 0 rgba(255, 245, 224, 0.45) inset,
+    0 10px 28px -10px rgba(212, 166, 97, 0.48);
+  transition: transform 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 180ms cubic-bezier(0.16, 1, 0.3, 1),
+    box-shadow 180ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.btn-gold::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    115deg,
+    transparent 20%,
+    rgba(255, 250, 238, 0.42) 50%,
+    transparent 80%
+  );
+  transform: translateX(-120%);
+  transition: transform 650ms cubic-bezier(0.16, 1, 0.3, 1);
+  pointer-events: none;
+}
+
+.btn-gold:hover::after {
+  transform: translateX(120%);
+}
+
+.btn-gold:hover {
+  filter: brightness(1.06);
+  box-shadow:
+    0 1px 0 rgba(255, 245, 224, 0.55) inset,
+    0 14px 32px -10px rgba(217, 175, 114, 0.62);
+}
+
+.btn-gold:active {
+  transform: scale(0.985);
+}
+
+/* Smoked obsidian glass surface */
+.glass-obsidian {
+  background: linear-gradient(
+    165deg,
+    rgba(28, 22, 18, 0.86) 0%,
+    rgba(17, 13, 10, 0.9) 100%
+  );
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+  border: 1px solid rgba(217, 175, 114, 0.17);
+}
+
+.glass-obsidian-subtle {
+  background: rgba(20, 16, 13, 0.72);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1px solid rgba(217, 175, 114, 0.14);
+}
+
+/* Luminous golden horizon filament */
+.gold-horizon {
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(217, 175, 114, 0.15) 18%,
+    rgba(243, 215, 163, 0.65) 50%,
+    rgba(217, 175, 114, 0.15) 82%,
+    transparent 100%
+  );
+  box-shadow: 0 0 18px rgba(217, 175, 114, 0.35);
+}
+
+/* Dark bespoke scrollbar */
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #0e0b08;
+}
+
+::-webkit-scrollbar-thumb {
+  background: rgba(217, 175, 114, 0.22);
+  border-radius: 9999px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: rgba(217, 175, 114, 0.38);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+@media print {
+  .no-print {
+    display: none !important;
+  }
+  .print-only {
+    display: block !important;
+  }
+  html, body {
+    color-scheme: light !important;
+    background: #ffffff !important;
+    background-image: none !important;
+    color: #0f172a !important;
+  }
+}

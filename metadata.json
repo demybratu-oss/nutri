@@ -1,0 +1,6 @@
+{
+  "name": "Verbena Nutrição",
+  "description": "Sistema clínico para nutricionistas com gestão de pacientes, biblioteca de receitas e criação de planos alimentares personalizados.",
+  "requestFramePermissions": ["camera", "microphone"],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

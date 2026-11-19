@@ -1,0 +1,978 @@
+{
+  "entities": {
+    "Patient": {
+      "title": "Patient",
+      "description": "Cadastro clínico de um paciente acompanhado pela nutricionista.",
+      "type": "object",
+      "properties": {
+        "nutritionistId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID da nutricionista proprietária do prontuário."
+        },
+        "fullName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120,
+          "description": "Nome completo do paciente."
+        },
+        "email": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "E-mail de contato do paciente (PII)."
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "Telefone ou WhatsApp do paciente (PII)."
+        },
+        "birthYear": {
+          "type": "integer",
+          "description": "Ano de nascimento do paciente (1920 a 2026)."
+        },
+        "sex": {
+          "type": "string",
+          "enum": ["F", "M"],
+          "description": "Sexo biológico usado nos cálculos de TMB."
+        },
+        "weightKg": {
+          "type": "number",
+          "description": "Peso atual em quilogramas."
+        },
+        "heightCm": {
+          "type": "number",
+          "description": "Altura em centímetros."
+        },
+        "activityLevel": {
+          "type": "string",
+          "enum": ["sedentario", "leve", "moderado", "intenso", "atleta"],
+          "description": "Nível de atividade física semanal."
+        },
+        "goal": {
+          "type": "string",
+          "enum": ["emagrecimento", "hipertrofia", "reeducacao", "controle_glicemico", "performance"],
+          "description": "Objetivo nutricional principal."
+        },
+        "restrictions": {
+          "type": "array",
+          "description": "Lista limitada (máx. 15) de alergias ou restrições alimentares."
+        },
+        "clinicalNotes": {
+          "type": "string",
+          "maxLength": 1500,
+          "description": "Observações clínicas e resumo da anamnese."
+        },
+        "targetCalories": {
+          "type": "number",
+          "description": "Meta diária de energia em kcal."
+        },
+        "targetProteinG": {
+          "type": "number",
+          "description": "Meta diária de proteínas em gramas."
+        },
+        "targetCarbsG": {
+          "type": "number",
+          "description": "Meta diária de carboidratos em gramas."
+        },
+        "targetFatG": {
+          "type": "number",
+          "description": "Meta diária de gorduras em gramas."
+        },
+        "waterTargetLiters": {
+          "type": "number",
+          "description": "Meta diária de hidratação em litros."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ativo", "em_acompanhamento", "arquivado"],
+          "description": "Status de acompanhamento do paciente."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor no momento da criação."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na última atualização."
+        }
+      },
+      "required": [
+        "nutritionistId",
+        "fullName",
+        "email",
+        "phone",
+        "birthYear",
+        "sex",
+        "weightKg",
+        "heightCm",
+        "activityLevel",
+        "goal",
+        "restrictions",
+        "clinicalNotes",
+        "targetCalories",
+        "targetProteinG",
+        "targetCarbsG",
+        "targetFatG",
+        "waterTargetLiters",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Recipe": {
+      "title": "Recipe",
+      "description": "Receita clínica da biblioteca da nutricionista com informações nutricionais por porção.",
+      "type": "object",
+      "properties": {
+        "nutritionistId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID da nutricionista proprietária da receita."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120,
+          "description": "Título da receita."
+        },
+        "category": {
+          "type": "string",
+          "enum": ["cafe_da_manha", "almoco", "jantar", "lanche", "ceia", "sobremesa_fit"],
+          "description": "Refeição principal para a qual a receita é indicada."
+        },
+        "description": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "Resumo da preparação e benefícios nutricionais."
+        },
+        "prepTimeMin": {
+          "type": "integer",
+          "description": "Tempo estimado de preparo em minutos."
+        },
+        "servings": {
+          "type": "integer",
+          "description": "Rendimento em porções."
+        },
+        "portionLabel": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "description": "Medida caseira da porção (ex: 1 tigela de 320g)."
+        },
+        "calories": {
+          "type": "number",
+          "description": "Calorias por porção (kcal)."
+        },
+        "proteinG": {
+          "type": "number",
+          "description": "Proteínas por porção (g)."
+        },
+        "carbsG": {
+          "type": "number",
+          "description": "Carboidratos por porção (g)."
+        },
+        "fatG": {
+          "type": "number",
+          "description": "Gorduras por porção (g)."
+        },
+        "fiberG": {
+          "type": "number",
+          "description": "Fibras por porção (g)."
+        },
+        "dietaryTags": {
+          "type": "array",
+          "description": "Etiquetas nutricionais (máx. 10)."
+        },
+        "ingredients": {
+          "type": "array",
+          "description": "Lista de ingredientes com quantidades (máx. 30)."
+        },
+        "instructions": {
+          "type": "array",
+          "description": "Passos do modo de preparo (máx. 20)."
+        },
+        "clinicalTip": {
+          "type": "string",
+          "maxLength": 500,
+          "description": "Dica de substituição ou orientação clínica."
+        },
+        "imageUrl": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Caminho local da foto da receita."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na criação."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na atualização."
+        }
+      },
+      "required": [
+        "nutritionistId",
+        "title",
+        "category",
+        "description",
+        "prepTimeMin",
+        "servings",
+        "portionLabel",
+        "calories",
+        "proteinG",
+        "carbsG",
+        "fatG",
+        "fiberG",
+        "dietaryTags",
+        "ingredients",
+        "instructions",
+        "clinicalTip",
+        "imageUrl",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "MealPlan": {
+      "title": "MealPlan",
+      "description": "Plano alimentar personalizado vinculado a um paciente específico.",
+      "type": "object",
+      "properties": {
+        "nutritionistId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID da nutricionista responsável pelo plano."
+        },
+        "patientId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "ID do paciente vinculado ao plano alimentar."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 140,
+          "description": "Nome da fase ou versão do plano alimentar."
+        },
+        "objectiveSummary": {
+          "type": "string",
+          "maxLength": 400,
+          "description": "Resumo da estratégia nutricional do plano."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["rascunho", "ativo", "concluido"],
+          "description": "Estado do plano alimentar (concluido é estado terminal imutável)."
+        },
+        "targetCalories": {
+          "type": "number",
+          "description": "Meta calórica diária do plano (kcal)."
+        },
+        "targetProteinG": {
+          "type": "number",
+          "description": "Meta diária de proteínas (g)."
+        },
+        "targetCarbsG": {
+          "type": "number",
+          "description": "Meta diária de carboidratos (g)."
+        },
+        "targetFatG": {
+          "type": "number",
+          "description": "Meta diária de gorduras (g)."
+        },
+        "waterTargetLiters": {
+          "type": "number",
+          "description": "Meta diária de água (L)."
+        },
+        "generalGuidance": {
+          "type": "string",
+          "maxLength": 2000,
+          "description": "Orientações gerais, hidratação e observações clínicas."
+        },
+        "meals": {
+          "type": "array",
+          "description": "Lista estruturada de refeições diárias (máx. 10 refeições)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na criação."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na última atualização."
+        }
+      },
+      "required": [
+        "nutritionistId",
+        "patientId",
+        "title",
+        "objectiveSummary",
+        "status",
+        "targetCalories",
+        "targetProteinG",
+        "targetCarbsG",
+        "targetFatG",
+        "waterTargetLiters",
+        "generalGuidance",
+        "meals",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Consultation": {
+      "title": "Consultation",
+      "description": "Sessão de atendimento clínico conduzida pela IA como Nutricionista Dimitra Bratu.",
+      "type": "object",
+      "properties": {
+        "nutritionistId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID da nutricionista proprietária do atendimento."
+        },
+        "patientId": {
+          "type": "string",
+          "maxLength": 128,
+          "description": "ID opcional do paciente vinculado (vazio para atendimento geral)."
+        },
+        "patientName": {
+          "type": "string",
+          "maxLength": 120,
+          "description": "Nome do paciente vinculado ou identificação do atendimento."
+        },
+        "title": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 140,
+          "description": "Assunto principal do atendimento nutricional."
+        },
+        "mode": {
+          "type": "string",
+          "enum": ["consulta", "anamnese", "plano_substituicoes", "suplementacao"],
+          "description": "Modalidade de atendimento da Dra. Dimitra Bratu."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["aberta", "encerrada"],
+          "description": "Estado da consulta (encerrada é estado terminal imutável)."
+        },
+        "lastMessagePreview": {
+          "type": "string",
+          "maxLength": 240,
+          "description": "Prévia da última mensagem trocada."
+        },
+        "messageCount": {
+          "type": "integer",
+          "description": "Contagem de mensagens registradas na sessão."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na criação."
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na última atualização."
+        }
+      },
+      "required": [
+        "nutritionistId",
+        "patientId",
+        "patientName",
+        "title",
+        "mode",
+        "status",
+        "lastMessagePreview",
+        "messageCount",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ConsultationMessage": {
+      "title": "ConsultationMessage",
+      "description": "Mensagem individual de uma sessão de atendimento da Nutricionista Dimitra Bratu.",
+      "type": "object",
+      "properties": {
+        "nutritionistId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID da nutricionista proprietária da consulta pai."
+        },
+        "role": {
+          "type": "string",
+          "enum": ["user", "assistant"],
+          "description": "Autor da mensagem (paciente/usuário ou Dra. Dimitra Bratu IA)."
+        },
+        "content": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 8000,
+          "description": "Conteúdo textual ou Markdown da orientação nutricional."
+        },
+        "sources": {
+          "type": "array",
+          "description": "Fontes científicas consultadas pela IA (máx. 12)."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time",
+          "description": "Timestamp do servidor na criação."
+        }
+      },
+      "required": [
+        "nutritionistId",
+        "role",
+        "content",
+        "sources",
+        "createdAt"
+      ]
+    },
+    "Subscription": {
+      "title": "Subscription",
+      "description": "Assinatura anual (12 meses) de acompanhamento exclusivo com a Nutricionista Dimitra Bratu.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$",
+          "description": "UID do assinante autenticado."
+        },
+        "subscriberName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120,
+          "description": "Nome completo do assinante."
+        },
+        "subscriberEmail": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "E-mail do assinante (PII)."
+        },
+        "phone": {
+          "type": "string",
+          "maxLength": 40,
+          "description": "WhatsApp/telefone do assinante (PII)."
+        },
+        "specialty": {
+          "type": "string",
+          "enum": [
+            "metabolica_emagrecimento",
+            "imunidade_longevidade",
+            "saude_intestinal",
+            "saude_mulher_hormonal",
+            "performance_massa_magra",
+            "sono_ansiedade_cognicao"
+          ],
+          "description": "Especialidade clínica escolhida para tratamento nutricional e vitaminas manipuladas."
+        },
+        "healthFocus": {
+          "type": "string",
+          "maxLength": 600,
+          "description": "Objetivo de saúde e sintomas relatados pelo assinante."
+        },
+        "allergies": {
+          "type": "string",
+          "maxLength": 300,
+          "description": "Alergias ou restrições alimentares."
+        },
+        "planDurationMonths": {
+          "type": "integer",
+          "description": "Vigência da assinatura em meses (12 meses)."
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["cartao_12x", "pix_anual", "boleto_anual"],
+          "description": "Modalidade de pagamento referente aos 12 meses."
+        },
+        "totalAmountBrl": {
+          "type": "number",
+          "description": "Valor total do plano anual em reais."
+        },
+        "installmentLabel": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80,
+          "description": "Descrição das parcelas ou pagamento à vista."
+        },
+        "status": {
+          "type": "string",
+          "enum": ["ativa", "cancelada"],
+          "description": "Status da assinatura (cancelada é estado terminal)."
+        },
+        "validUntilIso": {
+          "type": "string",
+          "minLength": 10,
+          "maxLength": 40,
+          "description": "Data limite de vigência de 12 meses em formato ISO."
+        },
+        "receiptCode": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 40,
+          "description": "Código do comprovante de matrícula anual."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "subscriberName",
+        "subscriberEmail",
+        "phone",
+        "specialty",
+        "healthFocus",
+        "allergies",
+        "planDurationMonths",
+        "paymentMethod",
+        "totalAmountBrl",
+        "installmentLabel",
+        "status",
+        "validUntilIso",
+        "receiptCode",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "VideoSession": {
+      "title": "VideoSession",
+      "description": "Agendamento e registro de videochamada exclusiva com a Nutricionista Dimitra Bratu.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "patientId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "patientName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "specialty": {
+          "type": "string",
+          "enum": [
+            "metabolica_emagrecimento",
+            "imunidade_longevidade",
+            "saude_intestinal",
+            "saude_mulher_hormonal",
+            "performance_massa_magra",
+            "sono_ansiedade_cognicao"
+          ]
+        },
+        "scheduledDate": {
+          "type": "string",
+          "minLength": 8,
+          "maxLength": 20
+        },
+        "scheduledTime": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 12
+        },
+        "status": {
+          "type": "string",
+          "enum": ["agendada", "em_andamento", "concluida", "cancelada"]
+        },
+        "chiefComplaint": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "callNotes": {
+          "type": "string",
+          "maxLength": 3000
+        },
+        "durationMinutes": {
+          "type": "integer"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "patientId",
+        "patientName",
+        "specialty",
+        "scheduledDate",
+        "scheduledTime",
+        "status",
+        "chiefComplaint",
+        "callNotes",
+        "durationMinutes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CompoundingPrescription": {
+      "title": "CompoundingPrescription",
+      "description": "Prescrição individualizada de vitaminas e nutracêuticos manipulados para farmácia de manipulação.",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "patientId": {
+          "type": "string",
+          "maxLength": 128
+        },
+        "patientName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "specialty": {
+          "type": "string",
+          "enum": [
+            "metabolica_emagrecimento",
+            "imunidade_longevidade",
+            "saude_intestinal",
+            "saude_mulher_hormonal",
+            "performance_massa_magra",
+            "sono_ansiedade_cognicao"
+          ]
+        },
+        "formulaTitle": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 140
+        },
+        "pharmaceuticalForm": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 100
+        },
+        "totalDoses": {
+          "type": "integer"
+        },
+        "durationDays": {
+          "type": "integer"
+        },
+        "posology": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 500
+        },
+        "pharmacyNotes": {
+          "type": "string",
+          "maxLength": 800
+        },
+        "clinicalRationale": {
+          "type": "string",
+          "maxLength": 1500
+        },
+        "precautions": {
+          "type": "string",
+          "maxLength": 800
+        },
+        "status": {
+          "type": "string",
+          "enum": ["rascunho", "emitida"]
+        },
+        "actives": {
+          "type": "array",
+          "description": "Lista limitada (máx. 20) de vitaminas, minerais e bioativos da fórmula manipulada."
+        },
+        "recommendedRecipes": {
+          "type": "array",
+          "description": "Lista limitada (máx. 10) de receitas terapêuticas vinculadas ao tratamento."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "patientId",
+        "patientName",
+        "specialty",
+        "formulaTitle",
+        "pharmaceuticalForm",
+        "totalDoses",
+        "durationDays",
+        "posology",
+        "pharmacyNotes",
+        "clinicalRationale",
+        "precautions",
+        "status",
+        "actives",
+        "recommendedRecipes",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "AdminUser": {
+      "title": "AdminUser",
+      "description": "Registro de administrador autorizado a acessar o painel administrativo completo do site.",
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 160,
+          "description": "E-mail Google verificado do administrador liberado (PII)."
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120,
+          "description": "Nome do administrador."
+        },
+        "roleLabel": {
+          "type": "string",
+          "maxLength": 80,
+          "description": "Cargo ou função administrativa."
+        },
+        "addedByEmail": {
+          "type": "string",
+          "maxLength": 160,
+          "description": "E-mail do administrador que concedeu a permissão."
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "email",
+        "displayName",
+        "roleLabel",
+        "addedByEmail",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "SiteSettings": {
+      "title": "SiteSettings",
+      "description": "Configurações públicas do site (textos, identidade, valores do plano anual e contatos) gerenciadas somente por administradores.",
+      "type": "object",
+      "properties": {
+        "brandName": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "brandSubtitle": {
+          "type": "string",
+          "maxLength": 80
+        },
+        "heroEyebrow": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "heroTitle": {
+          "type": "string",
+          "minLength": 4,
+          "maxLength": 160
+        },
+        "heroDescription": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "methodTitle": {
+          "type": "string",
+          "maxLength": 140
+        },
+        "methodDescription": {
+          "type": "string",
+          "maxLength": 700
+        },
+        "bannerTitle": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "bannerDescription": {
+          "type": "string",
+          "maxLength": 600
+        },
+        "annualPlanHeadline": {
+          "type": "string",
+          "maxLength": 120
+        },
+        "annualCardInstallmentBrl": {
+          "type": "number"
+        },
+        "annualCardTotalBrl": {
+          "type": "number"
+        },
+        "annualPixTotalBrl": {
+          "type": "number"
+        },
+        "annualPixDiscountLabel": {
+          "type": "string",
+          "maxLength": 40
+        },
+        "annualBoletoTotalBrl": {
+          "type": "number"
+        },
+        "whatsappContact": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "instagramHandle": {
+          "type": "string",
+          "maxLength": 60
+        },
+        "updatedByEmail": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "brandName",
+        "brandSubtitle",
+        "heroEyebrow",
+        "heroTitle",
+        "heroDescription",
+        "methodTitle",
+        "methodDescription",
+        "bannerTitle",
+        "bannerDescription",
+        "annualPlanHeadline",
+        "annualCardInstallmentBrl",
+        "annualCardTotalBrl",
+        "annualPixTotalBrl",
+        "annualPixDiscountLabel",
+        "annualBoletoTotalBrl",
+        "whatsappContact",
+        "instagramHandle",
+        "updatedByEmail",
+        "updatedAt"
+      ]
+    },
+    "SiteMedia": {
+      "title": "SiteMedia",
+      "description": "Foto individual customizada de um espaço visual do site (hero, método, banner, perfil ou receitas em destaque).",
+      "type": "object",
+      "properties": {
+        "slotKey": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 64,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "label": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 120
+        },
+        "imageUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 450000
+        },
+        "altText": {
+          "type": "string",
+          "maxLength": 200
+        },
+        "isPublic": {
+          "type": "boolean"
+        },
+        "updatedByEmail": {
+          "type": "string",
+          "maxLength": 160
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "slotKey",
+        "label",
+        "imageUrl",
+        "altText",
+        "isPublic",
+        "updatedByEmail",
+        "updatedAt"
+      ]
+    }
+  },
+  "firestore": {
+    "/patients/{patientId}": {
+      "schema": { "$ref": "#/entities/Patient" },
+      "description": "Prontuários e metas nutricionais de pacientes, isolados por nutritionistId (com acesso administrativo)."
+    },
+    "/recipes/{recipeId}": {
+      "schema": { "$ref": "#/entities/Recipe" },
+      "description": "Biblioteca de receitas da nutricionista com composição de macronutrientes."
+    },
+    "/mealPlans/{planId}": {
+      "schema": { "$ref": "#/entities/MealPlan" },
+      "description": "Planos alimentares personalizados vinculados aos pacientes da nutricionista."
+    },
+    "/consultations/{consultationId}": {
+      "schema": { "$ref": "#/entities/Consultation" },
+      "description": "Sessões de atendimento da Nutricionista Dimitra Bratu (IA), isoladas por nutritionistId."
+    },
+    "/consultations/{consultationId}/messages/{messageId}": {
+      "schema": { "$ref": "#/entities/ConsultationMessage" },
+      "description": "Subcoleção de mensagens de cada sessão de atendimento, protegida pelo Master Gate da consulta pai."
+    },
+    "/subscriptions/{subscriptionId}": {
+      "schema": { "$ref": "#/entities/Subscription" },
+      "description": "Assinaturas anuais (12 meses) com especialidade escolhida, isoladas por userId e gerenciáveis por administradores."
+    },
+    "/videoSessions/{sessionId}": {
+      "schema": { "$ref": "#/entities/VideoSession" },
+      "description": "Agendamentos e registros de videochamadas com a Nutricionista Dimitra Bratu, isolados por userId e visíveis para administradores."
+    },
+    "/compoundingPrescriptions/{prescriptionId}": {
+      "schema": { "$ref": "#/entities/CompoundingPrescription" },
+      "description": "Receituários de vitaminas manipuladas para farmácias de manipulação, isolados por userId e visíveis para administradores."
+    },
+    "/admins/{adminId}": {
+      "schema": { "$ref": "#/entities/AdminUser" },
+      "description": "Lista de administradores autorizados com acesso restrito ao painel administrativo."
+    },
+    "/siteSettings/{settingsId}": {
+      "schema": { "$ref": "#/entities/SiteSettings" },
+      "description": "Textos, identidade visual e valores do plano anual editáveis somente por administradores."
+    },
+    "/siteMedia/{slotId}": {
+      "schema": { "$ref": "#/entities/SiteMedia" },
+      "description": "Fotos customizadas do site (upload ou URL) editáveis somente por administradores."
+    }
+  }
+}
